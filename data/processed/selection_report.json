@@ -1,0 +1,41 @@
+{
+  "steps": [
+    {
+      "step": "load",
+      "rule": "all rows of aides.csv",
+      "kept": 2442
+    },
+    {
+      "step": "quality",
+      "rule": "combined text of ['aid_objet', 'aid_operations_el', 'aid_conditions', 'aid_montant', 'aid_benef'] >= 600 chars",
+      "kept": 2270,
+      "dropped": 172
+    },
+    {
+      "step": "dedup",
+      "rule": "one aid per TF-IDF cosine>0.9 cluster on ['aid_objet', 'aid_operations_el', 'aid_montant']; keep latest aid_validation, then smallest id_aid",
+      "kept": 2018,
+      "dropped": 252
+    },
+    {
+      "step": "theme",
+      "rule": "projets parent category in ['Transition écologique et énergétique', 'Innovation']",
+      "kept": 504,
+      "dropped": 1514
+    }
+  ],
+  "themed_aids_lost_to_offtheme_representative": 5,
+  "raw_sha256": {
+    "aides.csv": "197c020cdd90b120760c74ace7b7fc68147c22cd9a1f6f1e82fa08133c342190",
+    "contacts.csv": "a937dec39c826bf91b67f2714bd8839a264fe93acd60b761dd4ac2704c6b3758",
+    "domaines.csv": "f25579f1552e3d2b484d57da1cb5a5fce11134c91968dbb5ca9e70db3ab82d66",
+    "financeurs.csv": "b124148e259a70bed43966209393af11e1c6bd889b35b9e94de8393405b38a81",
+    "natures.csv": "2ff93ba107b84bf440b964687a02d6d257351afc6d33f63cea8cee844331b98c",
+    "niveaux.csv": "0d973f948925056f24635924d95c500afadc9c8808748bccc6e82ec5e4b2da1c",
+    "profils.csv": "b99c2d224c682d5283b14cee2b7593a4f99f1cdb674f1482f9808e9e565a07d6",
+    "projets.csv": "f01ec13f73b497b3d495a80f53aebaa8874c56f0824b75f313d2b637fa353a6e",
+    "territoires.csv": "c79502e4ba32906334c4e916ff6f337e4e9e750a53575f00092acba41b23b29f"
+  },
+  "n_selected": 504,
+  "output_sha256": "efdc99ccec6d15566489ac7b447d8ad9ab3a26dfda7b32ad6a5ffb78b4ccfcbe"
+}

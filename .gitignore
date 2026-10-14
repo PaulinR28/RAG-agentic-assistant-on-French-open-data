@@ -1,0 +1,28 @@
+# Raw data stays local (see DATA_CARD.md for provenance and checksums)
+data/raw/*
+!data/raw/README.md
+
+# Secrets
+.env
+.env.*
+!.env.example
+
+# Python / tooling
+__pycache__/
+*.py[cod]
+.venv/
+.pytest_cache/
+*.egg-info/
+dist/
+build/
+
+# Models, indexes, caches
+models/
+indexes/
+.cache/
+
+# OS / editors
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
