@@ -13,6 +13,7 @@ dependencies = [
 
 [dependency-groups]
 dev = ["pytest>=8.0"]
+notebooks = ["matplotlib>=3.8", "ipykernel>=6.29", "nbconvert>=7.16"]
 
 [build-system]
 requires = ["hatchling"]
