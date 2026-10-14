@@ -11,7 +11,8 @@ SMEs carrying a **green-transition or innovation project**. One document = one a
 | | |
 |---|---|
 | Dataset | Business-aid database ("aides aux entreprises") export, 9 CSV files: `aides`, `contacts`, `domaines`, `financeurs`, `natures`, `niveaux`, `profils`, `projets`, `territoires` |
-| Origin | data.gouv.fr — **TODO (team): add the exact dataset URL, publisher and licence** |
+| Origin | **UNVERIFIED.** The exact download page has not been confirmed. Plausible candidate, *not confirmed*: data.gouv.fr "Base de données des Aides aux Entreprises" (https://www.data.gouv.fr/datasets/base-de-donnees-des-aides-aux-entreprises), described as a republication of the DGE / Institut Supérieur des Métiers aides-entreprises database |
+| Licence | **UNVERIFIED. Do not assume Etalab 2.0 or any other licence** until the original source page is confirmed |
 | Snapshot | Latest `aid_validation` in the export: 2026-10-09 (raw); files received 2026-10-13 |
 | Format | `;`-separated, **cp1252** encoding, quoted multi-line fields, one empty trailing column |
 | Integrity | SHA-256 of each raw file in `data/processed/selection_report.json` (`raw_sha256`) |
@@ -41,10 +42,24 @@ uv run python -m aides_rag.ingest.select_subset --raw data/raw --out data/proces
 - *Theme*: a coherent, rule-based scope (not a random sample) that lands close to the ~500 target
   without any arbitrary cut. It covers all regions, national and EU aids.
 
-**Note on the count (503 → 504).** The exploratory analysis reported 503. That run broke ties on
-`aid_validation` arbitrarily (unstable sort). In one cluster (3 "Eureka cluster" calls validated
-the same day) it kept the off-theme call. The script uses a deterministic tie-break (smallest
-`id_aid`), which keeps an in-theme call. Same criteria, deterministic result: **504**.
+**Note on the count (503 → 504).** The agreed rules said "keep the most recent `aid_validation`" but
+did not say what to do on a tie. The exploratory analysis reported 503. It sorted on `aid_validation`
+alone with an unstable sort, so ties were resolved by arbitrary row order. 30 near-duplicate clusters
+have a tie on their latest date. Only one of them changes the themed count:
+
+| `id_aid` | Aid | `aid_validation` | In theme |
+|---|---|---|---|
+| 12790 | Appel à Projets du Cluster Eureka ITEA | 2026-09-08 | yes |
+| 12791 | Appel à Projets du Cluster Eureka CELTIC-NEXT | 2026-09-08 | yes |
+| 12792 | Appel à Projets du Cluster Eureka Eurogia | 2026-09-08 | no |
+
+The exploratory run kept 12792, which is off-theme, so the cluster dropped out of the corpus.
+The script breaks ties by smallest `id_aid` and keeps 12790. **12790 is the extra record.** Two other
+ties swap the representative without changing the count: 11947 replaces 11949 ("Fonds Chaleur") and
+12305 replaces 12712 (biodiversity).
+
+Sensitivity of the count to the tie-break rule: smallest id → 504, longest text → 504, largest
+id → 503. The smallest-id rule was chosen because it is neutral, not to reach a target count.
 
 ## 4. Corpus profile (504 aids)
 
