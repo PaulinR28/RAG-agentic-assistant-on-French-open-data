@@ -11,9 +11,9 @@ SMEs carrying a **green-transition or innovation project**. One document = one a
 | | |
 |---|---|
 | Dataset | Business-aid database ("aides aux entreprises") export, 9 CSV files: `aides`, `contacts`, `domaines`, `financeurs`, `natures`, `niveaux`, `profils`, `projets`, `territoires` |
-| Origin | **UNVERIFIED.** The exact download page has not been confirmed. Plausible candidate, *not confirmed*: data.gouv.fr "Base de données des Aides aux Entreprises" (https://www.data.gouv.fr/datasets/base-de-donnees-des-aides-aux-entreprises), described as a republication of the DGE / Institut Supérieur des Métiers aides-entreprises database |
-| Licence | **UNVERIFIED. Do not assume Etalab 2.0 or any other licence** until the original source page is confirmed |
-| Snapshot | Latest `aid_validation` in the export: 2026-10-09 (raw); files received 2026-10-13 |
+| Origin | **Confirmed by the project lead (2026-10-14):** data.gouv.fr dataset **"Aides entreprises"**, https://www.data.gouv.fr/datasets/aides-entreprises (dataset id `5ae2d5b5c751df3498bc70ad`). Publisher: **Institut Supérieur des Métiers**. The database aides-entreprises.fr was set up by the French government; files are served from `https://data.aides-entreprises.fr/files/<name>.csv`. The page says it is updated weekly |
+| Licence | **Licence Ouverte / Open Licence**, data.gouv.fr licence id `fr-lo` (version 1.0, https://www.etalab.gouv.fr/wp-content/uploads/2014/05/Licence_Ouverte.pdf), as declared on the dataset page, read through the data.gouv.fr API on 2026-10-14. Note: this is *not* the 2.0 version (`lov2`). Reuse requires attribution: cite the source, "Institut Supérieur des Métiers – aides-entreprises.fr", and the date of last update |
+| Snapshot | Files received 2026-10-13; latest `aid_validation` in the snapshot: 2026-10-09. Snapshot vs. official files re-downloaded on 2026-10-14: the official files are newer (weekly updates; 8 of 9 checksums differ, `domaines.csv` identical). Columns are identical in all files. `aides.csv` has 2,441 rows (2 aids removed, 1 added). **All 504 selected aids are still present, with unchanged text and deadlines.** The project keeps the 2026-10-13 snapshot frozen for reproducibility |
 | Format | `;`-separated, **cp1252** encoding, quoted multi-line fields, one empty trailing column |
 | Integrity | SHA-256 of each raw file in `data/processed/selection_report.json` (`raw_sha256`) |
 

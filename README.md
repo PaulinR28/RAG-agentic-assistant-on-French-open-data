@@ -1,7 +1,9 @@
 # RAG & agentic assistant on French open data: green & innovation business aids
 
 An assistant that answers **"Which public funding can my company get?"** for French SMEs with a
-green-transition or innovation project. It runs over 504 public aid schemes (data.gouv.fr), uses
+green-transition or innovation project. It runs over 504 public aid schemes from the
+[data.gouv.fr "Aides entreprises" dataset](https://www.data.gouv.fr/datasets/aides-entreprises)
+(Institut Supérieur des Métiers, Licence Ouverte / Open Licence). It uses
 hybrid retrieval with reranking, answers with citations, and runs locally.
 
 > Status: **Phase 1, foundations** (corpus, data card, golden set). Retrieval, agent and evaluation runner come next.
