@@ -1,0 +1,288 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Project Status Dashboard</title>
+<style>
+:root{
+  --bg:#f6f7f9; --card:#ffffff; --ink:#16181d; --muted:#5d6470; --line:#e3e6eb;
+  --done:#1f8a5b; --done-bg:#e3f4ec; --pend:#b26b00; --pend-bg:#fdf1dc;
+  --block:#c0392b; --block-bg:#fbe5e2; --todo:#6b7280; --todo-bg:#eef0f3;
+  --accent:#2f5bd3; --accent-bg:#e7edfc;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#0f1115; --card:#181b21; --ink:#eceef2; --muted:#9aa3b2; --line:#2a2f38;
+    --done:#4cc38a; --done-bg:#16301f; --pend:#f0b24a; --pend-bg:#3a2a10;
+    --block:#ff7a6b; --block-bg:#3d1c18; --todo:#a0a7b4; --todo-bg:#242832;
+    --accent:#7d9cff; --accent-bg:#1c2540;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#0f1115; --card:#181b21; --ink:#eceef2; --muted:#9aa3b2; --line:#2a2f38;
+  --done:#4cc38a; --done-bg:#16301f; --pend:#f0b24a; --pend-bg:#3a2a10;
+  --block:#ff7a6b; --block-bg:#3d1c18; --todo:#a0a7b4; --todo-bg:#242832;
+  --accent:#7d9cff; --accent-bg:#1c2540;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.5 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+.wrap{max-width:1120px;margin:0 auto;padding:28px 16px 56px}
+header{display:flex;flex-wrap:wrap;justify-content:space-between;gap:16px;align-items:flex-end;margin-bottom:22px}
+h1{font-size:26px;margin:0 0 4px;letter-spacing:-.01em}
+h2{font-size:17px;margin:0 0 12px}
+.sub{color:var(--muted);margin:0}
+.legend{display:flex;gap:8px;flex-wrap:wrap}
+.pill{display:inline-flex;align-items:center;gap:6px;padding:2px 10px;border-radius:999px;font-size:12.5px;font-weight:600;white-space:nowrap;flex-shrink:0}
+.pill::before{content:"";width:8px;height:8px;border-radius:50%;background:currentColor}
+.done{color:var(--done);background:var(--done-bg)} .pend{color:var(--pend);background:var(--pend-bg)}
+.block{color:var(--block);background:var(--block-bg)} .todo{color:var(--todo);background:var(--todo-bg)}
+.grid{display:grid;gap:16px;grid-template-columns:repeat(12,minmax(0,1fr))}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:18px 20px;min-width:0}
+.s12{grid-column:span 12}.s8{grid-column:span 8}.s7{grid-column:span 7}.s6{grid-column:span 6}.s5{grid-column:span 5}.s4{grid-column:span 4}
+@media (max-width:860px){.s8,.s7,.s6,.s5,.s4{grid-column:span 12}}
+.kpis{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}
+@media (max-width:700px){.kpis{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.kpi{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px 16px}
+.kpi b{display:block;font-size:26px;letter-spacing:-.02em}
+.kpi span{color:var(--muted);font-size:13px}
+.note{color:var(--muted);font-size:13px;margin:8px 0 0}
+/* progress */
+.bar{height:10px;border-radius:99px;background:var(--todo-bg);overflow:hidden;display:flex}
+.bar i{display:block;height:100%}
+.list{list-style:none;margin:0;padding:0}
+.list li{display:flex;justify-content:space-between;gap:12px;padding:8px 0;border-bottom:1px solid var(--line);align-items:center}
+.list li:last-child{border-bottom:0}
+.list small{color:var(--muted);display:block;font-size:12.5px}
+/* phases */
+.phases{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin-top:6px}
+@media (max-width:700px){.phases{grid-template-columns:minmax(0,1fr) minmax(0,1fr)}}
+.phase{border:1px solid var(--line);border-radius:12px;padding:15px 12px 12px;position:relative;overflow:hidden}
+.phase::before{content:"";position:absolute;left:0;right:0;top:0;height:4px;background:var(--todo)}
+.phase.p-done::before{background:var(--done)}.phase.p-pend::before{background:var(--pend)}
+.phase h3{margin:0 0 4px;font-size:14px}.phase p{margin:6px 0 0;font-size:13px;color:var(--muted)}
+/* funnel */
+.funnel .row{display:grid;grid-template-columns:150px 1fr 64px;gap:12px;align-items:center;margin:9px 0}
+@media (max-width:560px){.funnel .row{grid-template-columns:96px 1fr 52px}}
+.funnel .lab{font-size:13px}.funnel .lab small{display:block;color:var(--muted);font-size:12px}
+.funnel .track{background:var(--todo-bg);border-radius:8px;height:26px;overflow:hidden}
+.funnel .fill{height:100%;background:var(--accent);border-radius:8px}
+.funnel .fill.final{background:var(--done)}
+.funnel .num{font-weight:700;text-align:right;font-variant-numeric:tabular-nums}
+.stack{display:flex;height:22px;border-radius:7px;overflow:hidden;margin:6px 0 4px}
+.stack i{display:flex;align-items:center;justify-content:center;font-size:11.5px;font-style:normal;color:#fff;font-weight:600;min-width:0}
+.keys{display:flex;flex-wrap:wrap;gap:4px 14px;font-size:12.5px;color:var(--muted)}
+.keys span::before{content:"";display:inline-block;width:9px;height:9px;border-radius:2px;margin-right:5px;background:var(--c)}
+/* architecture */
+.arch{display:flex;flex-wrap:wrap;align-items:stretch;gap:0;row-gap:12px}
+.node{flex:1 1 120px;border-radius:12px;padding:10px 12px;border:1.5px solid;min-width:120px;font-size:13px}
+.node b{display:block;font-size:13.5px}
+.node.n-done{border-color:var(--done);background:var(--done-bg)}
+.node.n-todo{border-color:var(--line);border-style:dashed;background:transparent}
+.node.n-pend{border-color:var(--pend);background:var(--pend-bg)}
+.node.n-block{border-color:var(--block);background:var(--block-bg)}
+.arrow{display:flex;align-items:center;justify-content:center;width:22px;color:var(--muted);font-size:18px;flex:0 0 22px}
+.lane{margin-top:14px}.lane-title{font-size:12px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;margin:0 0 8px}
+/* git */
+.gitline{position:relative;padding-left:22px}
+.gitline::before{content:"";position:absolute;left:7px;top:6px;bottom:6px;width:2px;background:var(--line)}
+.commit{position:relative;margin:0 0 12px}
+.commit::before{content:"";position:absolute;left:-20px;top:5px;width:12px;height:12px;border-radius:50%;background:var(--card);border:2.5px solid var(--accent)}
+.commit.c-main::before{border-color:var(--done)}
+code{font:12.5px ui-monospace,SFMono-Regular,Consolas,monospace;background:var(--todo-bg);padding:1px 5px;border-radius:5px}
+/* gauge */
+.ram{display:flex;height:30px;border-radius:8px;overflow:hidden;border:1px solid var(--line);margin:8px 0}
+.ram i{display:flex;align-items:center;justify-content:center;font-size:11.5px;font-style:normal;color:#fff;font-weight:600;white-space:nowrap;overflow:hidden}
+table{width:100%;border-collapse:collapse;font-size:13.5px}
+th,td{text-align:left;padding:8px 6px;border-bottom:1px solid var(--line);vertical-align:top}
+th{font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.05em}
+.sev{font-weight:700;font-size:12px;padding:2px 8px;border-radius:6px;white-space:nowrap}
+.steps{counter-reset:s;list-style:none;padding:0;margin:0}
+.steps li{counter-increment:s;display:grid;grid-template-columns:30px 1fr auto;gap:10px;align-items:start;padding:9px 0;border-bottom:1px solid var(--line)}
+.steps li:last-child{border-bottom:0}
+.steps li::before{content:counter(s);width:24px;height:24px;border-radius:50%;background:var(--accent-bg);color:var(--accent);font-weight:700;font-size:12.5px;display:flex;align-items:center;justify-content:center}
+.steps small{display:block;color:var(--muted)}
+footer{color:var(--muted);font-size:12.5px;margin-top:22px}
+.tw{overflow-x:auto}
+@media (max-width:560px){h1{font-size:22px}.card{padding:16px}.list li{flex-wrap:wrap}.steps li{grid-template-columns:30px 1fr}.steps li .pill{grid-column:2}.node{flex-basis:100%}.arrow{flex-basis:100%;width:auto;transform:rotate(90deg);height:18px}code{word-break:break-all}}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header>
+  <div>
+    <h1>Business-Aid Assistant: Project Status</h1>
+    <p class="sub">RAG &amp; agentic assistant on French open data · snapshot as of <b>14 Oct 2026</b>, checked against the repo and GitHub</p>
+  </div>
+  <div class="legend" aria-label="Status legend">
+    <span class="pill done">Done</span><span class="pill pend">Pending / in progress</span><span class="pill block">Blocked</span><span class="pill todo">Not started</span>
+  </div>
+</header>
+
+<section class="kpis" aria-label="Key figures">
+  <div class="kpi"><b>6 days</b><span>to code freeze (20 Oct, 23:59, tag v1.0)</span></div>
+  <div class="kpi"><b>504</b><span>aids in the approved corpus</span></div>
+  <div class="kpi"><b>20 / 40</b><span>golden test questions written</span></div>
+  <div class="kpi"><b>17 / 17</b><span>automated checks passing</span></div>
+</section>
+
+<div class="grid" style="margin-top:16px">
+
+  <!-- Objective + phases -->
+  <section class="card s12">
+    <h2>Objective</h2>
+    <p style="margin:0 0 12px">An assistant that answers <b>"Which public funding can my company get?"</b> for French SMEs with a <b>green-transition or innovation</b> project. It searches 504 official aid schemes, answers <b>with citations</b>, runs <b>on this laptop</b>, and is scored on test questions with cost and speed tracked. Defence: <b>21 Oct 2026</b>.</p>
+    <div class="phases">
+      <div class="phase p-pend"><h3>Phase 1 · Foundations</h3><span class="pill pend">Built, awaiting merge</span><p>Corpus, data card, 20 questions, tests. PR #1 is waiting for Saouss's review.</p></div>
+      <div class="phase p-pend"><h3>Phase 2 · Pipeline &amp; benchmark</h3><span class="pill pend">Approved, not started</span><p>Starts after PR #1 is merged. Search + local model, measured on the laptop.</p></div>
+      <div class="phase"><h3>Phase 3 · Agent &amp; evaluation</h3><span class="pill todo">Not started</span><p>Tools, citations, 40 questions, <code>run_eval.py</code>, error analysis.</p></div>
+      <div class="phase"><h3>Phase 4 · Freeze &amp; defence</h3><span class="pill todo">Not started</span><p>Tag v1.0, demo recording, 10-min pitch.</p></div>
+    </div>
+  </section>
+
+  <!-- Brief requirements progress -->
+  <section class="card s7">
+    <h2>Course requirements: what's delivered</h2>
+    <div class="bar" role="img" aria-label="2 of 12 done, 2 in progress or blocked, 8 not started">
+      <i style="width:16.7%;background:var(--done)"></i><i style="width:8.3%;background:var(--pend)"></i><i style="width:8.3%;background:var(--block)"></i>
+    </div>
+    <p class="note" style="margin-top:6px"><b>2 of 12</b> done · 1 in progress · 1 blocked · 8 not started</p>
+    <ul class="list" style="margin-top:8px">
+      <li><div>~500 documents selected &amp; cleaned<small>504 aids, rebuilt identically from the raw files</small></div><span class="pill done">Done</span></li>
+      <li><div>Data card (selection, profile, limits)<small>Source &amp; licence confirmed (Licence Ouverte)</small></div><span class="pill done">Done</span></li>
+      <li><div>Golden test set (~40 questions)<small>20 written and validated</small></div><span class="pill pend">20 / 40</span></li>
+      <li><div>Local model chosen &amp; documented<small>Waits for merge + the RAM benchmark</small></div><span class="pill block">Blocked</span></li>
+      <li><div>Chunking &amp; searchable index</div><span class="pill todo">Not started</span></li>
+      <li><div>Hybrid search (keyword + semantic) + reranking</div><span class="pill todo">Not started</span></li>
+      <li><div>Answers with citations, validated structured output</div><span class="pill todo">Not started</span></li>
+      <li><div>Agent with tools</div><span class="pill todo">Not started</span></li>
+      <li><div>Tracking: tokens, latency, cost, tool calls</div><span class="pill todo">Not started</span></li>
+      <li><div>Evaluation command <code>eval/run_eval.py</code><small>File does not exist yet</small></div><span class="pill todo">Not started</span></li>
+      <li><div>Demo + recording</div><span class="pill todo">Not started</span></li>
+      <li><div>Code freeze tag <code>v1.0</code><small>No tags in the repo</small></div><span class="pill todo">Not started</span></li>
+    </ul>
+  </section>
+
+  <!-- Dataset funnel -->
+  <section class="card s5">
+    <h2>Dataset: from 2,442 to 504 aids</h2>
+    <div class="funnel">
+      <div class="row"><div class="lab">All aids<small>raw export</small></div><div class="track"><div class="fill" style="width:100%"></div></div><div class="num">2,442</div></div>
+      <div class="row"><div class="lab">Enough text<small>−172 too short</small></div><div class="track"><div class="fill" style="width:93%"></div></div><div class="num">2,270</div></div>
+      <div class="row"><div class="lab">No duplicates<small>−252 near-copies</small></div><div class="track"><div class="fill" style="width:82.6%"></div></div><div class="num">2,018</div></div>
+      <div class="row"><div class="lab">Green + innovation<small>−1,514 off-theme</small></div><div class="track"><div class="fill final" style="width:20.6%"></div></div><div class="num">504</div></div>
+    </div>
+    <p class="note">One rule per step, no random sampling. Approved on 14 Oct: 504 aids, ties broken by smallest aid ID. The earlier "503" came from an arbitrary tie order; the extra aid is #12790.</p>
+
+    <h2 style="margin-top:16px">Coverage</h2>
+    <div class="stack" role="img" aria-label="432 local, 66 national, 6 European">
+      <i style="flex:432;background:#2f5bd3">432 local</i><i style="flex:66;background:#7a52c7">66</i><i style="flex:6;background:#c75293"></i>
+    </div>
+    <div class="keys"><span style="--c:#2f5bd3">Local / regional</span><span style="--c:#7a52c7">National (66)</span><span style="--c:#c75293">EU (6)</span></div>
+    <p class="note" style="margin-top:12px">Of the 432 local aids, how many are tied to a region:</p>
+    <div class="stack" role="img" aria-label="200 from IDs, 28 inferred, 204 unknown">
+      <i style="flex:200;background:var(--done)">200</i><i style="flex:28;background:var(--pend)">28</i><i style="flex:204;background:var(--block)">204</i>
+    </div>
+    <div class="keys"><span style="--c:var(--done)">Known</span><span style="--c:var(--pend)">Inferred from funder</span><span style="--c:var(--block)">Unknown (47%)</span></div>
+  </section>
+
+  <!-- Architecture -->
+  <section class="card s12">
+    <h2>System architecture: built vs. remaining</h2>
+    <div class="lane"><p class="lane-title">Answering a question</p>
+      <div class="arch">
+        <div class="node n-done"><b>Raw data</b>9 CSV files, kept local</div><div class="arrow">→</div>
+        <div class="node n-done"><b>Selection script</b>clean, dedupe, filter</div><div class="arrow">→</div>
+        <div class="node n-done"><b>Corpus</b>504 aids + metadata</div><div class="arrow">→</div>
+        <div class="node n-todo"><b>Chunking &amp; index</b>keyword + semantic</div><div class="arrow">→</div>
+        <div class="node n-todo"><b>Reranker</b>reorders top results</div><div class="arrow">→</div>
+        <div class="node n-block"><b>Local LLM + agent</b>Ollama installed, no model yet</div><div class="arrow">→</div>
+        <div class="node n-todo"><b>Answer</b>with cited aid IDs</div>
+      </div>
+    </div>
+    <div class="lane"><p class="lane-title">Proving it works</p>
+      <div class="arch">
+        <div class="node n-pend"><b>Golden questions</b>20 of 40</div><div class="arrow">→</div>
+        <div class="node n-todo"><b>run_eval.py</b>runs every question</div><div class="arrow">→</div>
+        <div class="node n-todo"><b>Tracking</b>tokens · latency · cost</div><div class="arrow">→</div>
+        <div class="node n-todo"><b>Scores &amp; error analysis</b>for the jury</div>
+      </div>
+    </div>
+    <div class="lane"><p class="lane-title">Quality safety net</p>
+      <div class="arch">
+        <div class="node n-done"><b>17 automated checks</b>count, rebuild, regions, dates, links, questions</div><div class="arrow">·</div>
+        <div class="node n-done"><b>Data card</b>every figure re-verified</div><div class="arrow">·</div>
+        <div class="node n-done"><b>Source-link check</b>387 of 524 links reachable</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Git -->
+  <section class="card s6">
+    <h2>Git &amp; review status</h2>
+    <div class="gitline">
+      <div class="commit c-main"><b>main</b> · <code>11e44db</code> Phase 1 skeleton, corpus, data card, 20 questions<br><span class="pill done">On main</span></div>
+      <div class="commit"><b>PR #1</b> <code>docs/phase1-review</code> · 3 commits (<code>72008f2</code>, <code>41d2c4d</code>, <code>9ec6289</code>)<br>Source &amp; licence confirmed · 503→504 explained · tie-break rule recorded<br>
+        <span class="pill pend">Open · mergeable</span> <span class="pill pend">Review requested: Saouss</span></div>
+    </div>
+    <p class="note"><b>Unblocked:</b> <code>saouss-07</code> is now a collaborator and her review is requested. Not reviewed yet.</p>
+    <p class="note">Workflow: short branches → pull request → 1 reviewer → merge. No release tag yet.</p>
+  </section>
+
+  <!-- Laptop -->
+  <section class="card s6">
+    <h2>Laptop &amp; local-model constraints</h2>
+    <ul class="list">
+      <li><div>Memory</div><b>16 GB (15.4 usable)</b></li>
+      <li><div>Processor</div><b>Intel Core Ultra 5 135U</b></li>
+      <li><div>Graphics card for AI</div><span class="pill block">None, CPU only</span></li>
+      <li><div>Ollama (local model runner)</div><span class="pill done">v0.40.4 installed</span></li>
+      <li><div>Models downloaded</div><span class="pill todo">0, on purpose</span></li>
+    </ul>
+    <p class="note" style="margin-top:12px">Memory use today, with other apps open (app figures from an earlier reading, "other" = the remainder):</p>
+    <div class="ram" role="img" aria-label="Free RAM: 0.5 to 1.9 GB of 15.4 GB">
+      <i style="flex:4.6;background:#8a6d3b">4.6</i><i style="flex:1.8;background:#6b7a99">1.8</i><i style="flex:1.5;background:#7a6b99">1.5</i><i style="flex:5.6;background:#8b919c">5.6</i><i style="flex:1.9;background:var(--done)">1.9</i>
+    </div>
+    <div class="keys"><span style="--c:#8a6d3b">Chrome</span><span style="--c:#6b7a99">VS Code</span><span style="--c:#7a6b99">Claude</span><span style="--c:#8b919c">System &amp; other</span><span style="--c:var(--done)">Free (GB)</span></div>
+    <p class="note">Lowest reading: <b>0.5 GB free</b>. Full pipeline needs an <b>estimated 4–5 GB</b> (to be measured in Phase 2). <b>Closing Chrome before the demo is mandatory.</b></p>
+  </section>
+
+  <!-- Risks -->
+  <section class="card s7">
+    <h2>Key risks</h2>
+    <div class="tw"><table>
+      <thead><tr><th>Risk</th><th>Level</th><th>Mitigation</th></tr></thead>
+      <tbody>
+        <tr><td>6 days left and the core pipeline isn't started</td><td><span class="sev block">High</span></td><td>Get the review done today; keep Phase 2 to one working pipeline</td></tr>
+        <tr><td>Laptop too slow or out of memory during the demo</td><td><span class="sev block">High</span></td><td>Benchmark first, smallest adequate model, close apps, record a backup video</td></tr>
+        <tr><td>Phase 1 merge waits on review</td><td><span class="sev pend">Medium</span></td><td>Saouss reviews today; fix requested changes quickly</td></tr>
+        <tr><td>47% of local aids have no known region</td><td><span class="sev pend">Medium</span></td><td>Never filter them out; possible mapping with the official intercommunality list</td></tr>
+        <tr><td>Official data updates weekly; our snapshot is frozen (13 Oct)</td><td><span class="sev todo">Low</span></td><td>All 504 aids checked unchanged on 14 Oct; show the snapshot date in answers</td></tr>
+        <tr><td>Golden set half done (20/40)</td><td><span class="sev pend">Medium</span></td><td>Add 20 questions in Phase 3; all scores depend on it</td></tr>
+        <tr><td>15 source links dead, 5 green aids lost in dedup</td><td><span class="sev todo">Low</span></td><td>Documented in the data card; citations use aid IDs</td></tr>
+      </tbody>
+    </table></div>
+  </section>
+
+  <!-- Next steps -->
+  <section class="card s5">
+    <h2>Next steps</h2>
+    <ol class="steps">
+      <li><div>Invite <code>saouss-07</code> as collaborator<small>Done: review requested</small></div><span class="pill done">Done</span></li>
+      <li><div>Review PR #1; fix requested changes<small>Then merge into main</small></div><span class="pill pend">Saouss</span></li>
+      <li><div>Confirm the dataset's original page &amp; licence<small>data.gouv.fr "Aides entreprises", Licence Ouverte (fr-lo)</small></div><span class="pill done">Done</span></li>
+      <li><div>Agree on the ownership split<small>Proposed, not yet agreed</small></div><span class="pill pend">Team</span></li>
+      <li><div>Close heavy apps → benchmark search + models<small>RAM, latency, quality on golden questions</small></div><span class="pill todo">After merge</span></li>
+      <li><div>Pick the smallest adequate model; build the end-to-end pipeline</div><span class="pill todo">Phase 2</span></li>
+    </ol>
+  </section>
+
+</div>
+
+<footer>
+  Sources: local git (<code>main</code> = <code>11e44db</code>, branch <code>docs/phase1-review</code> = <code>9ec6289</code>), GitHub API (PR #1 state, collaborators), <code>uv run pytest</code> (17 passed), <code>data/processed/*</code>, Windows hardware query, Ollama server. "4–5 GB" is an estimate pending measurement. Snapshot: it does not update itself.
+</footer>
+</div>
+</body>
+</html>
