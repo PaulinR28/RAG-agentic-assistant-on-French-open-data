@@ -61,6 +61,11 @@ ties swap the representative without changing the count: 11947 replaces 11949 ("
 Sensitivity of the count to the tie-break rule: smallest id → 504, longest text → 504, largest
 id → 503. The smallest-id rule was chosen because it is neutral, not to reach a target count.
 
+> **Approved rule (project lead, 2026-10-14).** Within a near-duplicate cluster, keep the aid with
+> the latest `aid_validation`. If several aids share that latest date, keep the one with the
+> **smallest `id_aid`** (compared as an integer). The approved corpus size is **504 aids**.
+> Changing this rule changes the corpus and requires a new decision.
+
 ## 4. Corpus profile (504 aids)
 
 | Dimension | Distribution |
