@@ -32,6 +32,14 @@ def report() -> dict:
     return json.loads(REPORT.read_text(encoding="utf-8"))
 
 
+def test_corpus_is_strict_json():
+    def reject(token):
+        raise ValueError(f"non-standard JSON constant {token}")
+
+    for line in CORPUS.read_text(encoding="utf-8").splitlines():
+        json.loads(line, parse_constant=reject)
+
+
 def test_count_matches_report(corpus, report):
     assert len(corpus) == report["n_selected"] == report["steps"][-1]["kept"]
 
@@ -117,8 +125,7 @@ def test_rebuild_is_deterministic(tmp_path, report):
     selected, rebuilt_report, proj_label = sel.select(RAW)
     assert rebuilt_report["raw_sha256"] == report["raw_sha256"], "raw files differ from the committed build"
     out = tmp_path / "aids.jsonl"
-    records = sel.build_records(selected, RAW, proj_label).to_dict(orient="records")
-    out.write_text("".join(json.dumps(r, ensure_ascii=False) + "\n" for r in records), encoding="utf-8", newline="\n")
+    sel.write_jsonl(sel.build_records(selected, RAW, proj_label), out)
     assert hashlib.sha256(out.read_bytes()).hexdigest() == report["output_sha256"]
 
 
