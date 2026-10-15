@@ -1,4 +1,4 @@
-"""Build the 503-aid corpus (green transition + innovation) from the raw aides-entreprises export.
+"""Build the ~500-aid corpus (green transition + innovation) from the raw aides-entreprises export.
 
 Deterministic pipeline, every step is counted in the selection report:
   1. load        all aids from data/raw/aides.csv
