@@ -91,22 +91,26 @@ def header(aid: dict) -> str:
 
 
 def split_long(text: str, budget: int) -> list[str]:
-    """Split one long section on sentence boundaries, each piece starting with ~OVERLAP of the previous."""
-    sentences = [s for s in SENTENCE_RE.split(text) if s.strip()]
+    """Split one long section on sentence boundaries, each piece starting with ~OVERLAP of the previous.
+
+    Each sentence keeps its original trailing whitespace, so line breaks of lists survive the split.
+    """
+    parts = re.split(f"({SENTENCE_RE.pattern})", text)
+    sentences = [s + sep for s, sep in zip(parts[::2], parts[1::2] + [""]) if s.strip()]
     pieces, current = [], []
     for sentence in sentences:
-        if current and len(" ".join(current + [sentence])) > budget:
-            pieces.append(" ".join(current))
+        if current and len("".join(current + [sentence]).strip()) > budget:
+            pieces.append("".join(current).strip())
             tail, size = [], 0
             for prev in reversed(current):
                 if size + len(prev) > OVERLAP * budget:
                     break
                 tail.insert(0, prev)
-                size += len(prev) + 1
+                size += len(prev)
             current = tail
         current.append(sentence)
     if current:
-        pieces.append(" ".join(current))
+        pieces.append("".join(current).strip())
     # a single sentence longer than the budget is cut hard (rare: unpunctuated lists)
     out = []
     step = int(budget * (1 - OVERLAP))
