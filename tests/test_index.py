@@ -70,6 +70,6 @@ def test_bm25_finds_named_aid(chunks):
 
 def test_bm25_recall_floor(aids):
     """Regression guard on the golden questions (dev set); measured 1.0 at commit time."""
-    questions = [q for q in read_corpus(ROOT / "eval/golden.jsonl") if q["gold_docs"]]
+    questions = [q for q in read_corpus(ROOT / "eval/golden.jsonl") if q["gold_docs"] and q["split"] == "dev"]
     result = evaluate(aids, questions, stem=True, header=True, budget=1800)
     assert result["summary"]["recall@5"] >= 0.9

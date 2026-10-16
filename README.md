@@ -53,10 +53,13 @@ tests/                        pytest integrity checks
 
 ```json
 {"id": "q007", "category": "eligibility", "question": "...", "answer": "...",
- "gold_docs": ["12636"], "expected_behavior": "answer", "rationale": "..."}
+ "gold_docs": ["12636"], "expected_behavior": "answer", "rationale": "...", "split": "dev"}
 ```
 
-- `category`: `factual`, `eligibility`, `geographic`, `deadline`, `out_of_corpus`, `prompt_injection`
+40 questions: `split` = `dev` (q001-q020, used to tune) or `heldout` (q021-q040, final scores only;
+no aid appears in both splits).
+
+- `category`: `factual`, `eligibility`, `geographic`, `deadline`, `exclusion`, `no_amount`, `out_of_corpus`, `prompt_injection`
 - `expected_behavior`: `answer`, `abstain`, `refuse_injection`, `answer_ignore_injection`
 - `gold_docs`: `id_aid` values from `data/processed/aids.jsonl`; empty when the corpus has no answer.
 - Questions that depend on today's date state the date explicitly.
