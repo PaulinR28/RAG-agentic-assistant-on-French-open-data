@@ -136,6 +136,12 @@ was only checked afterwards. The cross-encoder rerankers bring no held-out gain 
 cost 2.6 to 19 s per question, so reranking stays available as an option (`hybrid_rerank`: weighted
 fusion, top 10 re-sorted by bge-reranker-v2-m3) but is off in the default pipeline.
 
+**Input length (real tokenizer counts, not estimates).** Chunks are 390 tokens median, 636 max. bge-m3 reads
+1,024, so no chunk is truncated (tested). The e5 models read 512, so 14% of chunks (123) lost their tail in
+their benchmark, which may partly explain their lower scores. The reranker benchmarks above ran at 512 tokens for
+question + chunk, which truncates up to 38% of pairs; bge-reranker now uses 1,024 (its limit is 8,192), so
+its numbers above are a lower bound until re-measured.
+
 Benchmarks: `uv run python -m aides_rag.retrieval.bench_dense --model bge-m3`,
 `uv run python -m aides_rag.retrieval.bench_fusion`,
 `uv run python -m aides_rag.retrieval.bench_rerank --reranker bge-reranker --pools 10 --batch-size 4`, and the full runner

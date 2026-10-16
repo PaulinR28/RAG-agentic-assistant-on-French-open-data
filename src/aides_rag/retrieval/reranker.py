@@ -16,15 +16,19 @@ RERANKERS = {
     "camembert": "antoinelouis/crossencoder-camembert-base-mmarcoFR",
     "bge-reranker": "BAAI/bge-reranker-v2-m3",
 }
+# tokens for question + chunk together. Our longest chunk is 636 tokens and the longest golden question 73,
+# so 512 truncates up to 38% of pairs: use 1,024 where the model allows it (bge-reranker: up to 8,192).
+MAX_LENGTH = {"mminilm": 512, "camembert": 512, "bge-reranker": 1024}
 
 
 class Reranker:
-    def __init__(self, alias: str, max_length: int = 512):
+    def __init__(self, alias: str, max_length: int | None = None):
         from sentence_transformers import CrossEncoder  # heavy import, only when used
 
         self.alias = alias
         self.name = RERANKERS[alias]
-        self.model = CrossEncoder(str(local_dir(alias) or self.name), max_length=max_length, device="cpu")
+        self.max_length = max_length or MAX_LENGTH[alias]
+        self.model = CrossEncoder(str(local_dir(alias) or self.name), max_length=self.max_length, device="cpu")
         self.revision = model_revision(self.name, alias)
 
     def scores(self, query: str, texts: list[str], batch_size: int = 16) -> np.ndarray:

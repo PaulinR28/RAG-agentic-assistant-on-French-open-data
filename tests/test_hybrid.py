@@ -43,3 +43,25 @@ def test_hybrid_chunks_fuses_both_retrievers():
     # bm25 ranks [1, 2]; dense ranks [0, 3, 2, 1] -> 1: 1/61+1/64, 2: 1/62+1/63, 0: 1/61, 3: 1/62
     assert hybrid_chunks(bm25, dense, depth=4) == [1, 2, 0, 3]
     assert aids_in_order([3, 0, 2], np.array(["a", "a", "b", "c"])) == ["c", "a", "b"]
+
+
+@pytest.mark.skipif(model_revision(MODELS["bge-m3"].name, "bge-m3") is None, reason="bge-m3 not downloaded")
+def test_no_chunk_is_truncated_by_the_dense_model():
+    """Real token counts (not the chars/token estimate): every chunk fits bge-m3's window, and the
+    bge-reranker window fits the longest golden question + the longest chunk."""
+    import json
+    from pathlib import Path
+
+    from transformers import AutoTokenizer
+
+    from aides_rag.retrieval.dense import local_dir
+    from aides_rag.retrieval.reranker import MAX_LENGTH
+
+    root = Path(__file__).resolve().parents[1]
+    texts = [json.loads(line)["text"] for line in (root / "data/processed/chunks.jsonl").read_text(encoding="utf-8").splitlines()]
+    questions = [json.loads(line)["question"] for line in (root / "eval/golden.jsonl").read_text(encoding="utf-8").splitlines() if line.strip()]
+    tok = AutoTokenizer.from_pretrained(str(local_dir("bge-m3") or MODELS["bge-m3"].name))
+    longest_chunk = max(len(tok(t)["input_ids"]) for t in texts)
+    longest_question = max(len(tok(q)["input_ids"]) for q in questions)
+    assert longest_chunk <= MODELS["bge-m3"].max_seq_length
+    assert longest_chunk + longest_question <= MAX_LENGTH["bge-reranker"]
