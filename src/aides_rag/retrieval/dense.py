@@ -16,8 +16,9 @@ from pathlib import Path
 
 import numpy as np
 
-CACHE_DIR = Path("indexes")
-LOCAL_MODELS = Path("models")  # optional manual downloads: models/<alias>/ with a REVISION file
+ROOT = Path(__file__).resolve().parents[3]  # repo root, so paths work from any working directory
+CACHE_DIR = ROOT / "indexes"
+LOCAL_MODELS = ROOT / "models"  # optional manual downloads: models/<alias>/ with a REVISION file
 HF_CACHE = Path.home() / ".cache" / "huggingface" / "hub"
 
 

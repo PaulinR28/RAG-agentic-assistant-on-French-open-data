@@ -26,15 +26,21 @@ def rank_aids(scores: np.ndarray, chunk_aids: np.ndarray, positive_only: bool = 
     return list(ranking)
 
 
+def rrf_scores(rankings: list[list], k: int = RRF_K, depth: int = DEPTH, weights: list[float] | None = None) -> dict:
+    """Fused score of every item: sum over rankings of w / (k + rank), only the top `depth` of each list counting."""
+    fused: dict = {}
+    for ranking, w in zip(rankings, weights or [1.0] * len(rankings)):
+        for rank, item in enumerate(ranking[:depth], start=1):
+            fused[item] = fused.get(item, 0.0) + w / (k + rank)
+    return fused
+
+
 def rrf(rankings: list[list], k: int = RRF_K, depth: int = DEPTH, weights: list[float] | None = None) -> list:
     """Fuse rankings of aid ids (or chunk indices); ties broken by id, so the result is deterministic.
 
     weights (one per ranking, default all 1) give one retriever more say: score += w / (k + rank).
     """
-    fused: dict = {}
-    for ranking, w in zip(rankings, weights or [1.0] * len(rankings)):
-        for rank, item in enumerate(ranking[:depth], start=1):
-            fused[item] = fused.get(item, 0.0) + w / (k + rank)
+    fused = rrf_scores(rankings, k, depth, weights)
     return sorted(fused, key=lambda item: (-fused[item], item))
 
 
