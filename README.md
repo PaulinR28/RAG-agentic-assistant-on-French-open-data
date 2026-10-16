@@ -26,11 +26,16 @@ uv run pytest                             # corpus, chunking, BM25 and golden-se
 uv run python -m aides_rag.ingest.check_sources   # optional, needs network: source URL check
 ```
 
-Evaluation (Phase 2 onwards):
+Evaluation:
 
 ```bash
-uv run python eval/run_eval.py --questions eval/golden.jsonl --out eval/
+uv run python eval/run_eval.py --questions eval/golden.jsonl --out eval/   # --system bm25 (default)
 ```
+
+It writes `eval/results.jsonl` (one line per question: answer, cited sources, retrieved aid ids,
+tokens in/out, latency, tool calls, stop reason) and `eval/summary.json` (Recall@k, MRR, latency,
+tokens). Every system implements the same `answer(question) -> dict` contract, documented in
+`src/aides_rag/systems/__init__.py`; add a new one there and compare with `--system <name>`.
 
 ## Repository layout
 
@@ -44,6 +49,9 @@ data/processed/chunks.jsonl   865 retrieval chunks (metadata header + body), reb
 src/aides_rag/ingest/         corpus building (select_subset.py, check_sources.py)
 src/aides_rag/index/          chunking (chunks.py)
 src/aides_rag/retrieval/      BM25 with French analyzer (bm25.py), retrieval evaluation (eval_recall.py)
+src/aides_rag/systems/        answering systems behind one contract (bm25_only.py: retrieval only, no LLM)
+src/aides_rag/evaluation/     evaluation runner (run_eval.py), called by eval/run_eval.py
+eval/run_eval.py              evaluation entry point -> eval/results.jsonl, eval/summary.json
 eval/retrieval_bm25.json      last retrieval evaluation (variants, per-question ranks)
 eval/golden.jsonl             golden questions (id, question, answer, gold_docs, category, expected_behavior, rationale)
 tests/                        pytest integrity checks
