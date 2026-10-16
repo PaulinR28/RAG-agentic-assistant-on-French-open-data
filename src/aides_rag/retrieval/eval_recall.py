@@ -1,4 +1,5 @@
-"""Retrieval-only evaluation: Recall@k and MRR at aid level on the golden questions that have gold_docs.
+"""Retrieval-only evaluation: Recall@k and MRR at aid level on the golden questions that have gold_docs,
+reported separately for the dev and held-out splits.
 
 Chunk scores are aggregated per aid (max), so an aid counts as retrieved if any of its chunks is.
 Recall@k = share of a question's gold aids found in the top k aids, averaged over questions.
@@ -29,6 +30,7 @@ VARIANTS = {
     "bm25_stem_header_wholeaid": dict(stem=True, header=True, budget=100_000),
 }
 DEFAULT = "bm25_stem_header"
+SPLITS = ("dev", "heldout")  # tune on dev, report final scores on heldout
 
 
 def rank_aids(index: BM25, chunk_aids: np.ndarray, query: str) -> list[str]:
@@ -69,20 +71,26 @@ def main() -> None:
     args = ap.parse_args()
 
     aids = read_corpus(args.corpus)
-    questions = [q for q in read_corpus(args.golden) if q["gold_docs"]]
-    results = {name: evaluate(aids, questions, **cfg) for name, cfg in VARIANTS.items()}
+    golden = [q for q in read_corpus(args.golden) if q["gold_docs"]]
+    splits = {split: [q for q in golden if q.get("split", "dev") == split] for split in SPLITS}
+    results = {name: {split: evaluate(aids, qs, **cfg) for split, qs in splits.items() if qs}
+               for name, cfg in VARIANTS.items()}
 
-    print(f"{len(questions)} questions with gold docs\n")
-    print(f"{'variant':<28}" + "".join(f"{m:>11}" for m in [*(f'recall@{k}' for k in KS), "mrr", "n_chunks"]))
-    for name, res in results.items():
-        print(f"{name:<28}" + "".join(f"{v:>11}" for v in res["summary"].values()))
-    print(f"\nmisses at k=5 ({DEFAULT}):")
-    for p in results[DEFAULT]["per_question"]:
-        if not all(r and r <= 5 for r in p["gold_ranks"].values()):
-            print(f"  {p['id']} {p['category']:<12} gold ranks {p['gold_ranks']}")
+    metrics = [*(f"recall@{k}" for k in KS), "mrr"]
+    for split, qs in splits.items():
+        if not qs:
+            continue
+        print(f"\n[{split}] {len(qs)} questions with gold docs")
+        print(f"{'variant':<28}" + "".join(f"{m:>11}" for m in metrics))
+        for name, res in results.items():
+            print(f"{name:<28}" + "".join(f"{res[split]['summary'][m]:>11}" for m in metrics))
+        print(f"misses at k=5 ({DEFAULT}):")
+        for p in results[DEFAULT][split]["per_question"]:
+            if not all(r and r <= 5 for r in p["gold_ranks"].values()):
+                print(f"  {p['id']} {p['category']:<12} gold ranks {p['gold_ranks']}")
 
     out = {
-        "questions": len(questions),
+        "questions": {split: len(qs) for split, qs in splits.items()},
         "default": DEFAULT,
         "variants": {name: {"config": VARIANTS[name], **res} for name, res in results.items()},
     }

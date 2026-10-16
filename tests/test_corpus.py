@@ -138,11 +138,20 @@ def golden() -> list[dict]:
 
 
 def test_golden_schema(golden):
-    required = {"id", "question", "answer", "gold_docs", "category", "expected_behavior", "rationale"}
+    required = {"id", "question", "answer", "gold_docs", "category", "expected_behavior", "rationale", "split"}
     for q in golden:
         assert required <= set(q), q.get("id")
         assert isinstance(q["gold_docs"], list)
     assert len({q["id"] for q in golden}) == len(golden)
+
+
+def test_golden_splits(golden):
+    """~40 questions; the held-out split never reuses an aid from the dev split (no tuning leak)."""
+    assert {q["split"] for q in golden} == {"dev", "heldout"}
+    assert 35 <= len(golden) <= 50
+    dev_docs = {d for q in golden if q["split"] == "dev" for d in q["gold_docs"]}
+    held_docs = {d for q in golden if q["split"] == "heldout" for d in q["gold_docs"]}
+    assert not dev_docs & held_docs
 
 
 def test_golden_docs_in_corpus(golden, corpus):
