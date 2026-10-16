@@ -9,6 +9,7 @@ dependencies = [
     "numpy>=1.26",
     "scipy>=1.13",
     "scikit-learn>=1.5",
+    "snowballstemmer>=2.2",
 ]
 
 [dependency-groups]

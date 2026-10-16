@@ -1,4 +1,4 @@
-"""Build the 503-aid corpus (green transition + innovation) from the raw aides-entreprises export.
+"""Build the ~500-aid corpus (green transition + innovation) from the raw aides-entreprises export.
 
 Deterministic pipeline, every step is counted in the selection report:
   1. load        all aids from data/raw/aides.csv
@@ -17,6 +17,7 @@ import argparse
 import csv
 import hashlib
 import json
+import math
 import re
 from collections import defaultdict
 from pathlib import Path
@@ -263,6 +264,14 @@ def build_records(s: pd.DataFrame, raw: Path, proj_label: dict[str, str]) -> pd.
     return pd.DataFrame.from_records(records)
 
 
+def write_jsonl(corpus: pd.DataFrame, path: Path) -> None:
+    with open(path, "w", encoding="utf-8", newline="\n") as f:
+        for rec in corpus.to_dict(orient="records"):
+            # pandas turns None into NaN, which is not valid JSON: write null instead
+            rec = {k: None if isinstance(v, float) and math.isnan(v) else v for k, v in rec.items()}
+            f.write(json.dumps(rec, ensure_ascii=False, allow_nan=False) + "\n")
+
+
 def main() -> None:
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("--raw", type=Path, default=Path("data/raw"))
@@ -273,12 +282,12 @@ def main() -> None:
     corpus = build_records(selected, args.raw, proj_label)
     args.out.mkdir(parents=True, exist_ok=True)
     out = args.out / "aids.jsonl"
-    with open(out, "w", encoding="utf-8", newline="\n") as f:
-        for rec in corpus.to_dict(orient="records"):
-            f.write(json.dumps(rec, ensure_ascii=False) + "\n")
+    write_jsonl(corpus, out)
     report["n_selected"] = len(corpus)
     report["output_sha256"] = sha256(out)
-    (args.out / "selection_report.json").write_text(json.dumps(report, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+    (args.out / "selection_report.json").write_text(
+        json.dumps(report, ensure_ascii=False, indent=2) + "\n", encoding="utf-8", newline="\n"
+    )
     for st in report["steps"]:
         print(f"{st['step']:<8} kept={st['kept']:<5} {st['rule']}")
     print(f"-> {len(corpus)} aids written to {out}")
