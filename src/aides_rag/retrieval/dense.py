@@ -1,0 +1,70 @@
+"""Dense (embedding) search over the chunks, on CPU with sentence-transformers.
+
+Each chunk text is turned into a normalised vector once; the vectors are cached in indexes/
+(git-ignored), keyed by model and chunk content. A query is embedded the same way and scored
+by cosine similarity (dot product of normalised vectors) against every chunk: 865 chunks is
+small enough for exact search, no approximate index needed.
+
+Candidate models (all multilingual, open weights). E5 models expect "query: " / "passage: " prefixes.
+"""
+
+from __future__ import annotations
+
+import hashlib
+from dataclasses import dataclass
+from pathlib import Path
+
+import numpy as np
+
+CACHE_DIR = Path("indexes")
+HF_CACHE = Path.home() / ".cache" / "huggingface" / "hub"
+
+
+@dataclass(frozen=True)
+class ModelSpec:
+    name: str
+    query_prefix: str = ""
+    passage_prefix: str = ""
+    max_seq_length: int = 512
+
+
+MODELS = {
+    "e5-small": ModelSpec("intfloat/multilingual-e5-small", "query: ", "passage: "),
+    "e5-base": ModelSpec("intfloat/multilingual-e5-base", "query: ", "passage: "),
+    "bge-m3": ModelSpec("BAAI/bge-m3", max_seq_length=1024),
+}
+
+
+def model_revision(name: str) -> str | None:
+    """Commit hash of the locally cached model snapshot (for the README: exact versions)."""
+    ref = HF_CACHE / f"models--{name.replace('/', '--')}" / "refs" / "main"
+    return ref.read_text().strip() if ref.exists() else None
+
+
+class DenseIndex:
+    def __init__(self, alias: str, texts: list[str], cache_dir: Path = CACHE_DIR, batch_size: int = 16):
+        from sentence_transformers import SentenceTransformer  # heavy import, only when used
+
+        self.alias = alias
+        self.spec = MODELS[alias]
+        self.model = SentenceTransformer(self.spec.name, device="cpu")
+        self.model.max_seq_length = self.spec.max_seq_length
+        self.revision = model_revision(self.spec.name)
+
+        key = hashlib.sha256("\n".join([self.spec.name, self.spec.passage_prefix, str(self.spec.max_seq_length),
+                                        *texts]).encode("utf-8")).hexdigest()[:16]
+        path = cache_dir / f"{alias}-{key}.npy"
+        self.from_cache = path.exists()
+        if self.from_cache:
+            self.vectors = np.load(path)
+        else:
+            self.vectors = self.encode([self.spec.passage_prefix + t for t in texts], batch_size)
+            cache_dir.mkdir(parents=True, exist_ok=True)
+            np.save(path, self.vectors)
+
+    def encode(self, texts: list[str], batch_size: int = 16) -> np.ndarray:
+        return self.model.encode(texts, batch_size=batch_size, normalize_embeddings=True,
+                                 convert_to_numpy=True, show_progress_bar=False).astype(np.float32)
+
+    def scores(self, query: str) -> np.ndarray:
+        return self.vectors @ self.encode([self.spec.query_prefix + query])[0]
