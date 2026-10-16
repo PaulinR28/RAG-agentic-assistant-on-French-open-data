@@ -1,7 +1,9 @@
 # RAG & agentic assistant on French open data: green & innovation business aids
 
 An assistant that answers **"Which public funding can my company get?"** for French SMEs with a
-green-transition or innovation project. It runs over 504 public aid schemes (data.gouv.fr), uses
+green-transition or innovation project. It runs over 504 public aid schemes from the
+[data.gouv.fr "Aides entreprises" dataset](https://www.data.gouv.fr/datasets/aides-entreprises)
+(Institut Supérieur des Métiers, Licence Ouverte / Open Licence). It uses
 hybrid retrieval with reranking, answers with citations, and runs locally.
 
 > Status: **Phase 1, foundations** (corpus, data card, golden set). Retrieval, agent and evaluation runner come next.
@@ -17,7 +19,10 @@ cp .env.example .env                      # local secrets (never committed)
 # Rebuild the corpus (needs the raw CSVs in data/raw/, see data/raw/README.md)
 uv run python -m aides_rag.ingest.select_subset --raw data/raw --out data/processed
 
-uv run pytest                             # corpus + golden-set integrity checks
+uv run python -m aides_rag.index.chunks   # aids.jsonl -> chunks.jsonl (header + body, ~300-700 tokens)
+uv run python -m aides_rag.retrieval.eval_recall  # BM25 Recall@k / MRR on the golden set -> eval/retrieval_bm25.json
+
+uv run pytest                             # corpus, chunking, BM25 and golden-set checks
 uv run python -m aides_rag.ingest.check_sources   # optional, needs network: source URL check
 ```
 
@@ -35,7 +40,11 @@ data/raw/                     raw CSVs (git-ignored)
 data/processed/aids.jsonl     the 504-aid corpus (committed, ~1.9 MB)
 data/processed/selection_report.json   step counts, raw + output checksums
 data/processed/source_check.json       last URL reachability check
+data/processed/chunks.jsonl   865 retrieval chunks (metadata header + body), rebuilt from aids.jsonl
 src/aides_rag/ingest/         corpus building (select_subset.py, check_sources.py)
+src/aides_rag/index/          chunking (chunks.py)
+src/aides_rag/retrieval/      BM25 with French analyzer (bm25.py), retrieval evaluation (eval_recall.py)
+eval/retrieval_bm25.json      last retrieval evaluation (variants, per-question ranks)
 eval/golden.jsonl             golden questions (id, question, answer, gold_docs, category, expected_behavior, rationale)
 tests/                        pytest integrity checks
 ```

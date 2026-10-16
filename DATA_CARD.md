@@ -11,8 +11,9 @@ SMEs carrying a **green-transition or innovation project**. One document = one a
 | | |
 |---|---|
 | Dataset | Business-aid database ("aides aux entreprises") export, 9 CSV files: `aides`, `contacts`, `domaines`, `financeurs`, `natures`, `niveaux`, `profils`, `projets`, `territoires` |
-| Origin | data.gouv.fr — **TODO (team): add the exact dataset URL, publisher and licence** |
-| Snapshot | Latest `aid_validation` in the export: 2026-10-09 (raw); files received 2026-10-13 |
+| Origin | **Confirmed by the project lead (2026-10-14):** data.gouv.fr dataset **"Aides entreprises"**, https://www.data.gouv.fr/datasets/aides-entreprises (dataset id `5ae2d5b5c751df3498bc70ad`). Publisher: **Institut Supérieur des Métiers**. The database aides-entreprises.fr was set up by the French government; files are served from `https://data.aides-entreprises.fr/files/<name>.csv`. The page says it is updated weekly |
+| Licence | **Licence Ouverte / Open Licence**, data.gouv.fr licence id `fr-lo` (version 1.0, https://www.etalab.gouv.fr/wp-content/uploads/2014/05/Licence_Ouverte.pdf), as declared on the dataset page, read through the data.gouv.fr API on 2026-10-14. Note: this is *not* the 2.0 version (`lov2`). Reuse requires attribution: cite the source, "Institut Supérieur des Métiers – aides-entreprises.fr", and the date of last update |
+| Snapshot | Files received 2026-10-13; latest `aid_validation` in the snapshot: 2026-10-09. Snapshot vs. official files re-downloaded on 2026-10-14: the official files are newer (weekly updates; 8 of 9 checksums differ, `domaines.csv` identical). Columns are identical in all files. `aides.csv` has 2,441 rows (2 aids removed, 1 added). **All 504 selected aids are still present, with unchanged text and deadlines.** The project keeps the 2026-10-13 snapshot frozen for reproducibility |
 | Format | `;`-separated, **cp1252** encoding, quoted multi-line fields, one empty trailing column |
 | Integrity | SHA-256 of each raw file in `data/processed/selection_report.json` (`raw_sha256`) |
 
@@ -41,10 +42,29 @@ uv run python -m aides_rag.ingest.select_subset --raw data/raw --out data/proces
 - *Theme*: a coherent, rule-based scope (not a random sample) that lands close to the ~500 target
   without any arbitrary cut. It covers all regions, national and EU aids.
 
-**Note on the count (503 → 504).** The exploratory analysis reported 503. That run broke ties on
-`aid_validation` arbitrarily (unstable sort). In one cluster (3 "Eureka cluster" calls validated
-the same day) it kept the off-theme call. The script uses a deterministic tie-break (smallest
-`id_aid`), which keeps an in-theme call. Same criteria, deterministic result: **504**.
+**Note on the count (503 → 504).** The agreed rules said "keep the most recent `aid_validation`" but
+did not say what to do on a tie. The exploratory analysis reported 503. It sorted on `aid_validation`
+alone with an unstable sort, so ties were resolved by arbitrary row order. 30 near-duplicate clusters
+have a tie on their latest date. Only one of them changes the themed count:
+
+| `id_aid` | Aid | `aid_validation` | In theme |
+|---|---|---|---|
+| 12790 | Appel à Projets du Cluster Eureka ITEA | 2026-09-08 | yes |
+| 12791 | Appel à Projets du Cluster Eureka CELTIC-NEXT | 2026-09-08 | yes |
+| 12792 | Appel à Projets du Cluster Eureka Eurogia | 2026-09-08 | no |
+
+The exploratory run kept 12792, which is off-theme, so the cluster dropped out of the corpus.
+The script breaks ties by smallest `id_aid` and keeps 12790. **12790 is the extra record.** Two other
+ties swap the representative without changing the count: 11947 replaces 11949 ("Fonds Chaleur") and
+12305 replaces 12712 (biodiversity).
+
+Sensitivity of the count to the tie-break rule: smallest id → 504, longest text → 504, largest
+id → 503. The smallest-id rule was chosen because it is neutral, not to reach a target count.
+
+> **Approved rule (project lead, 2026-10-14).** Within a near-duplicate cluster, keep the aid with
+> the latest `aid_validation`. If several aids share that latest date, keep the one with the
+> **smallest `id_aid`** (compared as an integer). The approved corpus size is **504 aids**.
+> Changing this rule changes the corpus and requires a new decision.
 
 ## 4. Corpus profile (504 aids)
 
