@@ -129,7 +129,7 @@ bash scripts/download_model.sh mminilm cross-encoder/mmarco-mMiniLMv2-L12-H384-v
 | Hybrid, equal weights | 0.85 / 0.75 | 1.00 / 0.94 | 0 |
 | **Hybrid, dense weight 3** (default) | **0.91 / 0.88** | 0.97 / **1.00** | 0 |
 | + mMiniLMv2 reranker, pool 10 | 0.85 / 0.50 | 0.94 / 0.94 | +2.6 s |
-| + bge-reranker-v2-m3, pool 10 | 0.91 / 0.75 | 1.00 / 0.94 | +19.4 s |
+| + bge-reranker-v2-m3, pool 10 (1,024 tokens) | 0.91 / 0.75 | 1.00 / 0.94 | +20.5 s |
 
 The weight was picked on dev with a rule fixed beforehand (Recall@1, then MRR, then the simplest); held-out
 was only checked afterwards. The cross-encoder rerankers bring no held-out gain on this corpus and, on CPU,
@@ -139,8 +139,9 @@ fusion, top 10 re-sorted by bge-reranker-v2-m3) but is off in the default pipeli
 **Input length (real tokenizer counts, not estimates).** Chunks are 390 tokens median, 636 max. bge-m3 reads
 1,024, so no chunk is truncated (tested). The e5 models read 512, so 14% of chunks (123) lost their tail in
 their benchmark, which may partly explain their lower scores. The reranker benchmarks above ran at 512 tokens for
-question + chunk, which truncates up to 38% of pairs; bge-reranker now uses 1,024 (its limit is 8,192), so
-its numbers above are a lower bound until re-measured.
+question + chunk, which truncates up to 38% of pairs; bge-reranker now uses 1,024 (its limit is 8,192).
+Re-measured at 1,024: identical Recall (0.91 / 0.75 Recall@1, 1.00 / 0.94 Recall@5), 20.5 s per question, so
+truncation was not what held it back.
 
 Benchmarks: `uv run python -m aides_rag.retrieval.bench_dense --model bge-m3`,
 `uv run python -m aides_rag.retrieval.bench_fusion`,
