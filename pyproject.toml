@@ -10,6 +10,10 @@ dependencies = [
     "scipy>=1.13",
     "scikit-learn>=1.5",
     "snowballstemmer>=2.2",
+    "openai>=3.31.0",
+    "pydantic>=2.14.1",
+    "python-dotenv>=1.2.4",
+    "ollama>=0.6.3",
 ]
 
 [dependency-groups]
