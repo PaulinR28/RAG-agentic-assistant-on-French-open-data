@@ -17,6 +17,7 @@ from pathlib import Path
 import numpy as np
 
 CACHE_DIR = Path("indexes")
+LOCAL_MODELS = Path("models")  # optional manual downloads: models/<alias>/ with a REVISION file
 HF_CACHE = Path.home() / ".cache" / "huggingface" / "hub"
 
 
@@ -35,8 +36,15 @@ MODELS = {
 }
 
 
-def model_revision(name: str) -> str | None:
-    """Commit hash of the locally cached model snapshot (for the README: exact versions)."""
+def local_dir(alias: str) -> Path | None:
+    path = LOCAL_MODELS / alias
+    return path if (path / "REVISION").exists() else None
+
+
+def model_revision(name: str, alias: str | None = None) -> str | None:
+    """Commit hash of the local model (for the README: exact versions)."""
+    if alias and local_dir(alias):
+        return (local_dir(alias) / "REVISION").read_text().strip()
     ref = HF_CACHE / f"models--{name.replace('/', '--')}" / "refs" / "main"
     return ref.read_text().strip() if ref.exists() else None
 
@@ -47,9 +55,10 @@ class DenseIndex:
 
         self.alias = alias
         self.spec = MODELS[alias]
-        self.model = SentenceTransformer(self.spec.name, device="cpu")
+        source = local_dir(alias) or self.spec.name
+        self.model = SentenceTransformer(str(source), device="cpu")
         self.model.max_seq_length = self.spec.max_seq_length
-        self.revision = model_revision(self.spec.name)
+        self.revision = model_revision(self.spec.name, alias)
 
         key = hashlib.sha256("\n".join([self.spec.name, self.spec.passage_prefix, str(self.spec.max_seq_length),
                                         *texts]).encode("utf-8")).hexdigest()[:16]

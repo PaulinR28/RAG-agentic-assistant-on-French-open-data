@@ -33,3 +33,13 @@ def test_dense_finds_paraphrase(tmp_path):
     index = DenseIndex("e5-small", texts, cache_dir=tmp_path)
     assert int(np.argmax(index.scores("financer un triporteur à assistance électrique"))) == 0
     assert int(np.argmax(index.scores("isoler la toiture de mon atelier"))) == 2
+
+
+def test_hybrid_chunks_fuses_both_retrievers():
+    from aides_rag.retrieval.hybrid import aids_in_order, hybrid_chunks
+
+    bm25 = np.array([0.0, 5.0, 1.0, 0.0])  # chunk 1 first, chunk 0 and 3 unmatched
+    dense = np.array([0.9, 0.1, 0.5, 0.8])  # chunk 0 first
+    # bm25 ranks [1, 2]; dense ranks [0, 3, 2, 1] -> 1: 1/61+1/64, 2: 1/62+1/63, 0: 1/61, 3: 1/62
+    assert hybrid_chunks(bm25, dense, depth=4) == [1, 2, 0, 3]
+    assert aids_in_order([3, 0, 2], np.array(["a", "a", "b", "c"])) == ["c", "a", "b"]

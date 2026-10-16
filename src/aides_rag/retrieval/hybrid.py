@@ -24,9 +24,24 @@ def rank_aids(scores: np.ndarray, chunk_aids: np.ndarray, positive_only: bool = 
     return list(ranking)
 
 
-def rrf(rankings: list[list[str]], k: int = RRF_K, depth: int = DEPTH) -> list[str]:
-    fused: dict[str, float] = {}
+def rrf(rankings: list[list], k: int = RRF_K, depth: int = DEPTH) -> list:
+    """Fuse rankings of aid ids (or chunk indices); ties broken by id, so the result is deterministic."""
+    fused: dict = {}
     for ranking in rankings:
-        for rank, aid in enumerate(ranking[:depth], start=1):
-            fused[aid] = fused.get(aid, 0.0) + 1.0 / (k + rank)
-    return sorted(fused, key=lambda aid: (-fused[aid], aid))
+        for rank, item in enumerate(ranking[:depth], start=1):
+            fused[item] = fused.get(item, 0.0) + 1.0 / (k + rank)
+    return sorted(fused, key=lambda item: (-fused[item], item))
+
+
+def top_chunks(scores: np.ndarray, depth: int = DEPTH, positive_only: bool = False) -> list[int]:
+    order = np.argsort(-scores, kind="stable")[:depth]
+    return [int(i) for i in order if not positive_only or scores[i] > 0]
+
+
+def hybrid_chunks(bm25_scores: np.ndarray, dense_scores: np.ndarray, depth: int = DEPTH) -> list[int]:
+    """Chunk indices ordered by RRF of the BM25 and dense chunk rankings (the reranker's candidate pool)."""
+    return rrf([top_chunks(bm25_scores, depth, positive_only=True), top_chunks(dense_scores, depth)], depth=depth)
+
+
+def aids_in_order(chunk_order: list[int], chunk_aids: np.ndarray) -> list[str]:
+    return list(dict.fromkeys(chunk_aids[i] for i in chunk_order))
