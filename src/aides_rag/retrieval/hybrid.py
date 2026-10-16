@@ -12,6 +12,8 @@ import numpy as np
 
 RRF_K = 60
 DEPTH = 50
+# dense (bge-m3) counts 3x BM25 in the fusion: picked on dev only, see eval/retrieval_fusion.json
+DENSE_WEIGHT = 3.0
 
 
 def rank_aids(scores: np.ndarray, chunk_aids: np.ndarray, positive_only: bool = False) -> list[str]:
@@ -41,9 +43,11 @@ def top_chunks(scores: np.ndarray, depth: int = DEPTH, positive_only: bool = Fal
     return [int(i) for i in order if not positive_only or scores[i] > 0]
 
 
-def hybrid_chunks(bm25_scores: np.ndarray, dense_scores: np.ndarray, depth: int = DEPTH) -> list[int]:
+def hybrid_chunks(bm25_scores: np.ndarray, dense_scores: np.ndarray, depth: int = DEPTH,
+                  dense_weight: float = 1.0) -> list[int]:
     """Chunk indices ordered by RRF of the BM25 and dense chunk rankings (the reranker's candidate pool)."""
-    return rrf([top_chunks(bm25_scores, depth, positive_only=True), top_chunks(dense_scores, depth)], depth=depth)
+    return rrf([top_chunks(bm25_scores, depth, positive_only=True), top_chunks(dense_scores, depth)], depth=depth,
+               weights=[1.0, dense_weight])
 
 
 def aids_in_order(chunk_order: list[int], chunk_aids: np.ndarray) -> list[str]:
