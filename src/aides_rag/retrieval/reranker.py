@@ -33,8 +33,9 @@ class Reranker:
         return np.asarray(self.model.predict([(query, t) for t in texts], batch_size=batch_size,
                                              show_progress_bar=False), dtype=np.float32)
 
-    def rerank(self, query: str, candidates: list[int], texts: list[str]) -> tuple[list[int], np.ndarray]:
+    def rerank(self, query: str, candidates: list[int], texts: list[str],
+               batch_size: int = 16) -> tuple[list[int], np.ndarray]:
         """Candidate chunk indices re-sorted by cross-encoder score (highest first), with their scores."""
-        s = self.scores(query, [texts[i] for i in candidates])
+        s = self.scores(query, [texts[i] for i in candidates], batch_size)
         order = np.argsort(-s, kind="stable")
         return [candidates[i] for i in order], s[order]

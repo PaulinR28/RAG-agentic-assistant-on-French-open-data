@@ -12,6 +12,7 @@ Usage:
 from __future__ import annotations
 
 import argparse
+import gc
 import json
 import time
 from pathlib import Path
@@ -37,6 +38,7 @@ def main() -> None:
     ap.add_argument("--chunks", type=Path, default=Path("data/processed/chunks.jsonl"))
     ap.add_argument("--golden", type=Path, default=Path("eval/golden.jsonl"))
     ap.add_argument("--out", type=Path, default=Path("eval/retrieval_rerank.json"))
+    ap.add_argument("--batch-size", type=int, default=16, help="pairs per forward pass (lower = less RAM)")
     args = ap.parse_args()
 
     chunks = read_corpus(args.chunks)
@@ -44,21 +46,26 @@ def main() -> None:
     chunk_aids = np.array([c["id_aid"] for c in chunks])
     golden = read_corpus(args.golden)
     bm25 = BM25(texts)
+    max_pool = max(args.pools)
+    # candidate pools first, then free the dense model so it never shares memory with the reranker
     dense = DenseIndex(args.dense, texts)
+    pools = {q["id"]: hybrid_chunks(bm25.scores(q["question"]), dense.scores(q["question"]), depth=max(max_pool, 50))
+             for q in golden}
+    del dense
+    gc.collect()
     t0 = time.perf_counter()
     reranker = Reranker(args.reranker)
     load_s = time.perf_counter() - t0
 
-    max_pool = max(args.pools)
     rankings: dict[str, dict[str, list[str]]] = {"hybrid": {}, **{f"rerank@{p}": {} for p in args.pools}}
     latency: dict[int, list[float]] = {p: [] for p in args.pools}
     top_score: dict[str, float] = {}
     for q in golden:
-        fused = hybrid_chunks(bm25.scores(q["question"]), dense.scores(q["question"]), depth=max(max_pool, 50))
+        fused = pools[q["id"]]
         rankings["hybrid"][q["question"]] = aids_in_order(fused, chunk_aids)
         for pool in args.pools:
             t0 = time.perf_counter()
-            reranked, scores = reranker.rerank(q["question"], fused[:pool], texts)
+            reranked, scores = reranker.rerank(q["question"], fused[:pool], texts, batch_size=args.batch_size)
             latency[pool].append((time.perf_counter() - t0) * 1000)
             # chunks beyond the pool keep their hybrid order, so Recall@50 stays comparable
             rankings[f"rerank@{pool}"][q["question"]] = aids_in_order(reranked + fused[pool:], chunk_aids)
