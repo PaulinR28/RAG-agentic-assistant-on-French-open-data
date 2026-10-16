@@ -3,7 +3,8 @@
 Writes, in --out:
   results.jsonl  one line per question: answer, cited sources, retrieved aid ids, tokens in/out,
                  latency, tool calls, stop reason (+ id, category, gold_docs, error)
-  summary.json   retrieval metrics (Recall@k, MRR), latency, tokens, tool calls, errors
+  summary.json   retrieval metrics (Recall@k, MRR; all questions and per split dev / heldout),
+                 latency, tokens, tool calls, errors
 
 Retrieval metrics are aid-level and use the questions that have gold_docs, as in
 retrieval/eval_recall.py. Answer-level scores (judged correctness, abstention, injection) need
@@ -26,6 +27,7 @@ from aides_rag.index.chunks import read_corpus
 from aides_rag.systems import OUTPUT_KEYS, SYSTEMS, load_system
 
 KS = (1, 5, 10)
+SPLITS = ("dev", "heldout")
 
 
 def run(system, questions: list[dict], system_name: str) -> list[dict]:
@@ -40,6 +42,7 @@ def run(system, questions: list[dict], system_name: str) -> list[dict]:
         rows.append({
             "id": q["id"],
             "system": system_name,
+            "split": q.get("split"),
             "category": q.get("category"),
             "expected_behavior": q.get("expected_behavior"),
             "question": q["question"],
@@ -86,6 +89,9 @@ def summarize(rows: list[dict], system_name: str) -> dict:
         "n_questions": len(rows),
         "errors": [r["id"] for r in rows if r["error"]],
         "retrieval": retrieval_metrics(rows),
+        # tune on dev, report final scores on heldout (no aid is shared between the two splits)
+        "retrieval_by_split": {split: retrieval_metrics([r for r in rows if r["split"] == split])
+                               for split in SPLITS if any(r["split"] == split for r in rows)},
         "latency_ms": {
             "mean": round(float(latencies.mean()), 1),
             "p50": round(float(np.percentile(latencies, 50)), 1),
@@ -126,11 +132,11 @@ def main(argv: list[str] | None = None) -> dict:
         json.dumps(summary, ensure_ascii=False, indent=2) + "\n", encoding="utf-8", newline="\n"
     )
 
-    ret = summary["retrieval"]
     print(f"system={args.system}  questions={len(rows)}  errors={len(summary['errors'])}")
-    if ret["n_questions"]:
-        print("  " + "  ".join(f"{m}={ret[m]}" for m in [*(f"recall@{k}" for k in KS), "mrr"])
-              + f"  (on {ret['n_questions']} questions with gold docs)")
+    for name, ret in [("all", summary["retrieval"]), *summary["retrieval_by_split"].items()]:
+        if ret["n_questions"]:
+            print(f"  [{name}] " + "  ".join(f"{m}={ret[m]}" for m in [*(f"recall@{k}" for k in KS), "mrr"])
+                  + f"  (on {ret['n_questions']} questions with gold docs)")
     lat = summary["latency_ms"]
     print(f"  latency ms: mean={lat['mean']} p95={lat['p95']}  tokens: {summary['tokens']}  tool calls: {summary['tool_calls']}")
     print(f"-> {args.out / 'results.jsonl'}, {args.out / 'summary.json'}")
