@@ -16,9 +16,16 @@ from pydantic import BaseModel, ConfigDict, Field, ValidationError, field_valida
 class Answer(BaseModel):
     model_config = ConfigDict(extra="forbid")  # -> "additionalProperties": false in the schema
 
-    answer: str = Field(description="Réponse en français, concise, fondée uniquement sur les fiches fournies.")
+    answer: str = Field(min_length=1, description="Réponse en français, concise, fondée uniquement sur les fiches fournies.")
     citations: list[str] = Field(description="Identifiants id_aid des fiches utilisées, chiffres uniquement, ex. [\"411\"].")
     abstained: bool = Field(description="true si les fiches ne permettent pas de répondre ou si la demande sort du périmètre.")
+
+    @field_validator("answer")
+    @classmethod
+    def not_blank(cls, value: str) -> str:
+        if not value.strip():
+            raise ValueError("le champ answer est vide : explique ta réponse, ou pourquoi tu t'abstiens")
+        return value.strip()
 
     @field_validator("citations", mode="before")
     @classmethod
