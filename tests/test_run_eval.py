@@ -35,9 +35,13 @@ def test_recall_matches_retrieval_eval(full_run):
     """The runner and retrieval/eval_recall.py must agree on the same BM25 index."""
     summary, _ = full_run
     reference = json.loads((ROOT / "eval/retrieval_bm25.json").read_text(encoding="utf-8"))
-    expected = reference["variants"][reference["default"]]["summary"]
-    for k in (1, 5, 10):
-        assert summary["retrieval"][f"recall@{k}"] == expected[f"recall@{k}"]
+    default = reference["variants"][reference["default"]]
+    for split in ("dev", "heldout"):
+        expected = default[split]["summary"]
+        got = summary["retrieval_by_split"][split]
+        assert got["n_questions"] == reference["questions"][split]
+        for k in (1, 5, 10):
+            assert got[f"recall@{k}"] == expected[f"recall@{k}"], (split, k)
 
 
 def test_failing_question_is_recorded_not_raised(tmp_path, monkeypatch):

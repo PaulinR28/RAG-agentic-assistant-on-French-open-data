@@ -1,27 +1,69 @@
 {
   "system": "bm25",
-  "n_questions": 20,
+  "n_questions": 40,
   "errors": [],
   "retrieval": {
-    "n_questions": 17,
-    "recall@1": 0.735,
-    "recall@5": 1.0,
-    "recall@10": 1.0,
-    "mrr": 0.843,
+    "n_questions": 33,
+    "recall@1": 0.742,
+    "recall@5": 0.939,
+    "recall@10": 0.97,
+    "mrr": 0.824,
     "recall@5_by_category": {
       "deadline": 1.0,
       "eligibility": 1.0,
-      "factual": 1.0,
-      "geographic": 1.0,
+      "exclusion": 1.0,
+      "factual": 0.9,
+      "geographic": 0.833,
+      "no_amount": 1.0,
       "prompt_injection": 1.0
     },
-    "misses@5": []
+    "misses@5": [
+      "q021",
+      "q028"
+    ]
+  },
+  "retrieval_by_split": {
+    "dev": {
+      "n_questions": 17,
+      "recall@1": 0.735,
+      "recall@5": 1.0,
+      "recall@10": 1.0,
+      "mrr": 0.843,
+      "recall@5_by_category": {
+        "deadline": 1.0,
+        "eligibility": 1.0,
+        "factual": 1.0,
+        "geographic": 1.0,
+        "prompt_injection": 1.0
+      },
+      "misses@5": []
+    },
+    "heldout": {
+      "n_questions": 16,
+      "recall@1": 0.75,
+      "recall@5": 0.875,
+      "recall@10": 0.938,
+      "mrr": 0.804,
+      "recall@5_by_category": {
+        "deadline": 1.0,
+        "eligibility": 1.0,
+        "exclusion": 1.0,
+        "factual": 0.75,
+        "geographic": 0.667,
+        "no_amount": 1.0,
+        "prompt_injection": 1.0
+      },
+      "misses@5": [
+        "q021",
+        "q028"
+      ]
+    }
   },
   "latency_ms": {
-    "mean": 0.3,
-    "p50": 0.3,
-    "p95": 0.4,
-    "max": 0.5
+    "mean": 0.6,
+    "p50": 0.5,
+    "p95": 1.2,
+    "max": 1.2
   },
   "tokens": {
     "in": null,
