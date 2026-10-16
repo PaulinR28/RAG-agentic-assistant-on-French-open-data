@@ -6,7 +6,7 @@ peak memory; top reranker score for answerable vs out-of-corpus questions (abste
 Results are merged into eval/retrieval_rerank.json under "<dense>+<reranker>".
 
 Usage:
-    uv run python -m aides_rag.retrieval.bench_rerank --dense e5-small --reranker mminilm
+    uv run python -m aides_rag.retrieval.bench_rerank --dense bge-m3 --reranker mminilm
 """
 
 from __future__ import annotations
@@ -21,7 +21,7 @@ import numpy as np
 from aides_rag.index.chunks import read_corpus
 from aides_rag.retrieval.bench_dense import peak_memory_gb
 from aides_rag.retrieval.bm25 import BM25
-from aides_rag.retrieval.dense import MODELS, DenseIndex
+from aides_rag.retrieval.dense import DEFAULT_DENSE, MODELS, DenseIndex
 from aides_rag.retrieval.eval_recall import SPLITS, score_rankings
 from aides_rag.retrieval.hybrid import aids_in_order, hybrid_chunks
 from aides_rag.retrieval.reranker import RERANKERS, Reranker
@@ -31,7 +31,7 @@ POOLS = (10, 20, 50)
 
 def main() -> None:
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
-    ap.add_argument("--dense", choices=sorted(MODELS), default="e5-small")
+    ap.add_argument("--dense", choices=sorted(MODELS), default=DEFAULT_DENSE)
     ap.add_argument("--reranker", choices=sorted(RERANKERS), required=True)
     ap.add_argument("--pools", type=int, nargs="+", default=list(POOLS))
     ap.add_argument("--chunks", type=Path, default=Path("data/processed/chunks.jsonl"))

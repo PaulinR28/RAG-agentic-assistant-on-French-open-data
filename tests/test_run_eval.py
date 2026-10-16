@@ -56,3 +56,14 @@ def test_failing_question_is_recorded_not_raised(tmp_path, monkeypatch):
 def test_unknown_system_rejected():
     with pytest.raises(ValueError):
         load_system("does-not-exist")
+
+
+@pytest.mark.skipif(not (ROOT / "models/bge-m3/REVISION").exists(), reason="bge-m3 not downloaded")
+def test_hybrid_system_matches_dense_benchmark(tmp_path):
+    """run_eval --system hybrid and retrieval/bench_dense.py must agree (same BM25 + bge-m3 + RRF)."""
+    summary = main(["--questions", str(GOLDEN), "--out", str(tmp_path), "--system", "hybrid"])
+    reference = json.loads((ROOT / "eval/retrieval_dense.json").read_text(encoding="utf-8"))["bge-m3"]["quality"]
+    for split in ("dev", "heldout"):
+        expected = reference[split]["hybrid"]["summary"]
+        for k in (1, 5, 10):
+            assert summary["retrieval_by_split"][split][f"recall@{k}"] == expected[f"recall@{k}"], (split, k)

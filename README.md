@@ -82,5 +82,43 @@ no aid appears in both splits).
 
 ## Models
 
-To be fixed in Phase 2, with exact names and versions. Demo machine constraint: 16 GB RAM, Intel Core
-Ultra 5 135U, integrated graphics only (CPU inference).
+All models run locally on CPU (demo machine: 16 GB RAM, Intel Core Ultra 5 135U, integrated graphics only).
+Exact Hugging Face revisions are pinned; weights are never committed (`models/` is git-ignored).
+
+| Role | Model | Revision | Status |
+|---|---|---|---|
+| Dense retriever | [`BAAI/bge-m3`](https://huggingface.co/BAAI/bge-m3) | `5617a9f61b028005a4858fdac845db406aefb181` | **Chosen** |
+| Dense (compared) | `intfloat/multilingual-e5-small` | `614241f622f53c4eeff9890bdc4f31cfecc418b3` | Benchmarked |
+| Dense (compared) | `intfloat/multilingual-e5-base` | `d128750597153bb5987e10b1c3493a34e5a4502a` | Benchmarked |
+| Reranker | `cross-encoder/mmarco-mMiniLMv2-L12-H384-v1` | `1427fd652930e4ba29e8149678df786c240d8825` | Under evaluation |
+| Keyword | BM25 (Okapi, k1=1.5, b=0.75), French Snowball stemmer | `snowballstemmer` (see `uv.lock`) | In use |
+| Answering LLM | to be chosen (Ollama) | | |
+
+**Why bge-m3** (`eval/retrieval_dense.json`, dense retrieval alone):
+
+| Model | Size | Recall@1 dev / held-out | Recall@5 dev / held-out | Query latency | Peak RAM |
+|---|---|---|---|---|---|
+| e5-small | 0.5 GB | 0.74 / 0.75 | 0.97 / 1.00 | 39 ms | 1.6 GB |
+| e5-base | 1.1 GB | 0.74 / 0.63 | 1.00 / 1.00 | 86 ms | 2.4 GB |
+| **bge-m3** | 2.3 GB | **0.91 / 0.88** | 0.97 / 1.00 | 219 ms | 2.6 GB |
+
+Chosen on dev; held-out confirms. bge-m3 is also the only one whose top similarity separates answerable
+from out-of-corpus questions (min 0.617 vs max 0.613, on 3 out-of-corpus questions only: a lead for
+abstention, not a rule yet). The chunk vectors (`indexes/bge-m3-*.npy`, 3.5 MB) are committed, since
+embedding the 865 chunks takes ~35 min on this CPU.
+
+Get the models (resumable, pinned revision):
+
+```bash
+bash scripts/download_model.sh bge-m3 BAAI/bge-m3 5617a9f61b028005a4858fdac845db406aefb181 \
+  config.json config_sentence_transformers.json modules.json sentence_bert_config.json \
+  special_tokens_map.json tokenizer_config.json sentencepiece.bpe.model tokenizer.json \
+  1_Pooling/config.json pytorch_model.bin
+bash scripts/download_model.sh mminilm cross-encoder/mmarco-mMiniLMv2-L12-H384-v1 \
+  1427fd652930e4ba29e8149678df786c240d8825 config.json special_tokens_map.json \
+  tokenizer_config.json sentencepiece.bpe.model tokenizer.json model.safetensors
+```
+
+Benchmarks: `uv run python -m aides_rag.retrieval.bench_dense --model bge-m3`,
+`uv run python -m aides_rag.retrieval.bench_rerank --reranker mminilm`, and the full runner
+`uv run python eval/run_eval.py --questions eval/golden.jsonl --out eval/ --system hybrid`.

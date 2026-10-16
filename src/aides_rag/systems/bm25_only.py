@@ -12,7 +12,7 @@ import numpy as np
 
 from aides_rag.index.chunks import read_corpus
 from aides_rag.retrieval.bm25 import BM25
-from aides_rag.retrieval.eval_recall import rank_aids
+from aides_rag.retrieval.hybrid import rank_aids
 
 
 class Bm25Only:
@@ -26,7 +26,7 @@ class Bm25Only:
         return {
             "answer": None,
             "cited_sources": [],
-            "retrieved_ids": rank_aids(self.index, self.chunk_aids, question)[: self.k],
+            "retrieved_ids": rank_aids(self.index.scores(question), self.chunk_aids, positive_only=True)[: self.k],
             "tokens_in": None,
             "tokens_out": None,
             "tool_calls": [],

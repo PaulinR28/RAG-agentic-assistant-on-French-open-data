@@ -29,6 +29,8 @@ class ModelSpec:
     max_seq_length: int = 512
 
 
+DEFAULT_DENSE = "bge-m3"  # chosen on dev Recall@1 (0.91 vs 0.74 for e5); see eval/retrieval_dense.json
+
 MODELS = {
     "e5-small": ModelSpec("intfloat/multilingual-e5-small", "query: ", "passage: "),
     "e5-base": ModelSpec("intfloat/multilingual-e5-base", "query: ", "passage: "),
