@@ -40,8 +40,8 @@ TOOL_SPECS = [
                        "description": "Région de l'entreprise, seulement si la question la donne (une ville = sa région). "
                                       "Les aides nationales et européennes restent incluses."},
             "open_on": {"type": "string",
-                        "description": "Date AAAA-MM-JJ : garde seulement les aides encore ouvertes à cette date. "
-                                       "Seulement si l'utilisateur demande ce qui est ouvert ; jamais pour une aide nommée."},
+                        "description": "Date du jour AAAA-MM-JJ, si la question la donne : chaque fiche indique alors "
+                                       "si elle est ouverte ou clôturée à cette date. Aucune fiche n'est retirée."},
             "nature": {"type": "string", "enum": NATURES,
                        "description": "Type d'aide, seulement si la question le précise (ex. un prêt)."},
         }},
@@ -82,16 +82,17 @@ def _search_aids(args: dict, shown: set[str]) -> tuple[str, list[str]]:
     query = str(args.get("query") or "").strip()
     if not query:
         return "Paramètre query manquant : donne des mots-clés de recherche.", []
-    notes, filters = [], {}
+    notes, filters, day = [], {}, None
     if args.get("region"):
         filters["region"] = _match(args["region"], REGIONS)
         if not filters["region"]:
             notes.append(f"Région « {args['region']} » inconnue, filtre ignoré. Valeurs possibles : {', '.join(REGIONS)}.")
     if args.get("open_on"):
+        # a status annotation, not a filter: filtering hid the very aid asked about (dev q016, closed 5 days before)
         try:
-            filters["open_on"] = date.fromisoformat(str(args["open_on"])).isoformat()
+            day = date.fromisoformat(str(args["open_on"])).isoformat()
         except ValueError:
-            notes.append(f"Date « {args['open_on']} » invalide (format AAAA-MM-JJ), filtre ignoré.")
+            notes.append(f"Date « {args['open_on']} » invalide (format AAAA-MM-JJ), statut non calculé.")
     if args.get("nature"):
         nature = _match(args["nature"], NATURES)
         filters["natures"] = [nature] if nature else None
@@ -101,7 +102,7 @@ def _search_aids(args: dict, shown: set[str]) -> tuple[str, list[str]]:
     new = [h for h in hits if h.id_aid not in shown]
     again = [h.id_aid for h in hits if h.id_aid in shown]
     shown.update(h.id_aid for h in new)
-    text = "\n".join(notes + [format_hits(new) if new or not again else ""]).strip()
+    text = "\n".join(notes + [format_hits(new, status_on=day) if new or not again else ""]).strip()
     if again:
         text += f"\n\nAussi pertinentes, déjà fournies plus haut : {', '.join(again)}."
     return text, [h.id_aid for h in hits]

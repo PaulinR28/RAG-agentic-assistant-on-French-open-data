@@ -32,9 +32,8 @@ AGENT_RULES = """
 Tu disposes de deux outils pour trouver les fiches :
 - search_aids : commence toujours par lui, sauf si la demande sort clairement du périmètre. Formule une requête \
 en mots-clés qui garde le nom de l'aide ET ce que l'on cherche (taux, montant, conditions, date limite...). \
-Ajoute region ou nature seulement si la question les précise. N'ajoute open_on que si l'utilisateur demande \
-quelles aides sont encore ouvertes ; pour une aide qu'il nomme, cherche sans date puis compare toi-même la date \
-limite de la fiche à la date du jour.
+Ajoute region ou nature seulement si la question les précise. Si la question donne la date du jour, passe-la \
+dans open_on : chaque fiche indiquera alors si elle est ouverte ou clôturée à cette date (aucune n'est retirée).
 - get_aid : lit la fiche complète d'une aide. Une fiche marquée extrait="2/5" n'est qu'un morceau : si le détail \
 cherché n'y est pas, appelle get_aid avec son id_aid.
 Au plus 3 appels d'outils. Dès que tu as les fiches nécessaires, n'appelle plus d'outil et écris seulement : PRÊT. \
@@ -46,10 +45,21 @@ ANSWER_INSTRUCTION = """Donne maintenant ta réponse finale au format JSON :
 - "abstained" : true si les fiches ne permettent pas de répondre ou si la demande sort du périmètre, sinon false."""
 
 
-def format_hits(hits: list[Hit]) -> str:
+def format_hits(hits: list[Hit], status_on: str | None = None) -> str:
     if not hits:
         return "Aucune fiche trouvée."
-    return "\n\n".join(f'<aide id_aid="{h.id_aid}"{_part(h)}>\n{h.text}\n</aide>' for h in hits)
+    return "\n\n".join(f'<aide id_aid="{h.id_aid}"{_part(h)}>\n{_status(h, status_on)}{h.text}\n</aide>' for h in hits)
+
+
+def _status(h: Hit, day: str | None) -> str:
+    """Open or closed on `day`, computed by code: the model only reads it (a 4B model misreads dates)."""
+    if not day:
+        return ""
+    if not h.date_fin:
+        return f"Statut au {day} : ouverte (pas de date limite)\n"
+    if h.date_fin < day:  # ISO dates compare as strings; the deadline day itself is still open
+        return f"Statut au {day} : CLÔTURÉE depuis le {h.date_fin}\n"
+    return f"Statut au {day} : ouverte jusqu'au {h.date_fin}\n"
 
 
 def _part(h: Hit) -> str:

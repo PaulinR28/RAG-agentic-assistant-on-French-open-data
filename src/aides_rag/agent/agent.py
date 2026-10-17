@@ -13,13 +13,14 @@ so Ollama reuses the cached prompt prefix instead of re-reading the aids (~15 s 
 from __future__ import annotations
 
 import time
+from dataclasses import replace
 
 from aides_rag.agent.prompts import agent_messages, answer_request, rag_messages
 from aides_rag.agent.schema import ANSWER_SCHEMA, Answer, InvalidAnswer, parse_answer
 from aides_rag.agent.tools import TOOL_SPECS, run_tool
 from aides_rag.agent.trace import Trace
 from aides_rag.index.chunks import approx_tokens
-from aides_rag.llm.client import NUM_CTX, LLMClient
+from aides_rag.llm.client import NUM_CTX, LLMClient, ToolCall
 from aides_rag.retrieval.search import search
 
 MODES = ("rag", "agent")
@@ -57,7 +58,8 @@ def answer(question: str, mode: str = "agent", qid: str | None = None, llm: LLMC
 def _rag(question: str, k: int, trace: Trace) -> list[dict]:
     start = time.perf_counter()
     hits = search(question, k=k)
-    trace.add_tool("search_aids", {"query": question, "k": k}, time.perf_counter() - start, [h.id_aid for h in hits])
+    trace.add_tool("search_aids", {"query": question, "k": k}, time.perf_counter() - start, [h.id_aid for h in hits],
+                   forced=True)
     return rag_messages(question, hits)
 
 
@@ -69,13 +71,18 @@ def _agent(question: str, llm: LLMClient, trace: Trace) -> tuple[list[dict], boo
         round_ += 1
         resp = llm.chat(messages, tools=TOOL_SPECS, max_tokens=TOOL_ROUND_TOKENS)
         trace.add_llm(resp, f"tools_{round_}")
-        if not resp.tool_calls:
+        calls, forced = resp.tool_calls, False
+        if not calls and n_calls == 0:
+            # the model wanted to answer without looking (dev q004, q005: it wrongly judged the question out
+            # of scope). Search with the raw question for it, as rag mode does, so it never knows less than rag
+            calls, forced = [ToolCall("call_forced", "search_aids", {"query": question})], True
+        if not calls:
             # the model has what it needs (or refuses). Its free-text draft is dropped: copied into the
             # JSON answer, a wrong draft became a wrong answer (dev q007); the cache still covers the aids
             return messages + [answer_request(question)], False
-        messages.append(resp.as_message())
+        messages.append(replace(resp, content="" if forced else resp.content, tool_calls=calls).as_message())
         context = resp.tokens_in + resp.tokens_out
-        for tc in resp.tool_calls:
+        for tc in calls:
             # every call gets a tool message (the OpenAI API requires one per call id), even when not executed
             if n_calls >= MAX_TOOL_CALLS:
                 text, refused = LIMIT_NOTE, True
@@ -84,7 +91,7 @@ def _agent(question: str, llm: LLMClient, trace: Trace) -> tuple[list[dict], boo
                 text, ids = run_tool(tc.name, tc.arguments, shown)
                 if context + approx_tokens(text) > CONTEXT_BUDGET:
                     text, ids = FULL_NOTE, []
-                trace.add_tool(tc.name, tc.arguments, time.perf_counter() - start, ids)
+                trace.add_tool(tc.name, tc.arguments, time.perf_counter() - start, ids, forced=forced)
                 n_calls += 1
             context += approx_tokens(text)
             messages.append({"role": "tool", "name": tc.name, "tool_call_id": tc.id, "content": text})

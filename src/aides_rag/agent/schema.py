@@ -2,8 +2,8 @@
 
 1. Shape: `Answer` (JSON schema sent to the model, then parsed by Pydantic).
 2. Grounding: every citation must be an aid the system actually retrieved during this question,
-   and a non-abstained answer must cite at least one aid. A violation raises `InvalidAnswer`,
-   whose message is sent back to the model for one retry.
+   a non-abstained answer must cite at least one aid, and an abstention cites none. A violation
+   raises `InvalidAnswer`, whose message is sent back to the model for one retry.
 """
 
 from __future__ import annotations
@@ -55,4 +55,7 @@ def parse_answer(raw: str, retrieved_ids: list[str]) -> Answer:
         raise InvalidAnswer(f"Citations {unknown} absentes des fiches fournies. Cite uniquement parmi : {retrieved_ids}.")
     if not ans.abstained and not ans.citations:
         raise InvalidAnswer("Une réponse non abstenue doit citer au moins un id_aid parmi les fiches fournies.")
+    if ans.abstained and ans.citations:
+        raise InvalidAnswer("Une abstention ne cite aucune fiche. Si les fiches répondent à la question, mets "
+                            "abstained à false et réponds ; sinon, mets citations à [].")
     return ans
