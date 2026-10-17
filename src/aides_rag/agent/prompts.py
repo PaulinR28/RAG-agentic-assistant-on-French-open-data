@@ -27,6 +27,19 @@ Si la situation décrite ne remplit pas une condition (âge, taille, date de cr�
 réponds « Non » et cite la condition. Si une date du jour est donnée, compare-la à la date limite de la fiche.
 6. Réponds en français, en 4 phrases au plus ou une courte liste."""
 
+AGENT_RULES = """
+
+Tu disposes de deux outils pour trouver les fiches :
+- search_aids : commence toujours par lui, sauf si la demande sort clairement du périmètre. Formule une requête \
+en mots-clés qui garde le nom de l'aide ET ce que l'on cherche (taux, montant, conditions, date limite...). \
+Ajoute region ou nature seulement si la question les précise. N'ajoute open_on que si l'utilisateur demande \
+quelles aides sont encore ouvertes ; pour une aide qu'il nomme, cherche sans date puis compare toi-même la date \
+limite de la fiche à la date du jour.
+- get_aid : lit la fiche complète d'une aide. Une fiche marquée extrait="2/5" n'est qu'un morceau : si le détail \
+cherché n'y est pas, appelle get_aid avec son id_aid.
+Au plus 3 appels d'outils. Dès que tu as les fiches nécessaires, n'appelle plus d'outil et écris seulement : PRÊT. \
+Ne rédige pas la réponse à ce moment-là : elle te sera demandée ensuite."""
+
 ANSWER_INSTRUCTION = """Donne maintenant ta réponse finale au format JSON :
 - "answer" : la réponse en français ; si tu t'abstiens, explique en une phrase pourquoi (information absente des fiches, ou demande hors périmètre) ;
 - "citations" : la liste des id_aid utilisés (chiffres uniquement, ex. ["411"]) ;
@@ -36,7 +49,27 @@ ANSWER_INSTRUCTION = """Donne maintenant ta réponse finale au format JSON :
 def format_hits(hits: list[Hit]) -> str:
     if not hits:
         return "Aucune fiche trouvée."
-    return "\n\n".join(f'<aide id_aid="{h.id_aid}">\n{h.text}\n</aide>' for h in hits)
+    return "\n\n".join(f'<aide id_aid="{h.id_aid}"{_part(h)}>\n{h.text}\n</aide>' for h in hits)
+
+
+def _part(h: Hit) -> str:
+    """Mark partial excerpts so the model knows the rest of the card exists (get_aid)."""
+    return f' extrait="{h.part}/{h.n_parts}"' if h.n_parts > 1 else ""
+
+
+def answer_request(question: str) -> dict:
+    """Agent mode: restate the question right before the answer request; after ~3k tokens of aids,
+    a 4B model otherwise loses details such as the company's age or size."""
+    return {"role": "user", "content": f"Question de l'utilisateur, à traiter avec les fiches ci-dessus :\n"
+                                       f"<question>\n{question}\n</question>\n\n{ANSWER_INSTRUCTION}"}
+
+
+def agent_messages(question: str) -> list[dict]:
+    """Agentic RAG: the model gets only the question and fetches the aids itself with its tools."""
+    return [
+        {"role": "system", "content": SYSTEM_PROMPT + AGENT_RULES},
+        {"role": "user", "content": f"Question de l'utilisateur :\n<question>\n{question}\n</question>"},
+    ]
 
 
 def rag_messages(question: str, hits: list[Hit]) -> list[dict]:

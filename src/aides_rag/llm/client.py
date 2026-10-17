@@ -79,28 +79,31 @@ class LLMClient:
                 raise RuntimeError("OPENROUTER_API_KEY is missing: add it to .env (see .env.example)")
             self._sdk = OpenAI(base_url="https://openrouter.ai/api/v1", api_key=key, timeout=TIMEOUT_S)
 
-    def chat(self, messages: list[dict], tools: list[dict] | None = None, schema: dict | None = None) -> LLMResponse:
-        """One model call. `tools` = OpenAI-style tool specs; `schema` = JSON schema the reply must follow."""
+    def chat(self, messages: list[dict], tools: list[dict] | None = None, schema: dict | None = None,
+             max_tokens: int | None = None) -> LLMResponse:
+        """One model call. `tools` = OpenAI-style tool specs; `schema` = JSON schema the reply must follow;
+        `max_tokens` overrides the client's default output cap for this call."""
         start = time.perf_counter()
-        resp = self._ollama(messages, tools, schema) if self.backend == "ollama" else self._openrouter(messages, tools, schema)
+        call = self._ollama if self.backend == "ollama" else self._openrouter
+        resp = call(messages, tools, schema, max_tokens or self.max_tokens)
         resp.latency_s = round(time.perf_counter() - start, 3)
         return resp
 
-    def _ollama(self, messages, tools, schema) -> LLMResponse:
+    def _ollama(self, messages, tools, schema, max_tokens) -> LLMResponse:
         r = self._sdk.chat(model=self.model, messages=[_to_ollama(m) for m in messages], tools=tools, format=schema,
                            think=False, keep_alive=KEEP_ALIVE,
-                           options={"num_ctx": NUM_CTX, "temperature": self.temperature, "num_predict": self.max_tokens})
+                           options={"num_ctx": NUM_CTX, "temperature": self.temperature, "num_predict": max_tokens})
         calls = [ToolCall(f"call_{i}", tc.function.name, dict(tc.function.arguments or {}))
                  for i, tc in enumerate(r.message.tool_calls or [])]
         return LLMResponse(r.message.content or "", calls, r.prompt_eval_count or 0, r.eval_count or 0, 0.0, 0.0,
                            "tool_calls" if calls else (r.done_reason or "stop"))
 
-    def _openrouter(self, messages, tools, schema) -> LLMResponse:
+    def _openrouter(self, messages, tools, schema, max_tokens) -> LLMResponse:
         kwargs = {"tools": tools} if tools else {}
         if schema:
             kwargs["response_format"] = {"type": "json_schema", "json_schema": {"name": "Answer", "strict": True, "schema": schema}}
         r = self._sdk.chat.completions.create(model=self.model, messages=[_to_openai(m) for m in messages],
-                                              temperature=self.temperature, max_tokens=self.max_tokens, **kwargs)
+                                              temperature=self.temperature, max_tokens=max_tokens, **kwargs)
         choice, usage = r.choices[0], r.usage
         calls = [ToolCall(tc.id, tc.function.name, json.loads(tc.function.arguments or "{}"))
                  for tc in (choice.message.tool_calls or [])]
