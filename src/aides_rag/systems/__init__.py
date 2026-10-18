@@ -22,6 +22,8 @@ OUTPUT_KEYS = ("answer", "cited_sources", "retrieved_ids", "tokens_in", "tokens_
 
 SYSTEMS = {
     "bm25": "aides_rag.systems.bm25_only:Bm25Only",
+    "hybrid": "aides_rag.systems.hybrid:Hybrid",
+    "hybrid_rerank": "aides_rag.systems.hybrid:HybridRerank",
 }
 
 

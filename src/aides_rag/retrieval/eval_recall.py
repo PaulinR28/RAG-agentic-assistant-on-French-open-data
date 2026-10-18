@@ -14,11 +14,13 @@ from __future__ import annotations
 import argparse
 import json
 from pathlib import Path
+from typing import Callable
 
 import numpy as np
 
 from aides_rag.index.chunks import MAX_BODY_CHARS, build_chunks, read_corpus
 from aides_rag.retrieval.bm25 import BM25
+from aides_rag.retrieval.hybrid import rank_aids
 
 KS = (1, 5, 10, 50)
 
@@ -33,24 +35,11 @@ DEFAULT = "bm25_stem_header"
 SPLITS = ("dev", "heldout")  # tune on dev, report final scores on heldout
 
 
-def rank_aids(index: BM25, chunk_aids: np.ndarray, query: str) -> list[str]:
-    """Aids ordered by their best chunk score (aids with score 0 are left out)."""
-    scores = index.scores(query)
-    best: dict[str, float] = {}
-    for i in np.argsort(-scores, kind="stable"):
-        if scores[i] <= 0:
-            break
-        best.setdefault(chunk_aids[i], float(scores[i]))
-    return list(best)
-
-
-def evaluate(aids: list[dict], questions: list[dict], stem: bool, header: bool, budget: int) -> dict:
-    chunks = build_chunks(aids, budget)
-    index = BM25([c["text"] if header else c["body"] for c in chunks], stem=stem)
-    chunk_aids = np.array([c["id_aid"] for c in chunks])
+def score_rankings(questions: list[dict], rank: Callable[[str], list[str]]) -> dict:
+    """Recall@k and MRR of any retriever, given as a function question -> ranked aid ids."""
     per_question = []
     for q in questions:
-        ranking = rank_aids(index, chunk_aids, q["question"])
+        ranking = rank(q["question"])
         ranks = {g: ranking.index(g) + 1 if g in ranking else None for g in q["gold_docs"]}
         per_question.append({"id": q["id"], "category": q["category"], "gold_ranks": ranks, "top5": ranking[:5]})
     summary = {f"recall@{k}": round(float(np.mean([
@@ -59,8 +48,16 @@ def evaluate(aids: list[dict], questions: list[dict], stem: bool, header: bool, 
     summary["mrr"] = round(float(np.mean([
         1 / min(r for r in p["gold_ranks"].values() if r) if any(p["gold_ranks"].values()) else 0.0
         for p in per_question])), 3)
-    summary["n_chunks"] = len(chunks)
     return {"summary": summary, "per_question": per_question}
+
+
+def evaluate(aids: list[dict], questions: list[dict], stem: bool, header: bool, budget: int) -> dict:
+    chunks = build_chunks(aids, budget)
+    index = BM25([c["text"] if header else c["body"] for c in chunks], stem=stem)
+    chunk_aids = np.array([c["id_aid"] for c in chunks])
+    result = score_rankings(questions, lambda q: rank_aids(index.scores(q), chunk_aids, positive_only=True))
+    result["summary"]["n_chunks"] = len(chunks)
+    return result
 
 
 def main() -> None:

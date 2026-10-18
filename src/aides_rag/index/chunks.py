@@ -5,9 +5,11 @@ The header is repeated on every chunk of an aid, so each chunk is self-contained
 BM25, the embedding model and the reranker. Template placeholders (%pme%, %mini%) are
 expanded into their meaning.
 
-Sizes are in characters; for French text, 1 token ~ 3.5 characters (multilingual tokenizers).
+Sizes are in characters; for our French text, 1 token ~ 4.0 characters (measured with the bge-m3 / XLM-R
+tokenizer: mean 3.98, 5th percentile 3.66).
 The default body budget of 1,800 characters (~500 tokens) keeps header + body inside a
-512-token encoder window for most chunks; long sections are split on sentences with ~15% overlap.
+512-token window for 87% of chunks (max 636 real tokens, well inside bge-m3's 1,024 setting);
+long sections are split on sentences with ~15% overlap.
 
 Usage:
     uv run python -m aides_rag.index.chunks --corpus data/processed/aids.jsonl --out data/processed/chunks.jsonl
@@ -22,7 +24,7 @@ from pathlib import Path
 
 MAX_BODY_CHARS = 1800
 OVERLAP = 0.15
-CHARS_PER_TOKEN = 3.5
+CHARS_PER_TOKEN = 4.0  # measured, see docstring; tests/test_hybrid.py checks real token counts
 MAX_LABELS = 5  # header lists (communes, funders) are capped: one aid lists 613 communes
 MAX_LABEL_CHARS = 250
 
