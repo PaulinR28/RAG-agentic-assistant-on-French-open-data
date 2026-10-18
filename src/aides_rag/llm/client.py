@@ -99,11 +99,17 @@ class LLMClient:
                            "tool_calls" if calls else (r.done_reason or "stop"))
 
     def _openrouter(self, messages, tools, schema, max_tokens) -> LLMResponse:
+        # No reasoning phase for any API model, like the local instruct model: comparisons measure model size and
+        # provider, not thinking. The providers serving Qwen3 hybrids ignore effort "none" (measured: 307 reasoning
+        # tokens), but obey Qwen's own "/no_think" switch in the system prompt (1 token).
+        messages = [_to_openai(m) for m in messages]
+        if "qwen3" in self.model and messages and messages[0]["role"] == "system":
+            messages[0] = {**messages[0], "content": messages[0]["content"] + "\n/no_think"}
         kwargs = {"tools": tools} if tools else {}
         if schema:
             kwargs["response_format"] = {"type": "json_schema", "json_schema": {"name": "Answer", "strict": True, "schema": schema}}
-        r = self._sdk.chat.completions.create(model=self.model, messages=[_to_openai(m) for m in messages],
-                                              temperature=self.temperature, max_tokens=max_tokens, **kwargs)
+        r = self._sdk.chat.completions.create(model=self.model, messages=messages, temperature=self.temperature,
+                                              max_tokens=max_tokens, extra_body={"reasoning": {"effort": "none"}}, **kwargs)
         choice, usage = r.choices[0], r.usage
         calls = [ToolCall(tc.id, tc.function.name, json.loads(tc.function.arguments or "{}"))
                  for tc in (choice.message.tool_calls or [])]
