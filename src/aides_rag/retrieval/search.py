@@ -4,12 +4,18 @@ One hit per aid (its best-scoring chunk), so `k` hits are `k` distinct aids, in 
 Metadata filters never drop aids that apply everywhere (national / European scope) or whose
 region could not be resolved (`regions == []`, 47% of territorial aids, see DATA_CARD.md).
 
-Current implementation: BM25 only (stub). Workstream A replaces `_scores` with hybrid
-BM25 + dense + reranking; the signature and the Hit fields stay the same.
+Ranking (`_scores`): hybrid BM25 + bge-m3, fused with weighted RRF (dense weight 3), the default measured in
+eval/retrieval_fusion.json (held-out Recall@1 0.88, Recall@5 1.0). Each aid is represented by its best dense
+chunk; aids outside both top-50 lists follow in dense order with a tiny score, so filters can still reach
+every aid. The cross-encoder reranker is not used here (off by default: ~19 s per question on CPU).
+
+Set AIDES_SEARCH=bm25 to fall back to BM25 only (no dense model in memory, e.g. on an 8 GB machine
+that also runs the LLM).
 """
 
 from __future__ import annotations
 
+import os
 from dataclasses import dataclass
 from datetime import date
 from functools import lru_cache
@@ -19,6 +25,7 @@ import numpy as np
 
 from aides_rag.index.chunks import read_corpus
 from aides_rag.retrieval.bm25 import BM25
+from aides_rag.retrieval.hybrid import DENSE_WEIGHT, rank_aids, rrf_scores
 
 CHUNKS_PATH = Path(__file__).resolve().parents[3] / "data" / "processed" / "chunks.jsonl"
 EVERYWHERE = {"national", "european"}
@@ -45,9 +52,34 @@ def _index() -> tuple[list[dict], BM25]:
     return chunks, BM25([c["text"] for c in chunks])
 
 
+@lru_cache(maxsize=1)
+def _dense():
+    """bge-m3 query encoder + the committed chunk vectors, loaded once per process (~2.6 GB RAM)."""
+    from aides_rag.retrieval.dense import DEFAULT_DENSE, DenseIndex
+
+    chunks, _ = _index()
+    return DenseIndex(DEFAULT_DENSE, [c["text"] for c in chunks]), np.array([c["id_aid"] for c in chunks])
+
+
 def _scores(query: str) -> np.ndarray:
+    """One positive score per aid, on its representative chunk; 0 elsewhere. Higher = better."""
     chunks, bm25 = _index()
-    return bm25.scores(query)
+    b = bm25.scores(query)
+    if os.getenv("AIDES_SEARCH", "hybrid") == "bm25":
+        return b
+    dense, chunk_aids = _dense()
+    d = dense.scores(query)
+    dense_ranking = rank_aids(d, chunk_aids)
+    fused = rrf_scores([rank_aids(b, chunk_aids, positive_only=True), dense_ranking], weights=[1.0, DENSE_WEIGHT])
+    tail = [aid for aid in dense_ranking if aid not in fused]
+    score = {**fused, **{aid: 1e-6 / (r + 1) for r, aid in enumerate(tail)}}
+    best_chunk: dict[str, int] = {}
+    for i in np.argsort(-d, kind="stable"):
+        best_chunk.setdefault(chunk_aids[i], int(i))
+    out = np.zeros(len(chunks))
+    for aid, value in score.items():
+        out[best_chunk[aid]] = value
+    return out
 
 
 def _keep(chunk: dict, region: str | None, open_on: str | None, natures: list[str] | None) -> bool:
