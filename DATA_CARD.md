@@ -137,3 +137,37 @@ The tests check:
 - dates are ISO, URLs are well formed and funders are resolved;
 - regression: Picardie departments resolve to Hauts-de-France;
 - the golden set has the right schema, its `gold_docs` exist in the corpus, and out-of-corpus questions have no docs.
+
+## 9. Cleaning summary
+
+All steps run in `select_subset.py` (§3) except placeholder expansion (§10).
+
+- **Decoding:** cp1252 → UTF-8; `;` separator with quoted multi-line fields; empty trailing column dropped.
+- **Text:** control characters removed, whitespace normalised, in every text field.
+- **Dates:** `0000-00-00` → `null` (open-ended), all other dates ISO 8601.
+- **Lookups:** ids in `natures`, `projets`, `profils`, `financeurs`, `territoires` resolved to labels; regions resolved as in §6.
+- **Columns dropped:** `handicapes`, `femmes`, `jeunes`, `seniors`, `duree_projet` (< 1% filled), `status` (constant).
+- **Filtering:** cards under 600 characters removed (172), near-duplicates merged (252), off-theme aids removed (1,514).
+- **Links:** URLs extracted from the three `complements_*` fields into `source_urls`.
+
+## 10. From aids to chunks
+
+Script: `src/aides_rag/index/chunks.py` → `data/processed/chunks.jsonl`.
+
+| | |
+|---|---|
+| Output | **865 chunks** from 504 aids (1.7 per aid on average) |
+| Structure | metadata header + body text |
+| Header | TODO: exact fields (e.g. `id_aid`, title, scope, regions, natures, funders, `date_fin`, `aid_validation`) |
+| Body | TODO: field order (e.g. objet → operations → conditions → montant → bénéficiaires) |
+| Size | ~300–700 tokens per chunk; TODO: tokenizer used to count |
+| Splitting | TODO: rule for long aids (e.g. split on field boundaries, then paragraphs; overlap TODO) |
+| Placeholders | `%mini%` → TODO short *de minimis* explanation; `%pme%` → TODO SME definition |
+| Chunk metadata | TODO: fields copied for filtering (e.g. `regions`, `scope`, `natures`, `date_fin`) |
+
+**Why this design**
+- One aid = one citation unit, and the median aid (1,587 characters) fits in one chunk, so most aids stay whole.
+- The header is repeated in every chunk, so a chunk from the middle of a long aid still carries its name, funder, region and deadline. This lets it match and be cited correctly.
+- Conditions often sit in `beneficiaires` or `montant` rather than `conditions` (empty for 258 aids, §7), so all fields of an aid are chunked together.
+- TODO: the result of reading 20 random aids / 20 random chunks before choosing.
+- Chunk-size and header experiments: `EVALUATION.md` §5 (E1, E2).
