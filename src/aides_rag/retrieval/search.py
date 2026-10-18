@@ -41,6 +41,8 @@ class Hit:
     regions: list[str]
     date_fin: str | None
     aid_validation: str | None
+    part: int = 1  # this chunk is part `part` of `n_parts` of the aid card
+    n_parts: int = 1
 
 
 @lru_cache(maxsize=1)
@@ -105,5 +107,6 @@ def search(query: str, k: int = 5, region: str | None = None,
         if c["id_aid"] in hits or not _keep(c, region, open_on, natures):
             continue
         hits[c["id_aid"]] = Hit(c["chunk_id"], c["id_aid"], float(scores[i]), c["title"], c["text"],
-                                c["regions"], c["date_fin"], c["aid_validation"])
+                                c["regions"], c["date_fin"], c["aid_validation"],
+                                c["chunk_index"] + 1, c["n_chunks"])
     return list(hits.values())

@@ -31,9 +31,10 @@ class Trace:
                                "latency_ms": round(resp.latency_s * 1000), "cost_usd": resp.cost_usd,
                                "finish_reason": resp.finish_reason})
 
-    def add_tool(self, name: str, args: dict, latency_s: float, result_ids: list[str]) -> None:
+    def add_tool(self, name: str, args: dict, latency_s: float, result_ids: list[str], forced: bool = False) -> None:
+        """`forced`: run by the code (rag mode, or an agent that answered without searching), not chosen by the model."""
         self.tool_calls.append({"name": name, "args": args, "latency_ms": round(latency_s * 1000),
-                                "result_ids": result_ids})
+                                "result_ids": result_ids, "forced": forced})
         self.retrieved_ids.extend(i for i in result_ids if i not in self.retrieved_ids)
 
     def row(self, answer: Answer | None, error: str | None = None) -> dict:

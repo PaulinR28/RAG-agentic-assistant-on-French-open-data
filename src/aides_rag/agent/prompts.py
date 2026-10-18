@@ -27,16 +27,59 @@ Si la situation décrite ne remplit pas une condition (âge, taille, date de cr�
 réponds « Non » et cite la condition. Si une date du jour est donnée, compare-la à la date limite de la fiche.
 6. Réponds en français, en 4 phrases au plus ou une courte liste."""
 
+AGENT_RULES = """
+
+Tu disposes de deux outils pour trouver les fiches :
+- search_aids : commence toujours par lui, sauf si la demande sort clairement du périmètre. Formule une requête \
+en mots-clés qui garde le nom de l'aide ET ce que l'on cherche (taux, montant, conditions, date limite...). \
+Ajoute region ou nature seulement si la question les précise. Si la question donne la date du jour, passe-la \
+dans open_on : chaque fiche indiquera alors si elle est ouverte ou clôturée à cette date (aucune n'est retirée).
+- get_aid : lit la fiche complète d'une aide. Une fiche marquée extrait="2/5" n'est qu'un morceau : si le détail \
+cherché n'y est pas, appelle get_aid avec son id_aid.
+Au plus 3 appels d'outils. Dès que tu as les fiches nécessaires, n'appelle plus d'outil et écris seulement : PRÊT. \
+Ne rédige pas la réponse à ce moment-là : elle te sera demandée ensuite."""
+
 ANSWER_INSTRUCTION = """Donne maintenant ta réponse finale au format JSON :
 - "answer" : la réponse en français ; si tu t'abstiens, explique en une phrase pourquoi (information absente des fiches, ou demande hors périmètre) ;
 - "citations" : la liste des id_aid utilisés (chiffres uniquement, ex. ["411"]) ;
 - "abstained" : true si les fiches ne permettent pas de répondre ou si la demande sort du périmètre, sinon false."""
 
 
-def format_hits(hits: list[Hit]) -> str:
+def format_hits(hits: list[Hit], status_on: str | None = None) -> str:
     if not hits:
         return "Aucune fiche trouvée."
-    return "\n\n".join(f'<aide id_aid="{h.id_aid}">\n{h.text}\n</aide>' for h in hits)
+    return "\n\n".join(f'<aide id_aid="{h.id_aid}"{_part(h)}>\n{_status(h, status_on)}{h.text}\n</aide>' for h in hits)
+
+
+def _status(h: Hit, day: str | None) -> str:
+    """Open or closed on `day`, computed by code: the model only reads it (a 4B model misreads dates)."""
+    if not day:
+        return ""
+    if not h.date_fin:
+        return f"Statut au {day} : ouverte (pas de date limite)\n"
+    if h.date_fin < day:  # ISO dates compare as strings; the deadline day itself is still open
+        return f"Statut au {day} : CLÔTURÉE depuis le {h.date_fin}\n"
+    return f"Statut au {day} : ouverte jusqu'au {h.date_fin}\n"
+
+
+def _part(h: Hit) -> str:
+    """Mark partial excerpts so the model knows the rest of the card exists (get_aid)."""
+    return f' extrait="{h.part}/{h.n_parts}"' if h.n_parts > 1 else ""
+
+
+def answer_request(question: str) -> dict:
+    """Agent mode: restate the question right before the answer request; after ~3k tokens of aids,
+    a 4B model otherwise loses details such as the company's age or size."""
+    return {"role": "user", "content": f"Question de l'utilisateur, à traiter avec les fiches ci-dessus :\n"
+                                       f"<question>\n{question}\n</question>\n\n{ANSWER_INSTRUCTION}"}
+
+
+def agent_messages(question: str) -> list[dict]:
+    """Agentic RAG: the model gets only the question and fetches the aids itself with its tools."""
+    return [
+        {"role": "system", "content": SYSTEM_PROMPT + AGENT_RULES},
+        {"role": "user", "content": f"Question de l'utilisateur :\n<question>\n{question}\n</question>"},
+    ]
 
 
 def rag_messages(question: str, hits: list[Hit]) -> list[dict]:
