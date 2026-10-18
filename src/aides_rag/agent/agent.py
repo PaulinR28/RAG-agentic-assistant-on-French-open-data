@@ -87,10 +87,11 @@ def _agent(question: str, llm: LLMClient, trace: Trace) -> tuple[list[dict], boo
             if n_calls >= MAX_TOOL_CALLS:
                 text, refused = LIMIT_NOTE, True
             else:
-                start = time.perf_counter()
+                start, seen_before = time.perf_counter(), set(shown)
                 text, ids = run_tool(tc.name, tc.arguments, shown)
                 if context + approx_tokens(text) > CONTEXT_BUDGET:
                     text, ids = FULL_NOTE, []
+                    shown.intersection_update(seen_before)  # not shown after all: give them in full if found again
                 trace.add_tool(tc.name, tc.arguments, time.perf_counter() - start, ids, forced=forced)
                 n_calls += 1
             context += approx_tokens(text)

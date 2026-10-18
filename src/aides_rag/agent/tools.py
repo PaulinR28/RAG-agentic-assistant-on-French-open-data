@@ -14,7 +14,7 @@ from datetime import date
 from functools import lru_cache
 from pathlib import Path
 
-from aides_rag.agent.prompts import format_hits
+from aides_rag.agent.prompts import _status, format_hits
 from aides_rag.index.chunks import chunk_aid, read_corpus
 from aides_rag.retrieval.bm25 import strip_accents
 from aides_rag.retrieval.search import search
@@ -100,11 +100,13 @@ def _search_aids(args: dict, shown: set[str]) -> tuple[str, list[str]]:
             notes.append(f"Type « {args['nature']} » inconnu, filtre ignoré.")
     hits = search(query, k=SEARCH_K, **{k: v for k, v in filters.items() if v})
     new = [h for h in hits if h.id_aid not in shown]
-    again = [h.id_aid for h in hits if h.id_aid in shown]
+    again = [h for h in hits if h.id_aid in shown]
     shown.update(h.id_aid for h in new)
     text = "\n".join(notes + [format_hits(new, status_on=day) if new or not again else ""]).strip()
     if again:
-        text += f"\n\nAussi pertinentes, déjà fournies plus haut : {', '.join(again)}."
+        # the earlier display may have had no status, or another date: give it for the date asked now
+        listed = [f"{h.id_aid} ({_status(h, day).strip()})" if day else h.id_aid for h in again]
+        text += f"\n\nAussi pertinentes, déjà fournies plus haut : {', '.join(listed)}."
     return text, [h.id_aid for h in hits]
 
 

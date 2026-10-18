@@ -63,10 +63,13 @@ class LLMClient:
 
     @classmethod
     def from_env(cls, backend: str | None = None, model: str | None = None) -> LLMClient:
-        backend = backend or os.environ.get("LLM_BACKEND", "ollama")
+        env_backend = os.environ.get("LLM_BACKEND", "ollama")
+        backend = backend or env_backend
         if backend not in DEFAULT_MODELS:
             raise ValueError(f"LLM_BACKEND must be one of {list(DEFAULT_MODELS)}, got {backend!r}")
-        return cls(backend, model or os.environ.get("LLM_MODEL") or DEFAULT_MODELS[backend])
+        # LLM_MODEL names a model of LLM_BACKEND: ignore it when another backend is asked for (--backend)
+        env_model = os.environ.get("LLM_MODEL") if backend == env_backend else None
+        return cls(backend, model or env_model or DEFAULT_MODELS[backend])
 
     def __post_init__(self) -> None:
         if self.backend == "ollama":
@@ -111,10 +114,20 @@ class LLMClient:
         r = self._sdk.chat.completions.create(model=self.model, messages=messages, temperature=self.temperature,
                                               max_tokens=max_tokens, extra_body={"reasoning": {"effort": "none"}}, **kwargs)
         choice, usage = r.choices[0], r.usage
-        calls = [ToolCall(tc.id, tc.function.name, json.loads(tc.function.arguments or "{}"))
+        calls = [ToolCall(tc.id, tc.function.name, _tool_args(tc.function.arguments))
                  for tc in (choice.message.tool_calls or [])]
         return LLMResponse(choice.message.content or "", calls, usage.prompt_tokens, usage.completion_tokens, 0.0,
                            float(getattr(usage, "cost", 0.0) or 0.0), "tool_calls" if calls else choice.finish_reason)
+
+
+def _tool_args(raw: str | None) -> dict:
+    """Arguments of an API tool call. Malformed JSON (e.g. cut by max_tokens) becomes {}: the tool then answers
+    with a missing-parameter message the model can act on, instead of the whole question failing."""
+    try:
+        args = json.loads(raw or "{}")
+    except json.JSONDecodeError:
+        return {}
+    return args if isinstance(args, dict) else {}
 
 
 def _to_ollama(m: dict) -> dict:
