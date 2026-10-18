@@ -9,6 +9,9 @@ Every system is a class with `answer(question: str) -> dict` returning the keys 
     tokens_out     int | None   completion tokens
     tool_calls     list[dict]   one {"name": ..., "args": ...} per tool call (empty without an agent)
     stop_reason    str | None   why generation stopped (e.g. "stop", "length", "tool_use")
+    abstained      bool | None  the system said the corpus does not hold the answer (None without an LLM)
+    cost_usd       float | None billed cost of the answer (0 for a local model, None without an LLM)
+    model          str | None   generating model, e.g. "qwen3:4b-instruct-2507-q4_K_M"
 
 Latency is measured by the runner, not by the system. To add a system, write a module in this
 package and register it in `SYSTEMS` as "module:Class".
@@ -18,10 +21,13 @@ from __future__ import annotations
 
 import importlib
 
-OUTPUT_KEYS = ("answer", "cited_sources", "retrieved_ids", "tokens_in", "tokens_out", "tool_calls", "stop_reason")
+OUTPUT_KEYS = ("answer", "cited_sources", "retrieved_ids", "tokens_in", "tokens_out", "tool_calls", "stop_reason",
+               "abstained", "cost_usd", "model")
 
 SYSTEMS = {
     "bm25": "aides_rag.systems.bm25_only:Bm25Only",
+    "rag": "aides_rag.systems.generation:Rag",
+    "agent": "aides_rag.systems.generation:Agent",
 }
 
 
