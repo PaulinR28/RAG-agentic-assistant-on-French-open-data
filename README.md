@@ -82,5 +82,68 @@ no aid appears in both splits).
 
 ## Models
 
-To be fixed in Phase 2, with exact names and versions. Demo machine constraint: 16 GB RAM, Intel Core
-Ultra 5 135U, integrated graphics only (CPU inference).
+All models run locally on CPU (demo machine: 16 GB RAM, Intel Core Ultra 5 135U, integrated graphics only).
+Exact Hugging Face revisions are pinned; weights are never committed (`models/` is git-ignored).
+
+| Role | Model | Revision | Status |
+|---|---|---|---|
+| Dense retriever | [`BAAI/bge-m3`](https://huggingface.co/BAAI/bge-m3) | `5617a9f61b028005a4858fdac845db406aefb181` | **Chosen** |
+| Dense (compared) | `intfloat/multilingual-e5-small` | `614241f622f53c4eeff9890bdc4f31cfecc418b3` | Benchmarked |
+| Dense (compared) | `intfloat/multilingual-e5-base` | `d128750597153bb5987e10b1c3493a34e5a4502a` | Benchmarked |
+| Reranker (option) | [`BAAI/bge-reranker-v2-m3`](https://huggingface.co/BAAI/bge-reranker-v2-m3) | `953dc6f6f85a1b2dbfca4c34a2796e7dde08d41e` | Built, **off by default** (`--system hybrid_rerank`) |
+| Reranker (compared) | `cross-encoder/mmarco-mMiniLMv2-L12-H384-v1` | `1427fd652930e4ba29e8149678df786c240d8825` | Rejected: lowers held-out Recall@1 |
+| Keyword | BM25 (Okapi, k1=1.5, b=0.75), French Snowball stemmer | `snowballstemmer` (see `uv.lock`) | In use |
+| Fusion | Reciprocal Rank Fusion, k=60, **dense weight 3 / BM25 1** | (code) | In use, picked on dev |
+| Answering LLM | to be chosen (Ollama) | | |
+
+**Why bge-m3** (`eval/retrieval_dense.json`, dense retrieval alone):
+
+| Model | Size | Recall@1 dev / held-out | Recall@5 dev / held-out | Query latency | Peak RAM |
+|---|---|---|---|---|---|
+| e5-small | 0.5 GB | 0.74 / 0.75 | 0.97 / 1.00 | 39 ms | 1.6 GB |
+| e5-base | 1.1 GB | 0.74 / 0.63 | 1.00 / 1.00 | 86 ms | 2.4 GB |
+| **bge-m3** | 2.3 GB | **0.91 / 0.88** | 0.97 / 1.00 | 219 ms | 2.6 GB |
+
+Chosen on dev; held-out confirms. bge-m3 is also the only one whose top similarity separates answerable
+from out-of-corpus questions (min 0.617 vs max 0.613, on 3 out-of-corpus questions only: a lead for
+abstention, not a rule yet). The chunk vectors (`indexes/bge-m3-*.npy`, 3.5 MB) are committed, since
+embedding the 865 chunks takes ~35 min on this CPU.
+
+Get the models (resumable, pinned revision):
+
+```bash
+bash scripts/download_model.sh bge-m3 BAAI/bge-m3 5617a9f61b028005a4858fdac845db406aefb181 \
+  config.json config_sentence_transformers.json modules.json sentence_bert_config.json \
+  special_tokens_map.json tokenizer_config.json sentencepiece.bpe.model tokenizer.json \
+  1_Pooling/config.json pytorch_model.bin
+bash scripts/download_model.sh mminilm cross-encoder/mmarco-mMiniLMv2-L12-H384-v1 \
+  1427fd652930e4ba29e8149678df786c240d8825 config.json special_tokens_map.json \
+  tokenizer_config.json sentencepiece.bpe.model tokenizer.json model.safetensors
+```
+
+**Ranking: hybrid with dense weighted 3, reranker off by default** (`eval/retrieval_fusion.json`,
+`eval/retrieval_rerank.json`; Recall@1 dev / held-out, extra time per question on this CPU):
+
+| Ranking | Recall@1 | Recall@5 | Extra time |
+|---|---|---|---|
+| Hybrid, equal weights | 0.85 / 0.75 | 1.00 / 0.94 | 0 |
+| **Hybrid, dense weight 3** (default) | **0.91 / 0.88** | 0.97 / **1.00** | 0 |
+| + mMiniLMv2 reranker, pool 10 | 0.85 / 0.50 | 0.94 / 0.94 | +2.6 s |
+| + bge-reranker-v2-m3, pool 10 (1,024 tokens) | 0.91 / 0.75 | 1.00 / 0.94 | +20.5 s |
+
+The weight was picked on dev with a rule fixed beforehand (Recall@1, then MRR, then the simplest); held-out
+was only checked afterwards. The cross-encoder rerankers bring no held-out gain on this corpus and, on CPU,
+cost 2.6 to 19 s per question, so reranking stays available as an option (`hybrid_rerank`: weighted
+fusion, top 10 re-sorted by bge-reranker-v2-m3) but is off in the default pipeline.
+
+**Input length (real tokenizer counts, not estimates).** Chunks are 390 tokens median, 636 max. bge-m3 reads
+1,024, so no chunk is truncated (tested). The e5 models read 512, so 14% of chunks (123) lost their tail in
+their benchmark, which may partly explain their lower scores. The reranker benchmarks above ran at 512 tokens for
+question + chunk, which truncates up to 38% of pairs; bge-reranker now uses 1,024 (its limit is 8,192).
+Re-measured at 1,024: identical Recall (0.91 / 0.75 Recall@1, 1.00 / 0.94 Recall@5), 20.5 s per question, so
+truncation was not what held it back.
+
+Benchmarks: `uv run python -m aides_rag.retrieval.bench_dense --model bge-m3`,
+`uv run python -m aides_rag.retrieval.bench_fusion`,
+`uv run python -m aides_rag.retrieval.bench_rerank --reranker bge-reranker --pools 10 --batch-size 4`, and the full runner
+`uv run python eval/run_eval.py --questions eval/golden.jsonl --out eval/ --system hybrid`.
