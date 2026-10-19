@@ -11,6 +11,7 @@ Candidate models (all multilingual, open weights). E5 models expect "query: " / 
 from __future__ import annotations
 
 import hashlib
+import json
 from dataclasses import dataclass
 from pathlib import Path
 
@@ -65,13 +66,22 @@ class DenseIndex:
         key = hashlib.sha256("\n".join([self.spec.name, self.spec.passage_prefix, str(self.spec.max_seq_length),
                                         *texts]).encode("utf-8")).hexdigest()[:16]
         path = cache_dir / f"{alias}-{key}.npy"
+        meta = path.with_suffix(".json")  # which model revision made the vectors (committed next to them)
         self.from_cache = path.exists()
         if self.from_cache:
+            made_by = json.loads(meta.read_text(encoding="utf-8")).get("revision") if meta.exists() else None
+            if made_by and self.revision and made_by != self.revision:
+                # queries and chunks would be embedded by different weights: scores silently meaningless
+                raise RuntimeError(f"{path.name} was built with {self.spec.name}@{made_by}, but the local model is "
+                                   f"@{self.revision}. Download the pinned revision (README, Models) or delete "
+                                   f"the .npy to re-embed.")
             self.vectors = np.load(path)
         else:
             self.vectors = self.encode([self.spec.passage_prefix + t for t in texts], batch_size)
             cache_dir.mkdir(parents=True, exist_ok=True)
             np.save(path, self.vectors)
+            meta.write_text(json.dumps({"model": self.spec.name, "revision": self.revision}) + "\n",
+                            encoding="utf-8", newline="\n")
 
     def encode(self, texts: list[str], batch_size: int = 16) -> np.ndarray:
         return self.model.encode(texts, batch_size=batch_size, normalize_embeddings=True,
