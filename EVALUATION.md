@@ -84,7 +84,7 @@ Qwen3-14B). There is no separate API system. Final system (`rag` or `agent`): TO
 |---|---|---|
 | Recall@k (k = 1, 5, 10) | share of questions with at least one gold doc in the top k retrieved aids | questions with non-empty `gold_docs` |
 | MRR | mean of 1 / rank of the first gold doc (0 if absent from the top 10) | same |
-| Correctness | TODO: judged `correct` / `partial` / `wrong` against the reference answer | `expected_behavior = answer` |
+| Correctness | judged `correct` / `partial` / `wrong` against the reference answer (LLM judge, below); accuracy = share `correct`. For an expected abstention or refusal, `correct` = declined clearly | all questions |
 | Citation precision | share of cited ids that are gold docs or support the answer | answers with citations |
 | Hallucinated citations | cited ids that were not retrieved: rejected by the validator (retry, then `invalid_output`), so 0 in valid answers by construction | all answers |
 | Behaviour accuracy | abstains, refuses or ignores the injection as expected | `abstain`, `refuse_injection`, `answer_ignore_injection` |
@@ -97,11 +97,24 @@ Retrieval is scored at **aid level**: a chunk counts as its parent `id_aid`, dup
 
 ### Judge
 
-<!-- TODO -->
-- Judge model: TODO (exact version), prompt in `TODO path`.
-- Rubric: TODO.
-- Validation: we labelled TODO dev answers by hand; judge agreement with our labels = TODO %.
-- Known biases: TODO (e.g. lenient on partial answers, prefers longer answers).
+- **Judge model:** `anthropic/claude-sonnet-5.5` via OpenRouter, temperature 0, reasoning effort `low` (the model
+  cannot run without reasoning). It is a different, larger model than the graded ones (Qwen3 4B, Claude Haiku 5.5).
+  Prompt and rubric: `src/aides_rag/evaluation/judge.py`. Run it with `run_eval.py --judge`, or afterwards on a
+  results file with `python -m aides_rag.evaluation.judge`. Output: `eval/judged.jsonl` (verdict and one-sentence
+  reason per question) and the `judged_correctness` / `expected_behavior_respected` fields of `summary.json`,
+  overall and per split.
+- **Rubric:** the judge compares with the reference answer only (not its own knowledge). `correct` = the key facts
+  the question asks for, no contradiction; `partial` = right direction, a key element missing or imprecise;
+  `wrong` = contradiction, self-contradiction, invented fact, or wrong behaviour (answers when it should abstain,
+  abstains when it should answer). A row with no answer (error) is `wrong` without a judge call.
+- **Validation:** 40 dev answers graded by hand (the two e9 runs, rag, local Qwen3 4B; labels in
+  `eval/experiments/judge_validation/labels.json`). Judge vs hand labels: **39 / 40 identical (97.5 %)**, same
+  for correct vs not-correct. The one disagreement (q006, after) is stricter than us: `partial` where we said
+  `correct`, because the answer adds eligibility conditions that are not in the aid card. Cost of the 40 verdicts:
+  $0.12. Details: `eval/experiments/judge_validation/agreement.json`.
+- **Known limits:** only 3 `partial` answers in the validation set, so the partial / correct boundary is the least
+  tested; the judge trusts the reference answer, so an error in the golden set is not caught; it may be slightly
+  stricter than us on extra, unsupported details.
 
 ---
 

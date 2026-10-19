@@ -1,0 +1,20 @@
+{
+  "n": 40,
+  "exact_agreement": 0.975,
+  "correct_vs_not_agreement": 0.975,
+  "confusion_human_to_judge": {
+    "correct->correct": 29,
+    "correct->partial": 1,
+    "partial->partial": 2,
+    "wrong->wrong": 8
+  },
+  "disagreements": [
+    {
+      "run": "after",
+      "id": "q006",
+      "human": "correct",
+      "judge": "partial",
+      "judge_reason": "Amount, duration, rate and deferral match the reference, but it omits 'no guarantee' and the mandatory death/PTIA insurance, and adds unsupported eligibility conditions (under 50 employees, over 3 years, bank loan requirement)."
+    }
+  ]
+}

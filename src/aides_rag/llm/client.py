@@ -59,6 +59,7 @@ class LLMClient:
     model: str
     temperature: float = 0.0
     max_tokens: int = 700
+    reasoning: str = "none"  # OpenRouter reasoning effort; the judge's model refuses "none"
     _sdk: object = field(default=None, repr=False)
 
     @classmethod
@@ -112,7 +113,7 @@ class LLMClient:
         if schema:
             kwargs["response_format"] = {"type": "json_schema", "json_schema": {"name": "Answer", "strict": True, "schema": schema}}
         r = self._sdk.chat.completions.create(model=self.model, messages=messages, temperature=self.temperature,
-                                              max_tokens=max_tokens, extra_body={"reasoning": {"effort": "none"}}, **kwargs)
+                                              max_tokens=max_tokens, extra_body={"reasoning": {"effort": self.reasoning}}, **kwargs)
         choice, usage = r.choices[0], r.usage
         calls = [ToolCall(tc.id, tc.function.name, _tool_args(tc.function.arguments))
                  for tc in (choice.message.tool_calls or [])]
