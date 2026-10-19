@@ -12,6 +12,7 @@ so Ollama reuses the cached prompt prefix instead of re-reading the aids (~15 s 
 
 from __future__ import annotations
 
+import math
 import time
 from dataclasses import replace
 
@@ -19,7 +20,6 @@ from aides_rag.agent.prompts import agent_messages, answer_request, rag_messages
 from aides_rag.agent.schema import ANSWER_SCHEMA, Answer, InvalidAnswer, parse_answer
 from aides_rag.agent.tools import TOOL_SPECS, run_tool
 from aides_rag.agent.trace import Trace
-from aides_rag.index.chunks import approx_tokens
 from aides_rag.llm.client import NUM_CTX, LLMClient, ToolCall
 from aides_rag.retrieval.search import search
 
@@ -28,6 +28,10 @@ TOP_K = 5
 MAX_TOOL_CALLS = 3
 TOOL_ROUND_TOKENS = 200  # enough for two tool calls; caps the draft a small model writes instead of "PRÊT"
 CONTEXT_BUDGET = NUM_CTX - 1500  # keep room for the answer phase; past NUM_CTX Ollama drops the system prompt
+# Qwen3 splits our French text into ~3.5 chars/token (mean 3.49, 5th percentile 3.18, min 2.77 over the 865
+# chunks), denser than the 4.0 of chunks.approx_tokens (measured on bge-m3's tokenizer). The guard must not
+# undercount, so it uses 3.0: an overestimate for almost every text.
+GUARD_CHARS_PER_TOKEN = 3.0
 LIMIT_NOTE = "Limite de 3 appels d'outils atteinte : appel non exécuté. Réponds avec les fiches déjà fournies."
 FULL_NOTE = "Résultat non affiché : le contexte est plein. Réponds avec les fiches déjà fournies."
 
@@ -89,14 +93,19 @@ def _agent(question: str, llm: LLMClient, trace: Trace) -> tuple[list[dict], boo
             else:
                 start, seen_before = time.perf_counter(), set(shown)
                 text, ids = run_tool(tc.name, tc.arguments, shown)
-                if context + approx_tokens(text) > CONTEXT_BUDGET:
+                if context + _guard_tokens(text) > CONTEXT_BUDGET:
                     text, ids = FULL_NOTE, []
                     shown.intersection_update(seen_before)  # not shown after all: give them in full if found again
                 trace.add_tool(tc.name, tc.arguments, time.perf_counter() - start, ids, forced=forced)
                 n_calls += 1
-            context += approx_tokens(text)
+            context += _guard_tokens(text)
             messages.append({"role": "tool", "name": tc.name, "tool_call_id": tc.id, "content": text})
     return messages + [answer_request(question)], refused
+
+
+def _guard_tokens(text: str) -> int:
+    """Upper-side estimate of the LLM tokens a tool result adds (see GUARD_CHARS_PER_TOKEN)."""
+    return math.ceil(len(text) / GUARD_CHARS_PER_TOKEN)
 
 
 def _final_answer(llm: LLMClient, messages: list[dict], trace: Trace, tools: list[dict] | None = None) -> Answer | None:

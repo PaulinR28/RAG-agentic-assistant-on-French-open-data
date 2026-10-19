@@ -22,7 +22,7 @@ load_dotenv()
 
 NUM_CTX = 8192  # context window of the local model: prompt + 5 chunks + tool results fit in ~4k
 KEEP_ALIVE = "30m"  # keep the model in memory between questions (first load takes ~6 s)
-TIMEOUT_S = 180
+TIMEOUT_S = int(os.environ.get("LLM_TIMEOUT_S", 180))  # raise it on CPU-only machines (first call: load + ~3k-token prompt)
 DEFAULT_MODELS = {"ollama": "qwen3:4b-instruct-2507-q4_K_M", "openrouter": "anthropic/claude-haiku-5.5"}
 
 
