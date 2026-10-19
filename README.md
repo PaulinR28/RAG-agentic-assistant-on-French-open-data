@@ -29,7 +29,7 @@ uv run python -m aides_rag.ingest.check_sources   # optional, needs network: sou
 Evaluation:
 
 ```bash
-uv run python eval/run_eval.py --questions eval/golden.jsonl --out eval/   # --system bm25 (default)
+uv run python eval/run_eval.py --questions eval/golden.jsonl --out eval/   # --system rag (default)
 ```
 
 It writes `eval/results.jsonl` (one line per question: answer, cited sources, retrieved aid ids,
