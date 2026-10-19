@@ -54,3 +54,13 @@ def test_hybrid_filters_can_reach_any_aid():
     """Even a strict filter returns k hits: aids outside both top-50 lists are still ranked (dense order)."""
     hits = S.search("aide", k=10, natures=["Garantie"])
     assert len(hits) == min(10, 3)  # the corpus has 3 guarantee aids
+
+
+def test_agent_context_guard_never_undercounts_qwen_tokens():
+    """The guard estimate must be >= the real Qwen3 token count for (almost) every chunk: past NUM_CTX,
+    Ollama drops the start of the prompt (system rules, injection defence). Measured min ratio: 2.77."""
+    from aides_rag.agent.agent import GUARD_CHARS_PER_TOKEN, _guard_tokens
+
+    chunks, _ = S._index()
+    assert GUARD_CHARS_PER_TOKEN <= 3.18  # 5th percentile of Qwen3's chars/token on our chunks
+    assert sum(_guard_tokens(c["text"]) for c in chunks) >= sum(len(c["text"]) for c in chunks) / 3.49
