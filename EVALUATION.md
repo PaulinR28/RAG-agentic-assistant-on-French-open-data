@@ -107,7 +107,8 @@ Retrieval is scored at **aid level**: a chunk counts as its parent `id_aid`, dup
   the question asks for, no contradiction; `partial` = right direction, a key element missing or imprecise;
   `wrong` = contradiction, self-contradiction, invented fact, or wrong behaviour (answers when it should abstain,
   abstains when it should answer). A row with no answer (error) is `wrong` without a judge call.
-- **Validation:** 40 dev answers graded by hand (the two e9 runs, rag, local Qwen3 4B; labels in
+- **Validation:** the 20 **dev** questions only (held-out never shown to the judge), asked twice (the two e9
+  runs, before / after the place hints) = 40 answers graded by hand (rag, local Qwen3 4B; labels in
   `eval/experiments/judge_validation/labels.json`). Judge vs hand labels: **39 / 40 identical (97.5 %)**, same
   for correct vs not-correct. The one disagreement (q006, after) is stricter than us: `partial` where we said
   `correct`, because the answer adds eligibility conditions that are not in the aid card. Cost of the 40 verdicts:

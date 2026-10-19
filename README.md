@@ -108,7 +108,7 @@ Exact Hugging Face revisions are pinned; weights are never committed (`models/` 
 | Answering LLM (local, default) | `qwen3:4b-instruct-2507-q4_K_M` (Ollama tag; Q4_K_M quantisation) | Ollama 0.40.4, `temperature=0`, `num_ctx=8192` | **In use** |
 | Answering LLM (API, comparison) | `anthropic/claude-haiku-5.5` via OpenRouter | TODO (dated snapshot) | Optional (`LLM_BACKEND=openrouter`) |
 | Answering LLM (API, comparison) | Qwen3-14B via OpenRouter | TODO (exact slug) | Optional (`LLM_MODEL=<slug>`) |
-| Judge | `anthropic/claude-sonnet-5.5` via OpenRouter | temperature 0, reasoning `low` | **In use** (`run_eval.py --judge`); 97.5 % agreement with our hand labels on 40 dev answers |
+| Judge | `anthropic/claude-sonnet-5.5` via OpenRouter | temperature 0, reasoning `low` | **In use** (`run_eval.py --judge`); 97.5 % agreement with our hand labels (20 dev questions × 2 runs = 40 answers; held-out never used) |
 
 Library versions are pinned in `uv.lock`.
 

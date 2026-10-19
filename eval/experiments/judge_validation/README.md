@@ -7,7 +7,7 @@ hand in `../e9_full_cards_geo/README.md` (copied in `labels.json`). Run: `uv run
 
 | | Value |
 |---|---|
-| Answers | 40 |
+| Answers | 40 = the 20 **dev** questions × 2 runs (held-out q021–q040 never shown to the judge) |
 | Same verdict as the hand label | **39 / 40 (97.5 %)** |
 | Same correct vs not-correct decision | 39 / 40 (97.5 %) |
 | Confusion (human → judge) | correct→correct 29, wrong→wrong 8, partial→partial 2, correct→partial 1 |
