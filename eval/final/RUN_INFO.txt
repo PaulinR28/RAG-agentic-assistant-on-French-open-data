@@ -1,0 +1,8 @@
+commit=ca93aac
+date=2026-10-19 22:58 CEST
+machine=MacBook Air Apple M3, 16 GB RAM
+ollama=0.40.6
+model=qwen3:4b-instruct-2507-q4_K_M id 0edcdef34593
+note=held-out runs redone after #20 (logging only, assistant unchanged); a first pass on 5616e04 was used as a preview only
+api_model=anthropic/claude-haiku-5.5 via OpenRouter (rag_api, agent_api), run 2026-10-19 23:35 CEST
+layout=eval/final/<system>/results.jsonl + summary.json; questions = eval/final/golden_heldout.jsonl (the 20 split=heldout rows of eval/golden.jsonl)

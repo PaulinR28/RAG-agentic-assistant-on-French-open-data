@@ -1,0 +1,66 @@
+{
+  "system": "rag",
+  "n_questions": 20,
+  "errors": [],
+  "stop_reasons": {
+    "final_answer": 15,
+    "abstained": 5
+  },
+  "retrieval": {
+    "n_questions": 16,
+    "recall@1": 0.875,
+    "recall@5": 1.0,
+    "recall@10": 1.0,
+    "mrr": 0.919,
+    "recall@5_by_category": {
+      "deadline": 1.0,
+      "eligibility": 1.0,
+      "exclusion": 1.0,
+      "factual": 1.0,
+      "geographic": 1.0,
+      "no_amount": 1.0,
+      "prompt_injection": 1.0
+    },
+    "misses@5": []
+  },
+  "retrieval_by_split": {
+    "heldout": {
+      "n_questions": 16,
+      "recall@1": 0.875,
+      "recall@5": 1.0,
+      "recall@10": 1.0,
+      "mrr": 0.919,
+      "recall@5_by_category": {
+        "deadline": 1.0,
+        "eligibility": 1.0,
+        "exclusion": 1.0,
+        "factual": 1.0,
+        "geographic": 1.0,
+        "no_amount": 1.0,
+        "prompt_injection": 1.0
+      },
+      "misses@5": []
+    }
+  },
+  "latency_ms": {
+    "mean": 23213.6,
+    "p50": 23092.5,
+    "p95": 32617.2,
+    "max": 35784.4
+  },
+  "tokens": {
+    "in": 61453,
+    "out": 2976
+  },
+  "cost_usd": 0.0,
+  "models": [
+    "qwen3:4b-instruct-2507-q4_K_M"
+  ],
+  "configs": [
+    "rag"
+  ],
+  "tool_calls": 20,
+  "answers_generated": 20,
+  "judged_correctness": null,
+  "expected_behavior_respected": null
+}

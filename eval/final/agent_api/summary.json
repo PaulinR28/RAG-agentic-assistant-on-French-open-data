@@ -1,0 +1,70 @@
+{
+  "system": "agent",
+  "n_questions": 20,
+  "errors": [],
+  "stop_reasons": {
+    "final_answer": 15,
+    "abstained": 5
+  },
+  "retrieval": {
+    "n_questions": 16,
+    "recall@1": 0.812,
+    "recall@5": 0.938,
+    "recall@10": 0.938,
+    "mrr": 0.875,
+    "recall@5_by_category": {
+      "deadline": 1.0,
+      "eligibility": 1.0,
+      "exclusion": 1.0,
+      "factual": 1.0,
+      "geographic": 0.667,
+      "no_amount": 1.0,
+      "prompt_injection": 1.0
+    },
+    "misses@5": [
+      "q028"
+    ]
+  },
+  "retrieval_by_split": {
+    "heldout": {
+      "n_questions": 16,
+      "recall@1": 0.812,
+      "recall@5": 0.938,
+      "recall@10": 0.938,
+      "mrr": 0.875,
+      "recall@5_by_category": {
+        "deadline": 1.0,
+        "eligibility": 1.0,
+        "exclusion": 1.0,
+        "factual": 1.0,
+        "geographic": 0.667,
+        "no_amount": 1.0,
+        "prompt_injection": 1.0
+      },
+      "misses@5": [
+        "q028"
+      ]
+    }
+  },
+  "latency_ms": {
+    "mean": 5353.7,
+    "p50": 4748.1,
+    "p95": 8872.3,
+    "max": 12841.8
+  },
+  "tokens": {
+    "in": 286463,
+    "out": 9609
+  },
+  "cost_usd": 0.033453,
+  "models": [
+    "anthropic/claude-haiku-5.5"
+  ],
+  "configs": [
+    "agent"
+  ],
+  "tool_calls": 29,
+  "answers_generated": 20,
+  "judged_correctness": null,
+  "expected_behavior_respected": null
+}
