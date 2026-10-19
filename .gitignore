@@ -18,7 +18,9 @@ build/
 
 # Models, indexes, caches
 models/
-indexes/
+indexes/*
+!indexes/bge-m3-*.npy
+!indexes/bge-m3-*.json
 .cache/
 
 # OS / editors
