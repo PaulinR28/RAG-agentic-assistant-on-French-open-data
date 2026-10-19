@@ -2,9 +2,11 @@
 
 - `Hybrid` (default, run_eval --system hybrid): aid-level RRF with dense weighted DENSE_WEIGHT (3) against
   BM25 (1). Its Recall@k must match the "rrf_w3" rows of eval/retrieval_fusion.json.
-- `HybridRerank` (option, --system hybrid_rerank): the top RERANK_POOL chunks of the same fusion re-sorted by
-  the bge-reranker-v2-m3 cross-encoder. Off by default: on this laptop's CPU it adds ~19 s per question for
-  no held-out gain (eval/retrieval_rerank.json).
+- `HybridRerank` (option, --system hybrid_rerank): the top RERANK_POOL chunks of a chunk-level fusion
+  (dense weight 3) re-sorted by the bge-reranker-v2-m3 cross-encoder. Off by default: on this laptop's CPU it
+  adds ~20 s per question. Caveat: eval/retrieval_rerank.json measured the reranker on a chunk-level pool with
+  equal weights (bench_rerank.py), not on this exact pool, so run `run_eval --system hybrid_rerank` before
+  quoting its scores.
 
 Needs the models locally (models/<alias>/ or the Hugging Face cache); chunk vectors are read from indexes/.
 """

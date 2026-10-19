@@ -65,3 +65,19 @@ def test_no_chunk_is_truncated_by_the_dense_model():
     longest_question = max(len(tok(q)["input_ids"]) for q in questions)
     assert longest_chunk <= MODELS["bge-m3"].max_seq_length
     assert longest_chunk + longest_question <= MAX_LENGTH["bge-reranker"]
+
+
+@pytest.mark.skipif(model_revision(MODELS["e5-small"].name) is None, reason="e5-small not downloaded")
+def test_cached_vectors_from_another_model_revision_are_refused(tmp_path):
+    """Vectors embedded by one revision must not be scored against queries embedded by another."""
+    import json
+
+    from aides_rag.retrieval.dense import DenseIndex
+
+    texts = ["Subvention pour l'achat de vélos cargos électriques"]
+    first = DenseIndex("e5-small", texts, cache_dir=tmp_path)  # builds the cache and its .json
+    meta = next(tmp_path.glob("*.json"))
+    assert json.loads(meta.read_text(encoding="utf-8"))["revision"] == first.revision
+    meta.write_text(json.dumps({"model": first.spec.name, "revision": "another-revision"}), encoding="utf-8")
+    with pytest.raises(RuntimeError, match="another-revision"):
+        DenseIndex("e5-small", texts, cache_dir=tmp_path)

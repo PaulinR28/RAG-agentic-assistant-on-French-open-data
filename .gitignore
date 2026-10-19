@@ -20,6 +20,7 @@ build/
 models/
 indexes/*
 !indexes/bge-m3-*.npy
+!indexes/bge-m3-*.json
 .cache/
 
 # OS / editors
