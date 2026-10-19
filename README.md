@@ -4,7 +4,7 @@ An assistant that answers **"Which public funding can my company get?"** for Fre
 green-transition or innovation project. It runs over 504 public aid schemes from the
 [data.gouv.fr "Aides entreprises" dataset](https://www.data.gouv.fr/datasets/aides-entreprises)
 (Institut Supérieur des Métiers, Licence Ouverte / Open Licence). It uses
-hybrid retrieval with reranking, answers with citations, and runs locally.
+hybrid retrieval (BM25 + bge-m3 embeddings), answers with citations, and runs locally.
 
 > Status: **Phase 1, foundations** (corpus, data card, golden set). Retrieval, agent and evaluation runner come next.
 
@@ -14,12 +14,12 @@ hybrid retrieval with reranking, answers with citations, and runs locally.
 
 | System | Recall@5 | MRR | Correct | Behaviour OK | p50 latency (s) | € / question |
 |---|---|---|---|---|---|---|
-| `bm25` (baseline, no LLM) | TODO | TODO | n/a | n/a | TODO | 0 |
-| `hybrid_rerank` (no LLM) | TODO | TODO | n/a | n/a | TODO | 0 |
+| `bm25` (baseline, no LLM) | 0.875 | 0.81 | n/a | n/a | < 0.01 | 0 |
+| `hybrid` (no LLM, retrieval used by `rag` / `agent`) | **1.00** | **0.92** | n/a | n/a | 0.22 | 0 |
 | `rag` | TODO | TODO | TODO | TODO | TODO | TODO |
 | **`agent` (final)** | TODO | TODO | TODO | TODO | TODO | TODO |
 
-- TODO: what hybrid + reranking bought over BM25.
+- Hybrid search (BM25 + bge-m3, dense weight 3) over BM25 alone, held-out: Recall@1 0.75 → 0.88, Recall@5 0.88 → 1.00, for ~0.2 s per question on CPU. Cross-encoder reranking was measured and left off by default: no held-out gain for +20 s per question (EVALUATION.md §5, E5–E6).
 - TODO: quality vs latency between `rag` and `agent`.
 - TODO: main remaining failure mode.
 
@@ -85,8 +85,8 @@ Library versions are pinned in `uv.lock`.
 
 | Role | Model | Exact version / tag | Runtime |
 |---|---|---|---|
-| Embeddings | TODO | TODO | TODO |
-| Reranker | TODO | TODO | TODO |
+| Embeddings | `BAAI/bge-m3` | HF revision `5617a9f61b028005a4858fdac845db406aefb181` | sentence-transformers, CPU |
+| Reranker (option, off by default) | `BAAI/bge-reranker-v2-m3` | HF revision `953dc6f6f85a1b2dbfca4c34a2796e7dde08d41e` | sentence-transformers, CPU |
 | LLM (local) | TODO | TODO (tag + quantisation) | Ollama TODO |
 | LLM (API, optional) | TODO | TODO (dated snapshot) | API |
 | Judge | TODO | TODO | TODO |

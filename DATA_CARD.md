@@ -158,16 +158,16 @@ Script: `src/aides_rag/index/chunks.py` → `data/processed/chunks.jsonl`.
 |---|---|
 | Output | **865 chunks** from 504 aids (1.7 per aid on average) |
 | Structure | metadata header + body text |
-| Header | TODO: exact fields (e.g. `id_aid`, title, scope, regions, natures, funders, `date_fin`, `aid_validation`) |
-| Body | TODO: field order (e.g. objet → operations → conditions → montant → bénéficiaires) |
-| Size | ~300–700 tokens per chunk; TODO: tokenizer used to count |
-| Splitting | TODO: rule for long aids (e.g. split on field boundaries, then paragraphs; overlap TODO) |
-| Placeholders | `%mini%` → TODO short *de minimis* explanation; `%pme%` → TODO SME definition |
-| Chunk metadata | TODO: fields copied for filtering (e.g. `regions`, `scope`, `natures`, `date_fin`) |
+| Header | title, aid type (`natures`), area (scope, or territory labels + resolved region), funders, themes (`project_categories`), deadline (`date_fin`, or "aucune"), card update date (`aid_validation`). Long lists capped at 5 items / 250 characters (one aid lists 613 communes) |
+| Body | labelled sections in this order: Objet → Dépenses et opérations éligibles → Conditions → Montant → Bénéficiaires (empty sections skipped) |
+| Size | body ≤ 1,800 characters; **390 median / 636 max tokens** with the bge-m3 (XLM-R) tokenizer (3.98 characters/token), so no chunk exceeds bge-m3's 1,024-token window (tested). Qwen3 counts more: 3.49 characters/token |
+| Splitting | an aid whose body fits 1,800 characters stays one chunk (281 aids); longer aids are packed section by section; a section longer than the budget is split on sentence and list boundaries, each piece repeating ~15% of the previous one, line breaks kept |
+| Placeholders | `%mini%` → "Aide soumise au règlement de minimis : le total des aides de minimis reçues par l'entreprise est plafonné sur trois exercices fiscaux."; `%pme%` → "PME au sens de la définition européenne (moins de 250 salariés, chiffre d'affaires annuel inférieur ou égal à 50 M€ ou total de bilan inférieur ou égal à 43 M€)" |
+| Chunk metadata | `chunk_id`, `id_aid`, `chunk_index`, `n_chunks`, `approx_tokens`, plus for filters `scope`, `regions`, `natures`, `effectif`, `date_fin`, `aid_validation` |
 
 **Why this design**
 - One aid = one citation unit, and the median aid (1,587 characters) fits in one chunk, so most aids stay whole.
 - The header is repeated in every chunk, so a chunk from the middle of a long aid still carries its name, funder, region and deadline. This lets it match and be cited correctly.
 - Conditions often sit in `beneficiaires` or `montant` rather than `conditions` (empty for 258 aids, §7), so all fields of an aid are chunked together.
-- TODO: the result of reading 20 random aids / 20 random chunks before choosing.
+- 20 random aids and 20 random chunks were read before keeping this design (seed 42, `docs/reviews/chunking-review.md`): confirmed, with one fix (line breaks kept when splitting) and two rules passed to the answering model (respect explicit exclusions; say when an amount is not stated).
 - Chunk-size and header experiments: `EVALUATION.md` §5 (E1, E2).

@@ -66,11 +66,10 @@ uv run python eval/run_eval.py --questions eval/golden.jsonl --out eval/ --syste
 | System | Retrieval | Generation | Notes |
 |---|---|---|---|
 | `bm25` | BM25, French analyzer | none | baseline |
-| `dense` | TODO embedding model | none | |
-| `hybrid` | BM25 + dense, TODO fusion | none | |
-| `hybrid_rerank` | hybrid + TODO reranker | none | |
-| `rag` | hybrid_rerank, top-TODO chunks | TODO local LLM, one call | |
-| `agent` | tools over hybrid_rerank + metadata filters | TODO local LLM, up to TODO tool calls | final system |
+| `hybrid` | BM25 + `bge-m3`, weighted RRF (k = 60, dense weight 3) | none | retrieval of `rag` / `agent` |
+| `hybrid_rerank` | hybrid, top 10 chunks re-sorted by `bge-reranker-v2-m3` | none | option, off by default |
+| `rag` | hybrid, top-TODO chunks | TODO local LLM, one call | |
+| `agent` | tools over hybrid + metadata filters | TODO local LLM, up to TODO tool calls | final system |
 | `agent_api` | same as `agent` | TODO API model | optional comparison |
 
 ---
@@ -109,13 +108,14 @@ Retrieval is scored at **aid level**: a chunk counts as its parent `id_aid`, dup
 <!-- TODO: from eval/summary.json -->
 | System | R@1 | R@5 | R@10 | MRR | Correct | Behaviour OK | Cit. precision | p50 / p95 latency (s) | Tokens in / out | € / question |
 |---|---|---|---|---|---|---|---|---|---|---|
-| `bm25` | TODO | TODO | TODO | TODO | n/a | n/a | n/a | TODO | 0 / 0 | 0 |
-| `dense` | TODO | TODO | TODO | TODO | n/a | n/a | n/a | TODO | 0 / 0 | 0 |
-| `hybrid` | TODO | TODO | TODO | TODO | n/a | n/a | n/a | TODO | 0 / 0 | 0 |
-| `hybrid_rerank` | TODO | TODO | TODO | TODO | n/a | n/a | n/a | TODO | 0 / 0 | 0 |
+| `bm25` | 0.75 | 0.88 | 0.94 | 0.81 | n/a | n/a | n/a | < 0.01 | 0 / 0 | 0 |
+| `hybrid` | **0.88** | **1.00** | 1.00 | **0.92** | n/a | n/a | n/a | 0.22 (mean) | 0 / 0 | 0 |
+| `hybrid_rerank` ¹ | 0.75 | 0.94 | 1.00 | 0.83 | n/a | n/a | n/a | 20.5 (mean) | 0 / 0 | 0 |
 | `rag` | TODO | TODO | TODO | TODO | TODO | TODO | TODO | TODO | TODO | TODO |
 | `agent` | TODO | TODO | TODO | TODO | TODO | TODO | TODO | TODO | TODO | TODO |
 | `agent_api` | TODO | TODO | TODO | TODO | TODO | TODO | TODO | TODO | TODO | TODO |
+
+¹ Measured with `bench_rerank.py` on a hybrid pool with equal weights (`eval/retrieval_rerank.json`), not on the exact `hybrid_rerank` pool (dense weight 3); latency = reranking only. Retrieval rows: 16 held-out questions with gold docs; latency = mean query time on the demo machine (CPU), from `eval/retrieval_dense.json`.
 
 Dev scores for the same systems: `eval/summary_dev.json` <!-- TODO: confirm file name -->.
 
@@ -145,16 +145,21 @@ One design decision per row, everything else fixed. Raw outputs in `eval/experim
 
 | # | Decision | Variant A | Variant B | Metric | A | B | Kept |
 |---|---|---|---|---|---|---|---|
-| E1 | Chunk size | TODO | TODO | Recall@5 | TODO | TODO | TODO |
-| E2 | Metadata header in each chunk | with | without | Recall@5 | TODO | TODO | TODO |
-| E3 | BM25 analyzer | French | default | Recall@5 / MRR | TODO | TODO | TODO |
-| E4 | Retriever | BM25 | hybrid | Recall@5 / MRR | TODO | TODO | TODO |
-| E5 | Reranker | off | on | MRR / latency | TODO | TODO | TODO |
+| E1 | Chunk size (body chars, BM25) | 1,800 | 1,200 / whole aid | Recall@5 / MRR | 1.00 / 0.84 | 1.00 / 0.87 ; 1.00 / 0.85 | 1,800 ² |
+| E2 | Metadata header in each chunk | with | without | Recall@5 | **1.00** | 0.77 | with |
+| E3 | BM25 analyzer | French stemming | no stemming | Recall@5 / MRR | 1.00 / 0.84 | 1.00 / 0.88 | stemming ³ |
+| E4 | Retriever | BM25 | hybrid, bge-m3 ×3 | Recall@1 / MRR | 0.74 / 0.84 | **0.91 / 0.97** | hybrid ⁴ |
+| E5 | Reranker (pool 10) | off | `bge-reranker-v2-m3` | MRR / latency | 0.94 / 0 s | 0.97 / +20.5 s | off ⁵ |
 | E6 | Chunks passed to the LLM | top TODO | top TODO | correctness / tokens | TODO | TODO | TODO |
 | E7 | RAG vs agent | `rag` | `agent` | correctness / latency | TODO | TODO | TODO |
 | E8 | Local vs API LLM | TODO | TODO | correctness / latency / cost | TODO | TODO | TODO |
 
-BM25 variants already measured: `eval/retrieval_bm25.json` (variants and per-question ranks).
+Retrieval rows are on the 17 dev questions with gold docs. Sources: `eval/retrieval_bm25.json` (E1–E3), `eval/retrieval_dense.json` and `eval/retrieval_fusion.json` (E4), `eval/retrieval_rerank.json` (E5).
+
+² Ties on Recall@5; 1,800 characters keeps header + body inside a 512-token encoder window for 87% of chunks (390 median / 636 max real tokens, bge-m3 tokenizer). 1,200 has a slightly higher MRR, not re-tested with the dense model.
+³ Honest note: dev slightly favours no stemming (MRR 0.88 vs 0.84; held-out Recall@5 1.00 vs 0.88). We kept stemming; the impact is limited because BM25 weighs 1/4 in the final fusion. Not re-tuned.
+⁴ Embedding model chosen first, dense alone (Recall@1 dev / held-out): e5-small 0.74 / 0.75, e5-base 0.74 / 0.63, **bge-m3 0.91 / 0.88** (query 39 / 86 / 219 ms, RAM 1.6 / 2.4 / 2.6 GB). Fusion weight then picked on dev with a rule fixed beforehand (Recall@1, then MRR, then simplest): equal weights give 0.85 / 0.75, dense ×3 gives 0.91 / 0.88 (held-out checked afterwards).
+⁵ `mmarco-mMiniLMv2` (0.5 GB) made it worse: held-out Recall@1 0.75 → 0.50 at pool 10 (0.44 at 20 and 50), +2.6 s. `bge-reranker-v2-m3`: dev Recall@1 0.85 → 0.91 but held-out unchanged (0.75), +20.5 s per question on CPU, identical when re-measured at 1,024 tokens instead of 512. Kept as an option.
 
 ---
 
