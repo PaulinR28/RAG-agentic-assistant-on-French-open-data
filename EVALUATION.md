@@ -6,8 +6,8 @@ Course doctrine: no component counts as working until it is scored on the held-o
 cost and latency tracked. Every design decision below was tested on the **dev** split; the **held-out**
 split was run once per final system, for reporting only.
 
-<!-- TODO: date and commit of the final runs -->
-Final runs: TODO date, commit `TODO`, demo machine (16 GB RAM, Intel Core Ultra 5 135U, CPU only).
+Final runs: 2026-10-19, commit `ca93aac` (assistant frozen), MacBook Air M3 16 GB, Ollama 0.40.6 (`eval/final/RUN_INFO.txt`).
+Held-out was run once per system, after the final system (`rag`, local) had been declared in PR #20. Nothing was tuned after it.
 
 ---
 
@@ -123,37 +123,40 @@ Retrieval is scored at **aid level**: a chunk counts as its parent `id_aid`, dup
 
 ### Held-out (q021–q040)
 
-<!-- TODO: from eval/summary.json -->
 | System | R@1 | R@5 | R@10 | MRR | Correct | Behaviour OK | Cit. precision | p50 / p95 latency (s) | Tokens in / out | USD / question |
 |---|---|---|---|---|---|---|---|---|---|---|
 | `bm25` | 0.75 | 0.88 | 0.94 | 0.81 | n/a | n/a | n/a | < 0.01 | 0 / 0 | 0 |
 | `hybrid` | **0.88** | **1.00** | 1.00 | **0.92** | n/a | n/a | n/a | 0.22 (mean) | 0 / 0 | 0 |
 | `hybrid_rerank` ¹ | 0.75 | 0.94 | 1.00 | 0.83 | n/a | n/a | n/a | 20.5 (mean) | 0 / 0 | 0 |
-| `rag` | TODO | TODO | TODO | TODO | TODO | TODO | TODO | TODO | TODO | TODO |
-| `agent` | TODO | TODO | TODO | TODO | TODO | TODO | TODO | TODO | TODO | TODO |
-| `rag` or `agent`, API model | TODO | TODO | TODO | TODO | TODO | TODO | TODO | TODO | TODO | TODO |
+| **`rag`, Qwen3 4B local (final)** | 0.88 | 1.00 | 1.00 | 0.92 | **11 / 3 / 6** | 17 / 20 | 13 / 18 | 23.1 / 32.6 | 3,073 / 149 | 0 |
+| `agent`, Qwen3 4B local | 0.75 | 0.88 | 0.88 | 0.78 | 11 / 3 / 6 | 19 / 20 | 13 / 21 | 26.8 / 40.3 | 9,652 / 250 | 0 |
+| `rag`, Claude Haiku 5.5 (API) | 0.88 | 1.00 | 1.00 | 0.92 | 15 / 2 / 3 | 19 / 20 | 15 / 18 | 2.1 / 5.0 | 5,403 / 244 | 0.00066 |
+| `agent`, Claude Haiku 5.5 (API) | 0.81 | 0.94 | 0.94 | 0.88 | **16 / 2 / 2** | 19 / 20 | 14 / 16 | 4.7 / 8.9 | 14,323 / 480 | 0.00167 |
 
 ¹ Measured with `bench_rerank.py` on a hybrid pool with equal weights (`eval/retrieval_rerank.json`), not on the exact `hybrid_rerank` pool (dense weight 3); latency = reranking only. Retrieval rows: 16 held-out questions with gold docs; latency = mean query time on the demo machine (CPU), from `eval/retrieval_dense.json`.
+
+LLM rows: `eval/final/<system>/` (`results.jsonl`, `summary.json`, `judged.jsonl`). Correct = correct / partial / wrong by the judge (§3), all 20 questions. Behaviour OK = expected behaviour respected (answer, abstain, refuse, ignore the injection), all 20. Cit. precision = cited ids that are gold docs / all cited ids, a strict lower bound (a non-gold citation can still support the answer). For `agent`, retrieval is scored on the aids its searches returned. Tokens = mean per question; agent makes 3–5 LLM calls per question, rag 1–2. 0 errors and 20 / 20 valid structured outputs in all four runs (retries: rag 1, agent 3, rag API 3, agent API 3). Judge cost for the 80 verdicts: $0.26.
 
 Dev scores for the same systems: `eval/summary_dev.json` <!-- TODO: confirm file name -->.
 
 ### By category (held-out, final system)
 
-| Category | n | Correct / behaviour OK | Notes |
+| Category | n | Correct / partial / wrong · behaviour OK | Notes |
 |---|---:|---|---|
-| factual | TODO | TODO | TODO |
-| eligibility | TODO | TODO | TODO |
-| geographic | TODO | TODO | TODO |
-| deadline | TODO | TODO | TODO |
-| exclusion | TODO | TODO | TODO |
-| no_amount | TODO | TODO | TODO |
-| out_of_corpus | TODO | TODO | TODO |
-| prompt_injection | TODO | TODO | TODO |
+| factual | 4 | 2 / 1 / 1 · 3 | q024: cites the neighbouring campsite aid (12066) although 8119 was ranked first |
+| eligibility | 3 | 0 / 1 / 2 · 3 | q025 and q026: the right aid, but a threshold misread (age, turnover); q026 is wrong for all four systems |
+| geographic | 3 | 3 / 0 / 0 · 3 | |
+| deadline | 2 | 1 / 0 / 1 · 2 | q032: says "still open" for an aid closed the day before (only API `agent` gets it) |
+| exclusion | 2 | 1 / 0 / 1 · 1 | q034: misses that Grand Périgueux is excluded, cites a neighbouring aid |
+| no_amount | 1 | 0 / 1 / 0 · 1 | |
+| out_of_corpus | 3 | 3 / 0 / 0 · 3 | abstained on all three |
+| prompt_injection | 2 | 1 / 0 / 1 · 1 | q039 refused; q040: ignores the injection but abstains instead of answering (40 %) |
+
+In every wrong answer of the final system the gold aid was in the top 5: the errors are in reading, not in retrieval.
 
 ### Cost / latency trade-off
 
-<!-- TODO: one plot (quality vs p50 latency, one point per system) + 2–3 sentences -->
-TODO: which system we would ship under a latency budget of TODO s, and why.
+Local `rag` is free, keeps the data on the machine and answers in ~23 s (p50); it gets 11 / 20 correct. The same pipeline with Claude Haiku 5.5 gets 15 / 20 in 2 s for $0.0007 per question; `agent` with Haiku gets 16 / 20 in 5 s for $0.0017. Local `agent` adds three times the tokens and 4 s for no gain. Retrieval is identical across backends, so the gap is the answering model: a 4B model misreads thresholds and dates that a larger model gets right. Under a 10 s budget with a paid API allowed, we would ship `agent` with Haiku; without an API (privacy, cost), local `rag`. 20 questions: differences under ~10 points (2 questions) are not conclusive.
 
 ---
 
@@ -169,8 +172,8 @@ One design decision per row, everything else fixed. Raw outputs of generation ex
 | E4 | Retriever | BM25 | hybrid, bge-m3 ×3 | Recall@1 / MRR | 0.74 / 0.84 | **0.91 / 0.97** | hybrid ⁴ |
 | E5 | Reranker (pool 10) | off | `bge-reranker-v2-m3` | MRR / latency | 0.94 / 0 s | 0.97 / +20.5 s | off ⁵ |
 | E6 | Chunks passed to the LLM | top TODO | top TODO | correctness / tokens | TODO | TODO | TODO |
-| E7 | RAG vs agent (local 4B) ⁶ | `rag` | `agent` | correct / partial / wrong, mean latency | 15 / 3 / 2, 22.7 s | 15 / 2 / 3, 37.2 s | TODO |
-| E8 | Local vs API LLM (`rag`) ⁶ | Qwen3 4B, local | Claude Haiku 5.5, API | correct / partial / wrong, mean latency, cost for 20 q | 15 / 3 / 2, 22.7 s, $0 | 19 / 0 / 1, 2.1 s, $0.011 | TODO |
+| E7 | RAG vs agent (local 4B) ⁶ | `rag` | `agent` | correct / partial / wrong, mean latency | 15 / 3 / 2, 22.7 s | 15 / 2 / 3, 37.2 s | `rag` |
+| E8 | Local vs API LLM (`rag`) ⁶ | Qwen3 4B, local | Claude Haiku 5.5, API | correct / partial / wrong, mean latency, cost for 20 q | 15 / 3 / 2, 22.7 s, $0 | 19 / 0 / 1, 2.1 s, $0.011 | local (brief requires it); API as option |
 | E9 | Whole cards + place hints (`rag`, local 4B) ⁷ | best chunk, no hints | whole cards (≤ 4,000 chars) + place hints | correct / partial / wrong, prompt tokens | 15 / 1 / 4, 62.8k | 15 / 1 / 4, 77.1k | hints on, whole cards off |
 
 Retrieval rows are on the 17 dev questions with gold docs. Sources: `eval/retrieval_bm25.json` (E1–E3), `eval/retrieval_dense.json` and `eval/retrieval_fusion.json` (E4), `eval/retrieval_rerank.json` (E5). Generation rows (E7–E9) are on the 20 dev questions, graded by hand by one team member.
@@ -179,7 +182,7 @@ Retrieval rows are on the 17 dev questions with gold docs. Sources: `eval/retrie
 ³ Honest note: dev slightly favours no stemming (MRR 0.88 vs 0.84; held-out Recall@5 1.00 vs 0.88). We kept stemming; the impact is limited because BM25 weighs 1/4 in the final fusion. Not re-tuned.
 ⁴ Embedding model chosen first, dense alone (Recall@1 dev / held-out): e5-small 0.74 / 0.75, e5-base 0.74 / 0.63, **bge-m3 0.91 / 0.88** (query 39 / 86 / 219 ms, RAM 1.6 / 2.4 / 2.6 GB). Fusion weight then picked on dev with a rule fixed beforehand (Recall@1, then MRR, then simplest): equal weights give 0.85 / 0.75, dense ×3 gives 0.91 / 0.88 (held-out checked afterwards).
 ⁵ `mmarco-mMiniLMv2` (0.5 GB) made it worse: held-out Recall@1 0.75 → 0.50 at pool 10 (0.44 at 20 and 50), +2.6 s. `bge-reranker-v2-m3`: dev Recall@1 0.85 → 0.91 but held-out unchanged (0.75), +20.5 s per question on CPU, identical when re-measured at 1,024 tokens instead of 512. Kept as an option.
-⁶ PR #10 (2026-10-16), measured on an 8 GB M1 before the place hints and the context-guard fix; Qwen3-14B (API): 17 / 0 / 3 (`rag`), 18 / 0 / 2 (`agent`). Re-run with the final configuration: TODO.
+⁶ PR #10 (2026-10-16), measured on an 8 GB M1 before the place hints and the context-guard fix; Qwen3-14B (API): 17 / 0 / 3 (`rag`), 18 / 0 / 2 (`agent`). Final configuration: held-out table in §4.
 ⁷ PR #16, `eval/experiments/e9_full_cards_geo/`. Place hints fixed q011 (Lyon → Auvergne-Rhône-Alpes); whole cards broke q005 and did not fix q010 (the model still says a company created in 2025 meets "created before 30 Sept 2023").
 
 ---
