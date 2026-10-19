@@ -2,6 +2,9 @@
 data/raw/*
 !data/raw/README.md
 
+# UI question history (local, may hold user questions)
+data/ui_history.jsonl
+
 # Secrets
 .env
 .env.*

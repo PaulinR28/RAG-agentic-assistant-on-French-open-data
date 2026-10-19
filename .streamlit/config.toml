@@ -1,0 +1,18 @@
+# Boussole brand: cream base, burgundy accent, sand for secondary surfaces, Mulish (Arial if offline)
+[theme]
+base = "light"
+primaryColor = "#790D16"
+backgroundColor = "#F5EFE1"
+secondaryBackgroundColor = "#E5D3AF"
+textColor = "#2A1F1D"
+font = "Mulish:https://fonts.googleapis.com/css2?family=Mulish:wght@400;600;700;800&display=swap, Arial, sans-serif"
+
+[browser]
+gatherUsageStats = false
+
+[client]
+toolbarMode = "minimal"
+
+[server]
+headless = true
+address = "localhost"  # demo machine only, not the network
