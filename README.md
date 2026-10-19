@@ -4,9 +4,27 @@ An assistant that answers **"Which public funding can my company get?"** for Fre
 green-transition or innovation project. It runs over 504 public aid schemes from the
 [data.gouv.fr "Aides entreprises" dataset](https://www.data.gouv.fr/datasets/aides-entreprises)
 (Institut Supérieur des Métiers, Licence Ouverte / Open Licence). It uses
-hybrid retrieval with reranking, answers with citations, and runs locally.
+hybrid retrieval (BM25 + bge-m3 embeddings), answers with citations, and runs locally.
 
-> Status: **Phase 1, foundations** (corpus, data card, golden set). Retrieval, agent and evaluation runner come next.
+> Status: corpus, hybrid retrieval, generation (`rag`, `agent`) and the evaluation runner are built. The final
+> held-out run is pending. Code freeze: 2026-10-20 23:59, tag `v1.0`.
+
+## Results
+
+<!-- TODO: from eval/summary.json. Held-out split (q021–q040), demo machine, CPU only. Full tables: EVALUATION.md §4 -->
+
+| System | Recall@5 | MRR | Correct | Behaviour OK | p50 latency (s) | USD / question |
+|---|---|---|---|---|---|---|
+| `bm25` (baseline, no LLM) | 0.875 | 0.81 | n/a | n/a | < 0.01 | 0 |
+| `hybrid` (no LLM, retrieval used by `rag` / `agent`) | **1.00** | **0.92** | n/a | n/a | 0.22 | 0 |
+| `rag` | TODO | TODO | TODO | TODO | TODO | TODO |
+| **`agent` (final)** | TODO | TODO | TODO | TODO | TODO | TODO |
+
+- Hybrid search (BM25 + bge-m3, dense weight 3) over BM25 alone, held-out: Recall@1 0.75 → 0.88, Recall@5 0.88 → 1.00, for ~0.2 s per question on CPU. Cross-encoder reranking was measured and left off by default: no held-out gain for +20 s per question (EVALUATION.md §5, E5–E6).
+- TODO: quality vs latency between `rag` and `agent`.
+- TODO: main remaining failure mode.
+
+Demo recording: <!-- TODO: link -->
 
 ## Quick start
 
@@ -30,7 +48,16 @@ Evaluation:
 
 ```bash
 uv run python eval/run_eval.py --questions eval/golden.jsonl --out eval/   # --system bm25 (default)
+uv run python eval/run_eval.py --questions eval/golden.jsonl --out eval/ --system agent   # or rag, hybrid, hybrid_rerank
 ```
+
+Systems: `bm25`, `hybrid`, `hybrid_rerank` (retrieval only, no LLM), `rag` and `agent` (answer with the LLM).
+`rag` and `agent` retrieve with `hybrid`. The answering model is local by default; run the same system with an
+API model through OpenRouter, e.g. `LLM_BACKEND=openrouter LLM_MODEL=anthropic/claude-haiku-5.5` (key in `.env`).
+
+Local model: install [Ollama](https://ollama.com), then `ollama pull qwen3:4b-instruct-2507-q4_K_M` (the
+**instruct** tag: plain `qwen3:4b` always reasons first and is much slower). One question with its trace:
+`uv run python -m aides_rag.agent "Quel est le taux du CIR ?"` (`--mode rag` or `agent`).
 
 It writes `eval/results.jsonl` (one line per question: answer, cited sources, retrieved aid ids,
 tokens in/out, latency, tool calls, stop reason) and `eval/summary.json` (Recall@k, MRR, latency,
@@ -40,7 +67,8 @@ tokens). Every system implements the same `answer(question) -> dict` contract, d
 ## Repository layout
 
 ```
-DATA_CARD.md                  corpus provenance, selection rules, distributions, limitations
+DATA_CARD.md                  corpus provenance, selection, distributions, cleaning, chunking, limitations
+EVALUATION.md                 golden set, metrics, results, experiments, error analysis, risks
 data/raw/                     raw CSVs (git-ignored)
 data/processed/aids.jsonl     the 504-aid corpus (committed, ~1.9 MB)
 data/processed/selection_report.json   step counts, raw + output checksums
@@ -48,37 +76,20 @@ data/processed/source_check.json       last URL reachability check
 data/processed/chunks.jsonl   865 retrieval chunks (metadata header + body), rebuilt from aids.jsonl
 src/aides_rag/ingest/         corpus building (select_subset.py, check_sources.py)
 src/aides_rag/index/          chunking (chunks.py)
-src/aides_rag/retrieval/      BM25 with French analyzer (bm25.py), retrieval evaluation (eval_recall.py)
-src/aides_rag/systems/        answering systems behind one contract (bm25_only.py: retrieval only, no LLM)
+src/aides_rag/retrieval/      BM25 (bm25.py), bge-m3 (dense.py), weighted RRF (hybrid.py), reranker option
+                              (reranker.py), search() with filters and place hints (search.py, geo.py), benchmarks
+src/aides_rag/llm/            one chat() client for Ollama (local) and OpenRouter (API)
+src/aides_rag/agent/          answer schema + checks (schema.py), tools (tools.py), rag / agent loop (agent.py),
+                              per-answer trace (trace.py), CLI (python -m aides_rag.agent)
+src/aides_rag/systems/        the systems scored by run_eval, behind one contract (bm25, hybrid, rag, agent...)
 src/aides_rag/evaluation/     evaluation runner (run_eval.py), called by eval/run_eval.py
 eval/run_eval.py              evaluation entry point -> eval/results.jsonl, eval/summary.json
-eval/retrieval_bm25.json      last retrieval evaluation (variants, per-question ranks)
+eval/retrieval_*.json         retrieval benchmarks (BM25 variants, dense models, fusion, rerankers; per-question ranks)
+eval/experiments/             generation experiments (e.g. e9_full_cards_geo)
+indexes/                      bge-m3 chunk vectors (committed, pinned to the model revision)
 eval/golden.jsonl             golden questions (id, question, answer, gold_docs, category, expected_behavior, rationale)
 tests/                        pytest integrity checks
 ```
-
-## Golden set format
-
-```json
-{"id": "q007", "category": "eligibility", "question": "...", "answer": "...",
- "gold_docs": ["12636"], "expected_behavior": "answer", "rationale": "...", "split": "dev"}
-```
-
-40 questions: `split` = `dev` (q001-q020, used to tune) or `heldout` (q021-q040, final scores only;
-no aid appears in both splits).
-
-- `category`: `factual`, `eligibility`, `geographic`, `deadline`, `exclusion`, `no_amount`, `out_of_corpus`, `prompt_injection`
-- `expected_behavior`: `answer`, `abstain`, `refuse_injection`, `answer_ignore_injection`
-- `gold_docs`: `id_aid` values from `data/processed/aids.jsonl`; empty when the corpus has no answer.
-- Questions that depend on today's date state the date explicitly.
-
-## Git workflow
-
-- `main` is always runnable. No direct pushes after the initial skeleton.
-- One short-lived branch per task: `feat/…`, `fix/…`, `eval/…`, `docs/…`.
-- Pull request into `main`, with **one reviewer** and `uv run pytest` passing before merge.
-- Never commit raw data, model weights or secrets (`.env`).
-- Code freeze: **2026-10-20 23:59**, tag `v1.0`.
 
 ## Models
 
@@ -94,7 +105,12 @@ Exact Hugging Face revisions are pinned; weights are never committed (`models/` 
 | Reranker (compared) | `cross-encoder/mmarco-mMiniLMv2-L12-H384-v1` | `1427fd652930e4ba29e8149678df786c240d8825` | Rejected: lowers held-out Recall@1 |
 | Keyword | BM25 (Okapi, k1=1.5, b=0.75), French Snowball stemmer | `snowballstemmer` (see `uv.lock`) | In use |
 | Fusion | Reciprocal Rank Fusion, k=60, **dense weight 3 / BM25 1** | (code) | In use, picked on dev |
-| Answering LLM | to be chosen (Ollama) | | |
+| Answering LLM (local, default) | `qwen3:4b-instruct-2507-q4_K_M` (Ollama tag; Q4_K_M quantisation) | Ollama 0.40.4, `temperature=0`, `num_ctx=8192` | **In use** |
+| Answering LLM (API, comparison) | `anthropic/claude-haiku-5.5` via OpenRouter | TODO (dated snapshot) | Optional (`LLM_BACKEND=openrouter`) |
+| Answering LLM (API, comparison) | Qwen3-14B via OpenRouter | TODO (exact slug) | Optional (`LLM_MODEL=<slug>`) |
+| Judge | TODO | TODO | TODO |
+
+Library versions are pinned in `uv.lock`.
 
 **Why bge-m3** (`eval/retrieval_dense.json`, dense retrieval alone):
 
@@ -147,3 +163,67 @@ Benchmarks: `uv run python -m aides_rag.retrieval.bench_dense --model bge-m3`,
 `uv run python -m aides_rag.retrieval.bench_fusion`,
 `uv run python -m aides_rag.retrieval.bench_rerank --reranker bge-reranker --pools 10 --batch-size 4`, and the full runner
 `uv run python eval/run_eval.py --questions eval/golden.jsonl --out eval/ --system hybrid`.
+
+## Structured outputs and tracking
+
+The model must reply with this JSON, enforced at generation time and parsed with Pydantic
+(`src/aides_rag/agent/schema.py`):
+
+```json
+{"answer": "...", "citations": ["12636"], "abstained": false}
+```
+
+Checks after parsing: every citation is an aid retrieved for this question, an answer that does not abstain
+cites at least one aid, and an abstention cites none. On a violation the model gets **one retry** with the error
+message; if that fails too, the row ends with `stop_reason = "invalid_output"` (no forced abstention).
+Retrieved aids and the question are passed to the model as data, never as instructions.
+
+Each line of `eval/results.jsonl` (`src/aides_rag/agent/trace.py`) records:
+- **tokens in/out**: Ollama `prompt_eval_count` / `eval_count`; OpenRouter `usage`;
+- **latency**: end to end, plus per LLM call and per tool call;
+- **tool calls**: name, arguments, returned aid ids, latency, and whether the code forced the call;
+- **stop reason**: `final_answer`, `abstained`, `max_tool_calls`, `invalid_output` or `error`;
+- **cost in USD**: the cost billed by OpenRouter (`usage.cost`), not tokens × a price list; 0 for the local model.
+
+## Evaluation and residual risks
+
+40 golden questions in `eval/golden.jsonl`, across 8 categories (factual, eligibility, geographic, deadline,
+exclusion, no amount, out of corpus, prompt injection). `dev` (q001–q020) is used to tune and `heldout`
+(q021–q040) for final scores only; no aid appears in both. Metrics: Recall@k, MRR, judged correctness,
+citation precision, abstention / injection behaviour, latency, tokens, cost.
+Details, experiments and error analysis: [`EVALUATION.md`](EVALUATION.md).
+
+Main residual risks (full table: `EVALUATION.md` §7):
+- **Stale data:** 2026-10-13 snapshot of a weekly-updated source; deadlines and amounts may change.
+- **Region coverage:** 204 of 432 territorial aids have no machine-readable region.
+- **Not advice:** eligibility answers are indicative; the funder decides.
+- **Small test set:** 20 held-out questions, so one question = 5 points.
+- TODO: hallucination / injection rate from the final run.
+
+**Bonuses:** date handling: deadline status computed in code for a given day (`search_aids(open_on=…)`) ·
+local vs API comparison: measured on dev (`EVALUATION.md` §5), held-out TODO · UI: TODO ·
+vector database: no (in-memory BM25 + bge-m3 index, with region and aid-type filters; deadline status is
+annotated, not filtered, so a just-closed aid stays visible).
+
+## Team
+
+<!-- TODO: everyone speaks at the defence -->
+| Member | Main contributions | Defence part |
+|---|---|---|
+| Izan-Gaël | TODO | TODO |
+| Oussama | TODO | TODO |
+| Paulin | TODO | TODO |
+| Léopold | TODO | TODO |
+
+## Git workflow
+
+- `main` is always runnable. No direct pushes after the initial skeleton.
+- One short-lived branch per task: `feat/…`, `fix/…`, `eval/…`, `docs/…`.
+- Pull request into `main`, with **one reviewer** and `uv run pytest` passing before merge.
+- Never commit raw data, model weights or secrets (`.env`).
+- Code freeze: **2026-10-20 23:59**, tag `v1.0`.
+
+---
+
+*Data: Institut Supérieur des Métiers – aides-entreprises.fr, via data.gouv.fr, Licence Ouverte v1.0.
+Snapshot received 2026-10-13 (latest record update 2026-10-09).*
