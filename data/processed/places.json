@@ -1,0 +1,3347 @@
+{
+"ABBEVILLE": [
+"Hauts-de-France"
+],
+"ACHERES": [
+"Île-de-France"
+],
+"AGDE": [
+"Occitanie"
+],
+"AGEN": [
+"Nouvelle-Aquitaine"
+],
+"AIN": [
+"Auvergne-Rhône-Alpes"
+],
+"AISNE": [
+"Hauts-de-France"
+],
+"AIX-EN-PROVENCE": [
+"Provence-Alpes-Côte d'Azur"
+],
+"AIX-LES-BAINS": [
+"Auvergne-Rhône-Alpes"
+],
+"AJACCIO": [
+"Corse"
+],
+"ALBERTVILLE": [
+"Auvergne-Rhône-Alpes"
+],
+"ALBI": [
+"Occitanie"
+],
+"ALENCON": [
+"Normandie"
+],
+"ALES": [
+"Occitanie"
+],
+"ALFORTVILLE": [
+"Île-de-France"
+],
+"ALLAUCH": [
+"Provence-Alpes-Côte d'Azur"
+],
+"ALLIER": [
+"Auvergne-Rhône-Alpes"
+],
+"ALLONNES": [
+"Pays de la Loire"
+],
+"ALPES DE HAUTE-PROVENCE": [
+"Provence-Alpes-Côte d'Azur"
+],
+"ALPES-MARITIMES": [
+"Provence-Alpes-Côte d'Azur"
+],
+"AMBARES-ET-LAGRAVE": [
+"Nouvelle-Aquitaine"
+],
+"AMBERIEU-EN-BUGEY": [
+"Auvergne-Rhône-Alpes"
+],
+"AMBOISE": [
+"Centre-Val de Loire"
+],
+"AMIENS": [
+"Hauts-de-France"
+],
+"AMILLY": [
+"Centre-Val de Loire"
+],
+"AMNEVILLE": [
+"Grand Est"
+],
+"ANCENIS": [
+"Pays de la Loire"
+],
+"ANDERNOS-LES-BAINS": [
+"Nouvelle-Aquitaine"
+],
+"ANDRESY": [
+"Île-de-France"
+],
+"ANGERS": [
+"Pays de la Loire"
+],
+"ANGLET": [
+"Nouvelle-Aquitaine"
+],
+"ANGOULEME": [
+"Nouvelle-Aquitaine"
+],
+"ANICHE": [
+"Hauts-de-France"
+],
+"ANNECY": [
+"Auvergne-Rhône-Alpes"
+],
+"ANNEMASSE": [
+"Auvergne-Rhône-Alpes"
+],
+"ANNOEULLIN": [
+"Hauts-de-France"
+],
+"ANNONAY": [
+"Auvergne-Rhône-Alpes"
+],
+"ANTIBES": [
+"Provence-Alpes-Côte d'Azur"
+],
+"ANTONY": [
+"Île-de-France"
+],
+"ANZIN": [
+"Hauts-de-France"
+],
+"APT": [
+"Provence-Alpes-Côte d'Azur"
+],
+"ARCACHON": [
+"Nouvelle-Aquitaine"
+],
+"ARCUEIL": [
+"Île-de-France"
+],
+"ARDECHE": [
+"Auvergne-Rhône-Alpes"
+],
+"ARDENNES": [
+"Grand Est"
+],
+"ARGELES-SUR-MER": [
+"Occitanie"
+],
+"ARGENTAN": [
+"Normandie"
+],
+"ARGENTEUIL": [
+"Île-de-France"
+],
+"ARIEGE": [
+"Occitanie"
+],
+"ARLES": [
+"Provence-Alpes-Côte d'Azur"
+],
+"ARMENTIERES": [
+"Hauts-de-France"
+],
+"ARNOUVILLE": [
+"Île-de-France"
+],
+"ARPAJON": [
+"Île-de-France"
+],
+"ARRAS": [
+"Hauts-de-France"
+],
+"ASNIERES-SUR-SEINE": [
+"Île-de-France"
+],
+"ATHIS-MONS": [
+"Île-de-France"
+],
+"AUBAGNE": [
+"Provence-Alpes-Côte d'Azur"
+],
+"AUBE": [
+"Grand Est"
+],
+"AUBENAS": [
+"Auvergne-Rhône-Alpes"
+],
+"AUBERGENVILLE": [
+"Île-de-France"
+],
+"AUBERVILLIERS": [
+"Île-de-France"
+],
+"AUBIERE": [
+"Auvergne-Rhône-Alpes"
+],
+"AUCH": [
+"Occitanie"
+],
+"AUCHEL": [
+"Hauts-de-France"
+],
+"AUDE": [
+"Occitanie"
+],
+"AUDINCOURT": [
+"Bourgogne-Franche-Comté"
+],
+"AULNAY-SOUS-BOIS": [
+"Île-de-France"
+],
+"AURAY": [
+"Bretagne"
+],
+"AURILLAC": [
+"Auvergne-Rhône-Alpes"
+],
+"AURIOL": [
+"Provence-Alpes-Côte d'Azur"
+],
+"AUTUN": [
+"Bourgogne-Franche-Comté"
+],
+"AUXERRE": [
+"Bourgogne-Franche-Comté"
+],
+"AVEYRON": [
+"Occitanie"
+],
+"AVIGNON": [
+"Provence-Alpes-Côte d'Azur"
+],
+"AVION": [
+"Hauts-de-France"
+],
+"AVON": [
+"Île-de-France"
+],
+"AVRANCHES": [
+"Normandie"
+],
+"AVRILLE": [
+"Pays de la Loire"
+],
+"Alsace": [
+"Grand Est"
+],
+"Aquitaine": [
+"Nouvelle-Aquitaine"
+],
+"Auvergne": [
+"Auvergne-Rhône-Alpes"
+],
+"Auvergne-Rhône-Alpes": [
+"Auvergne-Rhône-Alpes"
+],
+"BAGNEUX": [
+"Île-de-France"
+],
+"BAGNOLET": [
+"Île-de-France"
+],
+"BAGNOLS-SUR-CEZE": [
+"Occitanie"
+],
+"BAIE-MAHAULT": [
+"Outre-mer"
+],
+"BAILLEUL": [
+"Hauts-de-France"
+],
+"BALMA": [
+"Occitanie"
+],
+"BAR-LE-DUC": [
+"Grand Est"
+],
+"BARENTIN": [
+"Normandie"
+],
+"BAS-RHIN": [
+"Grand Est"
+],
+"BASSE-TERRE": [
+"Outre-mer"
+],
+"BASTIA": [
+"Corse"
+],
+"BAUGE EN ANJOU": [
+"Pays de la Loire"
+],
+"BAYEUX": [
+"Normandie"
+],
+"BAYONNE": [
+"Nouvelle-Aquitaine"
+],
+"BEAUCAIRE": [
+"Occitanie"
+],
+"BEAUMONT": [
+"Auvergne-Rhône-Alpes"
+],
+"BEAUMONT-HAGUE": [
+"Normandie"
+],
+"BEAUNE": [
+"Bourgogne-Franche-Comté"
+],
+"BEAUPREAU-EN-MAUGES": [
+"Pays de la Loire"
+],
+"BEAUSOLEIL": [
+"Provence-Alpes-Côte d'Azur"
+],
+"BEAUVAIS": [
+"Hauts-de-France"
+],
+"BEGLES": [
+"Nouvelle-Aquitaine"
+],
+"BELFORT": [
+"Bourgogne-Franche-Comté"
+],
+"BELLEGARDE-SUR-VALSERINE": [
+"Auvergne-Rhône-Alpes"
+],
+"BELLEVILLE": [
+"Auvergne-Rhône-Alpes"
+],
+"BERCK": [
+"Hauts-de-France"
+],
+"BERGERAC": [
+"Nouvelle-Aquitaine"
+],
+"BERNAY": [
+"Normandie"
+],
+"BERRE-L'ETANG": [
+"Provence-Alpes-Côte d'Azur"
+],
+"BESANCON": [
+"Bourgogne-Franche-Comté"
+],
+"BETHUNE": [
+"Hauts-de-France"
+],
+"BETTON": [
+"Bretagne"
+],
+"BEZIERS": [
+"Occitanie"
+],
+"BEZONS": [
+"Île-de-France"
+],
+"BIARRITZ": [
+"Nouvelle-Aquitaine"
+],
+"BIGANOS": [
+"Nouvelle-Aquitaine"
+],
+"BILLERE": [
+"Nouvelle-Aquitaine"
+],
+"BISCARROSSE": [
+"Nouvelle-Aquitaine"
+],
+"BISCHHEIM": [
+"Grand Est"
+],
+"BISCHWILLER": [
+"Grand Est"
+],
+"BLAGNAC": [
+"Occitanie"
+],
+"BLANQUEFORT": [
+"Nouvelle-Aquitaine"
+],
+"BLOIS": [
+"Centre-Val de Loire"
+],
+"BOBIGNY": [
+"Île-de-France"
+],
+"BOIS-COLOMBES": [
+"Île-de-France"
+],
+"BOIS-D'ARCY": [
+"Île-de-France"
+],
+"BOIS-GUILLAUME": [
+"Normandie"
+],
+"BOISSY-SAINT-LEGER": [
+"Île-de-France"
+],
+"BOLBEC": [
+"Normandie"
+],
+"BOLLENE": [
+"Provence-Alpes-Côte d'Azur"
+],
+"BONDUES": [
+"Hauts-de-France"
+],
+"BONDY": [
+"Île-de-France"
+],
+"BONNEUIL-SUR-MARNE": [
+"Île-de-France"
+],
+"BONNEVILLE": [
+"Auvergne-Rhône-Alpes"
+],
+"BORDEAUX": [
+"Nouvelle-Aquitaine"
+],
+"BOUC-BEL-AIR": [
+"Provence-Alpes-Côte d'Azur"
+],
+"BOUCHES-DU-RHÔNE": [
+"Provence-Alpes-Côte d'Azur"
+],
+"BOUGUENAIS": [
+"Pays de la Loire"
+],
+"BOULOGNE-BILLANCOURT": [
+"Île-de-France"
+],
+"BOULOGNE-SUR-MER": [
+"Hauts-de-France"
+],
+"BOURG-DE-PEAGE": [
+"Auvergne-Rhône-Alpes"
+],
+"BOURG-EN-BRESSE": [
+"Auvergne-Rhône-Alpes"
+],
+"BOURG-LA-REINE": [
+"Île-de-France"
+],
+"BOURG-LES-VALENCE": [
+"Auvergne-Rhône-Alpes"
+],
+"BOURGES": [
+"Centre-Val de Loire"
+],
+"BOURGOIN-JALLIEU": [
+"Auvergne-Rhône-Alpes"
+],
+"BRAS-PANON": [
+"Outre-mer"
+],
+"BRESSUIRE": [
+"Nouvelle-Aquitaine"
+],
+"BREST": [
+"Bretagne"
+],
+"BRETIGNY-SUR-ORGE": [
+"Île-de-France"
+],
+"BRIANCON": [
+"Provence-Alpes-Côte d'Azur"
+],
+"BRIE-COMTE-ROBERT": [
+"Île-de-France"
+],
+"BRIGNAIS": [
+"Auvergne-Rhône-Alpes"
+],
+"BRIGNOLES": [
+"Provence-Alpes-Côte d'Azur"
+],
+"BRISSAC-QUINCE": [
+"Pays de la Loire"
+],
+"BRIVE-LA-GAILLARDE": [
+"Nouvelle-Aquitaine"
+],
+"BRON": [
+"Auvergne-Rhône-Alpes"
+],
+"BRUAY-LA-BUISSIERE": [
+"Hauts-de-France"
+],
+"BRUAY-SUR-L'ESCAUT": [
+"Hauts-de-France"
+],
+"BRUGES": [
+"Nouvelle-Aquitaine"
+],
+"BRUNOY": [
+"Île-de-France"
+],
+"BRUZ": [
+"Bretagne"
+],
+"BRY-SUR-MARNE": [
+"Île-de-France"
+],
+"BULLY-LES-MINES": [
+"Hauts-de-France"
+],
+"BUSSY-SAINT-GEORGES": [
+"Île-de-France"
+],
+"BUXEROLLES": [
+"Nouvelle-Aquitaine"
+],
+"Basse-Normandie": [
+"Normandie"
+],
+"Bourgogne": [
+"Bourgogne-Franche-Comté"
+],
+"Bourgogne-Franche-Comté": [
+"Bourgogne-Franche-Comté"
+],
+"Bretagne": [
+"Bretagne"
+],
+"CACHAN": [
+"Île-de-France"
+],
+"CAEN": [
+"Normandie"
+],
+"CAGNES-SUR-MER": [
+"Provence-Alpes-Côte d'Azur"
+],
+"CAHORS": [
+"Occitanie"
+],
+"CALAIS": [
+"Hauts-de-France"
+],
+"CALUIRE-ET-CUIRE": [
+"Auvergne-Rhône-Alpes"
+],
+"CALVADOS": [
+"Normandie"
+],
+"CAMBRAI": [
+"Hauts-de-France"
+],
+"CANET-EN-ROUSSILLON": [
+"Occitanie"
+],
+"CANNES": [
+"Provence-Alpes-Côte d'Azur"
+],
+"CANTAL": [
+"Auvergne-Rhône-Alpes"
+],
+"CANTELEU": [
+"Normandie"
+],
+"CAPESTERRE-BELLE-EAU": [
+"Outre-mer"
+],
+"CARCASSONNE": [
+"Occitanie"
+],
+"CARPENTRAS": [
+"Provence-Alpes-Côte d'Azur"
+],
+"CARQUEFOU": [
+"Pays de la Loire"
+],
+"CARRIERES-SOUS-POISSY": [
+"Île-de-France"
+],
+"CARRIERES-SUR-SEINE": [
+"Île-de-France"
+],
+"CARROS": [
+"Provence-Alpes-Côte d'Azur"
+],
+"CARVIN": [
+"Hauts-de-France"
+],
+"CASTANET-TOLOSAN": [
+"Occitanie"
+],
+"CASTELGINEST": [
+"Occitanie"
+],
+"CASTELNAU-LE-LEZ": [
+"Occitanie"
+],
+"CASTELNAUDARY": [
+"Occitanie"
+],
+"CASTELSARRASIN": [
+"Occitanie"
+],
+"CASTRES": [
+"Occitanie"
+],
+"CAUDEBEC-LES-ELBEUF": [
+"Normandie"
+],
+"CAUDRY": [
+"Hauts-de-France"
+],
+"CAVAILLON": [
+"Provence-Alpes-Côte d'Azur"
+],
+"CAYENNE": [
+"Outre-mer"
+],
+"CENON": [
+"Nouvelle-Aquitaine"
+],
+"CERGY": [
+"Île-de-France"
+],
+"CERNAY": [
+"Grand Est"
+],
+"CESSON": [
+"Île-de-France"
+],
+"CESSON-SEVIGNE": [
+"Bretagne"
+],
+"CESTAS": [
+"Nouvelle-Aquitaine"
+],
+"CHALETTE-SUR-LOING": [
+"Centre-Val de Loire"
+],
+"CHALLANS": [
+"Pays de la Loire"
+],
+"CHALON-SUR-SAONE": [
+"Bourgogne-Franche-Comté"
+],
+"CHALONS-EN-CHAMPAGNE": [
+"Grand Est"
+],
+"CHAMALIERES": [
+"Auvergne-Rhône-Alpes"
+],
+"CHAMBERY": [
+"Auvergne-Rhône-Alpes"
+],
+"CHAMBLY": [
+"Hauts-de-France"
+],
+"CHAMBRAY-LES-TOURS": [
+"Centre-Val de Loire"
+],
+"CHAMPIGNY-SUR-MARNE": [
+"Île-de-France"
+],
+"CHAMPS-SUR-MARNE": [
+"Île-de-France"
+],
+"CHANTELOUP-LES-VIGNES": [
+"Île-de-France"
+],
+"CHANTEPIE": [
+"Bretagne"
+],
+"CHANTILLY": [
+"Hauts-de-France"
+],
+"CHARENTE": [
+"Nouvelle-Aquitaine"
+],
+"CHARENTE-MARITIME": [
+"Nouvelle-Aquitaine"
+],
+"CHARENTON-LE-PONT": [
+"Île-de-France"
+],
+"CHARLEVILLE-MEZIERES": [
+"Grand Est"
+],
+"CHARTRES": [
+"Centre-Val de Loire"
+],
+"CHASSIEU": [
+"Auvergne-Rhône-Alpes"
+],
+"CHATEAU-GONTIER": [
+"Pays de la Loire"
+],
+"CHATEAU-THIERRY": [
+"Hauts-de-France"
+],
+"CHATEAUBRIANT": [
+"Pays de la Loire"
+],
+"CHATEAUDUN": [
+"Centre-Val de Loire"
+],
+"CHATEAUNEUF-LES-MARTIGUES": [
+"Provence-Alpes-Côte d'Azur"
+],
+"CHATEAURENARD": [
+"Provence-Alpes-Côte d'Azur"
+],
+"CHATEAUROUX": [
+"Centre-Val de Loire"
+],
+"CHATELLERAULT": [
+"Nouvelle-Aquitaine"
+],
+"CHATENAY-MALABRY": [
+"Île-de-France"
+],
+"CHATILLON": [
+"Île-de-France"
+],
+"CHATOU": [
+"Île-de-France"
+],
+"CHAUMONT": [
+"Grand Est"
+],
+"CHAUNY": [
+"Hauts-de-France"
+],
+"CHAVILLE": [
+"Île-de-France"
+],
+"CHELLES": [
+"Île-de-France"
+],
+"CHEMILLE-EN-ANJOU": [
+"Pays de la Loire"
+],
+"CHENNEVIERES-SUR-MARNE": [
+"Île-de-France"
+],
+"CHENOVE": [
+"Bourgogne-Franche-Comté"
+],
+"CHER": [
+"Centre-Val de Loire"
+],
+"CHERBOURG-EN-COTENTIN": [
+"Normandie"
+],
+"CHEVIGNY-SAINT-SAUVEUR": [
+"Bourgogne-Franche-Comté"
+],
+"CHEVILLY-LARUE": [
+"Île-de-France"
+],
+"CHILLY-MAZARIN": [
+"Île-de-France"
+],
+"CHOISY-LE-ROI": [
+"Île-de-France"
+],
+"CHOLET": [
+"Pays de la Loire"
+],
+"CLAMART": [
+"Île-de-France"
+],
+"CLAYE-SOUILLY": [
+"Île-de-France"
+],
+"CLERMONT": [
+"Hauts-de-France"
+],
+"CLERMONT-FERRAND": [
+"Auvergne-Rhône-Alpes"
+],
+"CLICHY": [
+"Île-de-France"
+],
+"CLICHY-SOUS-BOIS": [
+"Île-de-France"
+],
+"CLUSES": [
+"Auvergne-Rhône-Alpes"
+],
+"COGNAC": [
+"Nouvelle-Aquitaine"
+],
+"COGOLIN": [
+"Provence-Alpes-Côte d'Azur"
+],
+"COLMAR": [
+"Grand Est"
+],
+"COLOMBES": [
+"Île-de-France"
+],
+"COLOMIERS": [
+"Occitanie"
+],
+"COMBS-LA-VILLE": [
+"Île-de-France"
+],
+"COMINES": [
+"Hauts-de-France"
+],
+"COMPIEGNE": [
+"Hauts-de-France"
+],
+"CONCARNEAU": [
+"Bretagne"
+],
+"CONFLANS-SAINTE-HONORINE": [
+"Île-de-France"
+],
+"CORBAS": [
+"Auvergne-Rhône-Alpes"
+],
+"CORBEIL-ESSONNES": [
+"Île-de-France"
+],
+"CORMEILLES-EN-PARISIS": [
+"Île-de-France"
+],
+"CORREZE": [
+"Nouvelle-Aquitaine"
+],
+"CORSE-DU-SUD": [
+"Corse"
+],
+"COSNE-COURS-SUR-LOIRE": [
+"Bourgogne-Franche-Comté"
+],
+"COTE-D'OR": [
+"Bourgogne-Franche-Comté"
+],
+"COTES-D'ARMOR": [
+"Bretagne"
+],
+"COUDEKERQUE-BRANCHE": [
+"Hauts-de-France"
+],
+"COUERON": [
+"Pays de la Loire"
+],
+"COULOMMIERS": [
+"Île-de-France"
+],
+"COURBEVOIE": [
+"Île-de-France"
+],
+"COURNON-D'AUVERGNE": [
+"Auvergne-Rhône-Alpes"
+],
+"COURRIERES": [
+"Hauts-de-France"
+],
+"CRAPONNE": [
+"Auvergne-Rhône-Alpes"
+],
+"CREIL": [
+"Hauts-de-France"
+],
+"CREPY-EN-VALOIS": [
+"Hauts-de-France"
+],
+"CRETEIL": [
+"Île-de-France"
+],
+"CREUSE": [
+"Nouvelle-Aquitaine"
+],
+"CREUTZWALD": [
+"Grand Est"
+],
+"CROIX": [
+"Hauts-de-France"
+],
+"CUERS": [
+"Provence-Alpes-Côte d'Azur"
+],
+"CUGNAUX": [
+"Occitanie"
+],
+"CUSSET": [
+"Auvergne-Rhône-Alpes"
+],
+"Centre-Val de Loire": [
+"Centre-Val de Loire"
+],
+"Champagne-Ardenne": [
+"Grand Est"
+],
+"Corse": [
+"Corse"
+],
+"DAMMARIE-LES-LYS": [
+"Île-de-France"
+],
+"DAX": [
+"Nouvelle-Aquitaine"
+],
+"DECINES-CHARPIEU": [
+"Auvergne-Rhône-Alpes"
+],
+"DENAIN": [
+"Hauts-de-France"
+],
+"DEUIL-LA-BARRE": [
+"Île-de-France"
+],
+"DEUX-SEVRES": [
+"Nouvelle-Aquitaine"
+],
+"DEVILLE-LES-ROUEN": [
+"Normandie"
+],
+"DIEPPE": [
+"Normandie"
+],
+"DIGNE-LES-BAINS": [
+"Provence-Alpes-Côte d'Azur"
+],
+"DIJON": [
+"Bourgogne-Franche-Comté"
+],
+"DINAN": [
+"Bretagne"
+],
+"DINARD": [
+"Bretagne"
+],
+"DOLE": [
+"Bourgogne-Franche-Comté"
+],
+"DOMONT": [
+"Île-de-France"
+],
+"DORDOGNE": [
+"Nouvelle-Aquitaine"
+],
+"DOUAI": [
+"Hauts-de-France"
+],
+"DOUARNENEZ": [
+"Bretagne"
+],
+"DOUBS": [
+"Bourgogne-Franche-Comté"
+],
+"DOUCHY-LES-MINES": [
+"Hauts-de-France"
+],
+"DOUE-LA-FONTAINE": [
+"Pays de la Loire"
+],
+"DOURDAN": [
+"Île-de-France"
+],
+"DRAGUIGNAN": [
+"Provence-Alpes-Côte d'Azur"
+],
+"DRANCY": [
+"Île-de-France"
+],
+"DRAVEIL": [
+"Île-de-France"
+],
+"DREUX": [
+"Centre-Val de Loire"
+],
+"DROME": [
+"Auvergne-Rhône-Alpes"
+],
+"DUCOS": [
+"Outre-mer"
+],
+"DUGNY": [
+"Île-de-France"
+],
+"DUNKERQUE": [
+"Hauts-de-France"
+],
+"EAUBONNE": [
+"Île-de-France"
+],
+"ECHIROLLES": [
+"Auvergne-Rhône-Alpes"
+],
+"ECULLY": [
+"Auvergne-Rhône-Alpes"
+],
+"ELANCOURT": [
+"Île-de-France"
+],
+"ELBEUF": [
+"Normandie"
+],
+"ENGHIEN-LES-BAINS": [
+"Île-de-France"
+],
+"EPERNAY": [
+"Grand Est"
+],
+"EPINAL": [
+"Grand Est"
+],
+"EPINAY-SOUS-SENART": [
+"Île-de-France"
+],
+"EPINAY-SUR-ORGE": [
+"Île-de-France"
+],
+"EPINAY-SUR-SEINE": [
+"Île-de-France"
+],
+"ERAGNY": [
+"Île-de-France"
+],
+"ERMONT": [
+"Île-de-France"
+],
+"ERSTEIN": [
+"Grand Est"
+],
+"ESSONNE": [
+"Île-de-France"
+],
+"ETAMPES": [
+"Île-de-France"
+],
+"ETAPLES": [
+"Hauts-de-France"
+],
+"EURE": [
+"Normandie"
+],
+"EURE-ET-LOIR": [
+"Centre-Val de Loire"
+],
+"EVREUX": [
+"Normandie"
+],
+"EVRY": [
+"Île-de-France"
+],
+"EYBENS": [
+"Auvergne-Rhône-Alpes"
+],
+"EYSINES": [
+"Nouvelle-Aquitaine"
+],
+"FACHES-THUMESNIL": [
+"Hauts-de-France"
+],
+"FAMECK": [
+"Grand Est"
+],
+"FECAMP": [
+"Normandie"
+],
+"FINISTERE": [
+"Bretagne"
+],
+"FIRMINY": [
+"Auvergne-Rhône-Alpes"
+],
+"FLERS": [
+"Normandie"
+],
+"FLEURY-LES-AUBRAIS": [
+"Centre-Val de Loire"
+],
+"FLEURY-MEROGIS": [
+"Île-de-France"
+],
+"FLOIRAC": [
+"Nouvelle-Aquitaine"
+],
+"FLORANGE": [
+"Grand Est"
+],
+"FONDETTES": [
+"Centre-Val de Loire"
+],
+"FONSORBES": [
+"Occitanie"
+],
+"FONTAINE": [
+"Auvergne-Rhône-Alpes"
+],
+"FONTAINEBLEAU": [
+"Île-de-France"
+],
+"FONTENAY-AUX-ROSES": [
+"Île-de-France"
+],
+"FONTENAY-LE-COMTE": [
+"Pays de la Loire"
+],
+"FONTENAY-LE-FLEURY": [
+"Île-de-France"
+],
+"FONTENAY-SOUS-BOIS": [
+"Île-de-France"
+],
+"FORBACH": [
+"Grand Est"
+],
+"FORT-DE-FRANCE": [
+"Outre-mer"
+],
+"FOS-SUR-MER": [
+"Provence-Alpes-Côte d'Azur"
+],
+"FOUGERES": [
+"Bretagne"
+],
+"FOURMIES": [
+"Hauts-de-France"
+],
+"FRANCHEVILLE": [
+"Auvergne-Rhône-Alpes"
+],
+"FRANCONVILLE": [
+"Île-de-France"
+],
+"FREJUS": [
+"Provence-Alpes-Côte d'Azur"
+],
+"FRESNES": [
+"Île-de-France"
+],
+"FREYMING-MERLEBACH": [
+"Grand Est"
+],
+"FRONTIGNAN": [
+"Occitanie"
+],
+"Franche-Comté": [
+"Bourgogne-Franche-Comté"
+],
+"GAGNY": [
+"Île-de-France"
+],
+"GAILLAC": [
+"Occitanie"
+],
+"GAILLARD": [
+"Auvergne-Rhône-Alpes"
+],
+"GAP": [
+"Provence-Alpes-Côte d'Azur"
+],
+"GARCHES": [
+"Île-de-France"
+],
+"GARD": [
+"Occitanie"
+],
+"GARDANNE": [
+"Provence-Alpes-Côte d'Azur"
+],
+"GARGES-LES-GONESSE": [
+"Île-de-France"
+],
+"GENAS": [
+"Auvergne-Rhône-Alpes"
+],
+"GENNEVILLIERS": [
+"Île-de-France"
+],
+"GENTILLY": [
+"Île-de-France"
+],
+"GERS": [
+"Occitanie"
+],
+"GERZAT": [
+"Auvergne-Rhône-Alpes"
+],
+"GEX": [
+"Auvergne-Rhône-Alpes"
+],
+"GIEN": [
+"Centre-Val de Loire"
+],
+"GIF-SUR-YVETTE": [
+"Île-de-France"
+],
+"GIRONDE": [
+"Nouvelle-Aquitaine"
+],
+"GISORS": [
+"Normandie"
+],
+"GIVORS": [
+"Auvergne-Rhône-Alpes"
+],
+"GONESSE": [
+"Île-de-France"
+],
+"GOUSSAINVILLE": [
+"Île-de-France"
+],
+"GRADIGNAN": [
+"Nouvelle-Aquitaine"
+],
+"GRANDE-SYNTHE": [
+"Hauts-de-France"
+],
+"GRANVILLE": [
+"Normandie"
+],
+"GRASSE": [
+"Provence-Alpes-Côte d'Azur"
+],
+"GRAULHET": [
+"Occitanie"
+],
+"GRAVELINES": [
+"Hauts-de-France"
+],
+"GRENOBLE": [
+"Auvergne-Rhône-Alpes"
+],
+"GRIGNY": [
+"Île-de-France"
+],
+"GUADELOUPE": [
+"Outre-mer"
+],
+"GUEBWILLER": [
+"Grand Est"
+],
+"GUERANDE": [
+"Pays de la Loire"
+],
+"GUERET": [
+"Nouvelle-Aquitaine"
+],
+"GUIDEL": [
+"Bretagne"
+],
+"GUILHERAND-GRANGES": [
+"Auvergne-Rhône-Alpes"
+],
+"GUIPAVAS": [
+"Bretagne"
+],
+"GUJAN-MESTRAS": [
+"Nouvelle-Aquitaine"
+],
+"GUYANCOURT": [
+"Île-de-France"
+],
+"GUYANE": [
+"Outre-mer"
+],
+"Grand Est": [
+"Grand Est"
+],
+"HAGUENAU": [
+"Grand Est"
+],
+"HALLUIN": [
+"Hauts-de-France"
+],
+"HARNES": [
+"Hauts-de-France"
+],
+"HAUBOURDIN": [
+"Hauts-de-France"
+],
+"HAUT-RHIN": [
+"Grand Est"
+],
+"HAUTE-CORSE": [
+"Corse"
+],
+"HAUTE-GARONNE": [
+"Occitanie"
+],
+"HAUTE-LOIRE": [
+"Auvergne-Rhône-Alpes"
+],
+"HAUTE-MARNE": [
+"Grand Est"
+],
+"HAUTE-SAONE": [
+"Bourgogne-Franche-Comté"
+],
+"HAUTE-SAVOIE": [
+"Auvergne-Rhône-Alpes"
+],
+"HAUTE-VIENNE": [
+"Nouvelle-Aquitaine"
+],
+"HAUTES-ALPES": [
+"Provence-Alpes-Côte d'Azur"
+],
+"HAUTES-PYRENEES": [
+"Occitanie"
+],
+"HAUTMONT": [
+"Hauts-de-France"
+],
+"HAUTS-DE-SEINE": [
+"Île-de-France"
+],
+"HAYANGE": [
+"Grand Est"
+],
+"HAZEBROUCK": [
+"Hauts-de-France"
+],
+"HEM": [
+"Hauts-de-France"
+],
+"HENDAYE": [
+"Nouvelle-Aquitaine"
+],
+"HENIN-BEAUMONT": [
+"Hauts-de-France"
+],
+"HENNEBONT": [
+"Bretagne"
+],
+"HERAULT": [
+"Occitanie"
+],
+"HERBLAY": [
+"Île-de-France"
+],
+"HERICOURT": [
+"Bourgogne-Franche-Comté"
+],
+"HEROUVILLE-SAINT-CLAIR": [
+"Normandie"
+],
+"HOENHEIM": [
+"Grand Est"
+],
+"HOUILLES": [
+"Île-de-France"
+],
+"HYERES": [
+"Provence-Alpes-Côte d'Azur"
+],
+"Haute-Normandie": [
+"Normandie"
+],
+"Hauts-de-France": [
+"Hauts-de-France"
+],
+"IDF": [
+"Île-de-France"
+],
+"IFS": [
+"Normandie"
+],
+"ILLE-ET-VILAINE": [
+"Bretagne"
+],
+"ILLKIRCH-GRAFFENSTADEN": [
+"Grand Est"
+],
+"ILLZACH": [
+"Grand Est"
+],
+"INDRE": [
+"Centre-Val de Loire"
+],
+"INDRE-ET-LOIRE": [
+"Centre-Val de Loire"
+],
+"ISERE": [
+"Auvergne-Rhône-Alpes"
+],
+"ISSOIRE": [
+"Auvergne-Rhône-Alpes"
+],
+"ISSOUDUN": [
+"Centre-Val de Loire"
+],
+"ISSY-LES-MOULINEAUX": [
+"Île-de-France"
+],
+"ISTRES": [
+"Provence-Alpes-Côte d'Azur"
+],
+"IVRY-SUR-SEINE": [
+"Île-de-France"
+],
+"JEUMONT": [
+"Hauts-de-France"
+],
+"JOINVILLE-LE-PONT": [
+"Île-de-France"
+],
+"JOUE-LES-TOURS": [
+"Centre-Val de Loire"
+],
+"JOUY-LE-MOUTIER": [
+"Île-de-France"
+],
+"JURA": [
+"Bourgogne-Franche-Comté"
+],
+"JUVIGNAC": [
+"Occitanie"
+],
+"JUVISY-SUR-ORGE": [
+"Île-de-France"
+],
+"KINGERSHEIM": [
+"Grand Est"
+],
+"KOUROU": [
+"Outre-mer"
+],
+"L'ETANG-SALE": [
+"Outre-mer"
+],
+"L'HAY-LES-ROSES": [
+"Île-de-France"
+],
+"L'ISLE-ADAM": [
+"Île-de-France"
+],
+"L'ISLE-D'ABEAU": [
+"Auvergne-Rhône-Alpes"
+],
+"L'ISLE-SUR-LA-SORGUE": [
+"Provence-Alpes-Côte d'Azur"
+],
+"L'UNION": [
+"Occitanie"
+],
+"LA BAULE-ESCOUBLAC": [
+"Pays de la Loire"
+],
+"LA CELLE-SAINT-CLOUD": [
+"Île-de-France"
+],
+"LA CHAPELLE-SAINT-LUC": [
+"Grand Est"
+],
+"LA CHAPELLE-SAINT-MESMIN": [
+"Centre-Val de Loire"
+],
+"LA CHAPELLE-SUR-ERDRE": [
+"Pays de la Loire"
+],
+"LA CIOTAT": [
+"Provence-Alpes-Côte d'Azur"
+],
+"LA COURNEUVE": [
+"Île-de-France"
+],
+"LA CRAU": [
+"Provence-Alpes-Côte d'Azur"
+],
+"LA FLECHE": [
+"Pays de la Loire"
+],
+"LA GARDE": [
+"Provence-Alpes-Côte d'Azur"
+],
+"LA GARENNE-COLOMBES": [
+"Île-de-France"
+],
+"LA LONDE-LES-MAURES": [
+"Provence-Alpes-Côte d'Azur"
+],
+"LA MADELEINE": [
+"Hauts-de-France"
+],
+"LA MOTTE-SERVOLEX": [
+"Auvergne-Rhône-Alpes"
+],
+"LA POSSESSION": [
+"Outre-mer"
+],
+"LA QUEUE-EN-BRIE": [
+"Île-de-France"
+],
+"LA RICHE": [
+"Centre-Val de Loire"
+],
+"LA ROCHE-SUR-FORON": [
+"Auvergne-Rhône-Alpes"
+],
+"LA ROCHE-SUR-YON": [
+"Pays de la Loire"
+],
+"LA ROCHELLE": [
+"Nouvelle-Aquitaine"
+],
+"LA SEYNE-SUR-MER": [
+"Provence-Alpes-Côte d'Azur"
+],
+"LA TESTE DE BUCH": [
+"Nouvelle-Aquitaine"
+],
+"LA TRINITE": [
+"Outre-mer",
+"Provence-Alpes-Côte d'Azur"
+],
+"LA VALETTE-DU-VAR": [
+"Provence-Alpes-Côte d'Azur"
+],
+"LAGNY-SUR-MARNE": [
+"Île-de-France"
+],
+"LAMBALLE": [
+"Bretagne"
+],
+"LAMBERSART": [
+"Hauts-de-France"
+],
+"LAMENTIN": [
+"Outre-mer"
+],
+"LANDERNEAU": [
+"Bretagne"
+],
+"LANDES": [
+"Nouvelle-Aquitaine"
+],
+"LANESTER": [
+"Bretagne"
+],
+"LANNION": [
+"Bretagne"
+],
+"LAON": [
+"Hauts-de-France"
+],
+"LATTES": [
+"Occitanie"
+],
+"LAVAL": [
+"Pays de la Loire"
+],
+"LAVAUR": [
+"Occitanie"
+],
+"LAXOU": [
+"Grand Est"
+],
+"LE BLANC-MESNIL": [
+"Île-de-France"
+],
+"LE BOURGET": [
+"Île-de-France"
+],
+"LE BOUSCAT": [
+"Nouvelle-Aquitaine"
+],
+"LE CANNET": [
+"Provence-Alpes-Côte d'Azur"
+],
+"LE CHAMBON-FEUGEROLLES": [
+"Auvergne-Rhône-Alpes"
+],
+"LE CHESNAY": [
+"Île-de-France"
+],
+"LE CREUSOT": [
+"Bourgogne-Franche-Comté"
+],
+"LE FRANCOIS": [
+"Outre-mer"
+],
+"LE GOSIER": [
+"Outre-mer"
+],
+"LE GRAND-QUEVILLY": [
+"Normandie"
+],
+"LE HAILLAN": [
+"Nouvelle-Aquitaine"
+],
+"LE HAVRE": [
+"Normandie"
+],
+"LE KREMLIN-BICETRE": [
+"Île-de-France"
+],
+"LE LAMENTIN": [
+"Outre-mer"
+],
+"LE LUC": [
+"Provence-Alpes-Côte d'Azur"
+],
+"LE MANS": [
+"Pays de la Loire"
+],
+"LE MEE-SUR-SEINE": [
+"Île-de-France"
+],
+"LE MOULE": [
+"Outre-mer"
+],
+"LE PECQ": [
+"Île-de-France"
+],
+"LE PERREUX-SUR-MARNE": [
+"Île-de-France"
+],
+"LE PETIT-QUEVILLY": [
+"Normandie"
+],
+"LE PLESSIS-ROBINSON": [
+"Île-de-France"
+],
+"LE PLESSIS-TREVISE": [
+"Île-de-France"
+],
+"LE PONT-DE-CLAIX": [
+"Auvergne-Rhône-Alpes"
+],
+"LE PONTET": [
+"Provence-Alpes-Côte d'Azur"
+],
+"LE PORT": [
+"Outre-mer"
+],
+"LE PRADET": [
+"Provence-Alpes-Côte d'Azur"
+],
+"LE PRE-SAINT-GERVAIS": [
+"Île-de-France"
+],
+"LE PUY-EN-VELAY": [
+"Auvergne-Rhône-Alpes"
+],
+"LE RAINCY": [
+"Île-de-France"
+],
+"LE RELECQ-KERHUON": [
+"Bretagne"
+],
+"LE ROBERT": [
+"Outre-mer"
+],
+"LE TAILLAN-MEDOC": [
+"Nouvelle-Aquitaine"
+],
+"LE TAMPON": [
+"Outre-mer"
+],
+"LE VESINET": [
+"Île-de-France"
+],
+"LENS": [
+"Hauts-de-France"
+],
+"LEOGNAN": [
+"Nouvelle-Aquitaine"
+],
+"LES ABYMES": [
+"Outre-mer"
+],
+"LES AVIRONS": [
+"Outre-mer"
+],
+"LES CLAYES-SOUS-BOIS": [
+"Île-de-France"
+],
+"LES HERBIERS": [
+"Pays de la Loire"
+],
+"LES LILAS": [
+"Île-de-France"
+],
+"LES MUREAUX": [
+"Île-de-France"
+],
+"LES PAVILLONS-SOUS-BOIS": [
+"Île-de-France"
+],
+"LES PENNES-MIRABEAU": [
+"Provence-Alpes-Côte d'Azur"
+],
+"LES PONTS-DE-CE": [
+"Pays de la Loire"
+],
+"LES SABLES-D'OLONNE": [
+"Pays de la Loire"
+],
+"LES ULIS": [
+"Île-de-France"
+],
+"LEVALLOIS-PERRET": [
+"Île-de-France"
+],
+"LEZIGNAN-CORBIERES": [
+"Occitanie"
+],
+"LIBOURNE": [
+"Nouvelle-Aquitaine"
+],
+"LIEUSAINT": [
+"Île-de-France"
+],
+"LIEVIN": [
+"Hauts-de-France"
+],
+"LILLE": [
+"Hauts-de-France"
+],
+"LILLERS": [
+"Hauts-de-France"
+],
+"LIMAY": [
+"Île-de-France"
+],
+"LIMEIL-BREVANNES": [
+"Île-de-France"
+],
+"LIMOGES": [
+"Nouvelle-Aquitaine"
+],
+"LIMOUX": [
+"Occitanie"
+],
+"LINGOLSHEIM": [
+"Grand Est"
+],
+"LISIEUX": [
+"Normandie"
+],
+"LIVRY-GARGAN": [
+"Île-de-France"
+],
+"LOGNES": [
+"Île-de-France"
+],
+"LOIR-ET-CHER": [
+"Centre-Val de Loire"
+],
+"LOIRE": [
+"Auvergne-Rhône-Alpes"
+],
+"LOIRE-ATLANTIQUE": [
+"Pays de la Loire"
+],
+"LOIRE-AUTHION": [
+"Pays de la Loire"
+],
+"LOIRET": [
+"Centre-Val de Loire"
+],
+"LONGJUMEAU": [
+"Île-de-France"
+],
+"LONGUENESSE": [
+"Hauts-de-France"
+],
+"LONGWY": [
+"Grand Est"
+],
+"LONS": [
+"Nouvelle-Aquitaine"
+],
+"LONS-LE-SAUNIER": [
+"Bourgogne-Franche-Comté"
+],
+"LOOS": [
+"Hauts-de-France"
+],
+"LORIENT": [
+"Bretagne"
+],
+"LORMONT": [
+"Nouvelle-Aquitaine"
+],
+"LOT": [
+"Occitanie"
+],
+"LOT-ET-GARONNE": [
+"Nouvelle-Aquitaine"
+],
+"LOURDES": [
+"Occitanie"
+],
+"LOUVIERS": [
+"Normandie"
+],
+"LOUVRES": [
+"Île-de-France"
+],
+"LOZERE": [
+"Occitanie"
+],
+"LUCE": [
+"Centre-Val de Loire"
+],
+"LUNEL": [
+"Occitanie"
+],
+"LUNEVILLE": [
+"Grand Est"
+],
+"LYON": [
+"Auvergne-Rhône-Alpes"
+],
+"LYS-LEZ-LANNOY": [
+"Hauts-de-France"
+],
+"Languedoc-Roussillon": [
+"Occitanie"
+],
+"Limousin": [
+"Nouvelle-Aquitaine"
+],
+"Lorraine": [
+"Grand Est"
+],
+"MACON": [
+"Bourgogne-Franche-Comté"
+],
+"MACOURIA": [
+"Outre-mer"
+],
+"MAINE-ET-LOIRE": [
+"Pays de la Loire"
+],
+"MAINVILLIERS": [
+"Centre-Val de Loire"
+],
+"MAISONS-ALFORT": [
+"Île-de-France"
+],
+"MAISONS-LAFFITTE": [
+"Île-de-France"
+],
+"MAIZIERES-LES-METZ": [
+"Grand Est"
+],
+"MALAKOFF": [
+"Île-de-France"
+],
+"MANA": [
+"Outre-mer"
+],
+"MANCHE": [
+"Normandie"
+],
+"MANDELIEU-LA-NAPOULE": [
+"Provence-Alpes-Côte d'Azur"
+],
+"MANOSQUE": [
+"Provence-Alpes-Côte d'Azur"
+],
+"MANTES-LA-JOLIE": [
+"Île-de-France"
+],
+"MANTES-LA-VILLE": [
+"Île-de-France"
+],
+"MARCK": [
+"Hauts-de-France"
+],
+"MARCQ-EN-BAROEUL": [
+"Hauts-de-France"
+],
+"MARIGNANE": [
+"Provence-Alpes-Côte d'Azur"
+],
+"MARIPASOULA": [
+"Outre-mer"
+],
+"MARLY": [
+"Grand Est",
+"Hauts-de-France"
+],
+"MARLY-LE-ROI": [
+"Île-de-France"
+],
+"MARMANDE": [
+"Nouvelle-Aquitaine"
+],
+"MARNE": [
+"Grand Est"
+],
+"MAROMME": [
+"Normandie"
+],
+"MARQUETTE-LEZ-LILLE": [
+"Hauts-de-France"
+],
+"MARSEILLE": [
+"Provence-Alpes-Côte d'Azur"
+],
+"MARTIGUES": [
+"Provence-Alpes-Côte d'Azur"
+],
+"MARTINIQUE": [
+"Outre-mer"
+],
+"MASSY": [
+"Île-de-France"
+],
+"MATOURY": [
+"Outre-mer"
+],
+"MAUBEUGE": [
+"Hauts-de-France"
+],
+"MAUGES-SUR-LOIRE": [
+"Pays de la Loire"
+],
+"MAUGUIO": [
+"Occitanie"
+],
+"MAUREPAS": [
+"Île-de-France"
+],
+"MAYENNE": [
+"Pays de la Loire"
+],
+"MAYOTTE": [
+"Outre-mer"
+],
+"MEAUX": [
+"Île-de-France"
+],
+"MELUN": [
+"Île-de-France"
+],
+"MENDE": [
+"Occitanie"
+],
+"MENNECY": [
+"Île-de-France"
+],
+"MENTON": [
+"Provence-Alpes-Côte d'Azur"
+],
+"MERICOURT": [
+"Hauts-de-France"
+],
+"MERIGNAC": [
+"Nouvelle-Aquitaine"
+],
+"MERU": [
+"Hauts-de-France"
+],
+"METZ": [
+"Grand Est"
+],
+"MEUDON": [
+"Île-de-France"
+],
+"MEURTHE-ET-MOSELLE": [
+"Grand Est"
+],
+"MEUSE": [
+"Grand Est"
+],
+"MEYLAN": [
+"Auvergne-Rhône-Alpes"
+],
+"MEYZIEU": [
+"Auvergne-Rhône-Alpes"
+],
+"MEZE": [
+"Occitanie"
+],
+"MILLAU": [
+"Occitanie"
+],
+"MIONS": [
+"Auvergne-Rhône-Alpes"
+],
+"MIRAMAS": [
+"Provence-Alpes-Côte d'Azur"
+],
+"MITRY-MORY": [
+"Île-de-France"
+],
+"MOISSAC": [
+"Occitanie"
+],
+"MOISSY-CRAMAYEL": [
+"Île-de-France"
+],
+"MONS-EN-BAROEUL": [
+"Hauts-de-France"
+],
+"MONT-DE-MARSAN": [
+"Nouvelle-Aquitaine"
+],
+"MONT-SAINT-AIGNAN": [
+"Normandie"
+],
+"MONTAIGU": [
+"Pays de la Loire"
+],
+"MONTARGIS": [
+"Centre-Val de Loire"
+],
+"MONTATAIRE": [
+"Hauts-de-France"
+],
+"MONTAUBAN": [
+"Occitanie"
+],
+"MONTBELIARD": [
+"Bourgogne-Franche-Comté"
+],
+"MONTBRISON": [
+"Auvergne-Rhône-Alpes"
+],
+"MONTCEAU-LES-MINES": [
+"Bourgogne-Franche-Comté"
+],
+"MONTELIMAR": [
+"Auvergne-Rhône-Alpes"
+],
+"MONTEREAU-FAULT-YONNE": [
+"Île-de-France"
+],
+"MONTESSON": [
+"Île-de-France"
+],
+"MONTEUX": [
+"Provence-Alpes-Côte d'Azur"
+],
+"MONTEVRAIN": [
+"Île-de-France"
+],
+"MONTFERMEIL": [
+"Île-de-France"
+],
+"MONTGERON": [
+"Île-de-France"
+],
+"MONTIGNY-EN-GOHELLE": [
+"Hauts-de-France"
+],
+"MONTIGNY-LE-BRETONNEUX": [
+"Île-de-France"
+],
+"MONTIGNY-LES-CORMEILLES": [
+"Île-de-France"
+],
+"MONTIGNY-LES-METZ": [
+"Grand Est"
+],
+"MONTIVILLIERS": [
+"Normandie"
+],
+"MONTLOUIS-SUR-LOIRE": [
+"Centre-Val de Loire"
+],
+"MONTLUCON": [
+"Auvergne-Rhône-Alpes"
+],
+"MONTMAGNY": [
+"Île-de-France"
+],
+"MONTMORENCY": [
+"Île-de-France"
+],
+"MONTPELLIER": [
+"Occitanie"
+],
+"MONTREUIL": [
+"Île-de-France"
+],
+"MONTREVAULT-SUR-EVRE": [
+"Pays de la Loire"
+],
+"MONTROUGE": [
+"Île-de-France"
+],
+"MORANGIS": [
+"Île-de-France"
+],
+"MORBIHAN": [
+"Bretagne"
+],
+"MORET LOING ET ORVANNE": [
+"Île-de-France"
+],
+"MORLAIX": [
+"Bretagne"
+],
+"MORNE-A-L'EAU": [
+"Outre-mer"
+],
+"MORSANG-SUR-ORGE": [
+"Île-de-France"
+],
+"MOSELLE": [
+"Grand Est"
+],
+"MOUGINS": [
+"Provence-Alpes-Côte d'Azur"
+],
+"MOULINS": [
+"Auvergne-Rhône-Alpes"
+],
+"MOUVAUX": [
+"Hauts-de-France"
+],
+"MULHOUSE": [
+"Grand Est"
+],
+"MURET": [
+"Occitanie"
+],
+"Midi-Pyrénées": [
+"Occitanie"
+],
+"NANCY": [
+"Grand Est"
+],
+"NANTERRE": [
+"Île-de-France"
+],
+"NANTES": [
+"Pays de la Loire"
+],
+"NARBONNE": [
+"Occitanie"
+],
+"NEMOURS": [
+"Île-de-France"
+],
+"NEUILLY-PLAISANCE": [
+"Île-de-France"
+],
+"NEUILLY-SUR-MARNE": [
+"Île-de-France"
+],
+"NEUILLY-SUR-SEINE": [
+"Île-de-France"
+],
+"NEUVILLE-EN-FERRAIN": [
+"Hauts-de-France"
+],
+"NEVERS": [
+"Bourgogne-Franche-Comté"
+],
+"NICE": [
+"Provence-Alpes-Côte d'Azur"
+],
+"NIEVRE": [
+"Bourgogne-Franche-Comté"
+],
+"NIMES": [
+"Occitanie"
+],
+"NIORT": [
+"Nouvelle-Aquitaine"
+],
+"NOEUX-LES-MINES": [
+"Hauts-de-France"
+],
+"NOGENT-SUR-MARNE": [
+"Île-de-France"
+],
+"NOGENT-SUR-OISE": [
+"Hauts-de-France"
+],
+"NOISIEL": [
+"Île-de-France"
+],
+"NOISY-LE-GRAND": [
+"Île-de-France"
+],
+"NOISY-LE-SEC": [
+"Île-de-France"
+],
+"NORD": [
+"Hauts-de-France"
+],
+"NOUVELLE-CALEDONIE": [
+"Outre-mer"
+],
+"NOYON": [
+"Hauts-de-France"
+],
+"Nord-Pas-de-Calais": [
+"Hauts-de-France"
+],
+"Normandie": [
+"Normandie"
+],
+"Nouvelle-Aquitaine": [
+"Nouvelle-Aquitaine"
+],
+"OBERNAI": [
+"Grand Est"
+],
+"OISE": [
+"Hauts-de-France"
+],
+"OLIVET": [
+"Centre-Val de Loire"
+],
+"OLLIOULES": [
+"Provence-Alpes-Côte d'Azur"
+],
+"OLORON-SAINTE-MARIE": [
+"Nouvelle-Aquitaine"
+],
+"ONET-LE-CHATEAU": [
+"Occitanie"
+],
+"ORANGE": [
+"Provence-Alpes-Côte d'Azur"
+],
+"ORLEANS": [
+"Centre-Val de Loire"
+],
+"ORLY": [
+"Île-de-France"
+],
+"ORMESSON-SUR-MARNE": [
+"Île-de-France"
+],
+"ORNE": [
+"Normandie"
+],
+"ORSAY": [
+"Île-de-France"
+],
+"ORTHEZ": [
+"Nouvelle-Aquitaine"
+],
+"ORVAULT": [
+"Pays de la Loire"
+],
+"OSNY": [
+"Île-de-France"
+],
+"OSTWALD": [
+"Grand Est"
+],
+"OULLINS-PIERRE-BENITE": [
+"Auvergne-Rhône-Alpes"
+],
+"OUTREAU": [
+"Hauts-de-France"
+],
+"OYONNAX": [
+"Auvergne-Rhône-Alpes"
+],
+"OZOIR-LA-FERRIERE": [
+"Île-de-France"
+],
+"Occitanie": [
+"Occitanie"
+],
+"Oissel-sur-Seine": [
+"Normandie"
+],
+"Outre-mer": [
+"Outre-mer"
+],
+"PACA": [
+"Provence-Alpes-Côte d'Azur"
+],
+"PACE": [
+"Bretagne"
+],
+"PALAISEAU": [
+"Île-de-France"
+],
+"PAMIERS": [
+"Occitanie"
+],
+"PANAZOL": [
+"Nouvelle-Aquitaine"
+],
+"PANTIN": [
+"Île-de-France"
+],
+"PARIS": [
+"Île-de-France"
+],
+"PARTHENAY": [
+"Nouvelle-Aquitaine"
+],
+"PAS-DE-CALAIS": [
+"Hauts-de-France"
+],
+"PASSY": [
+"Auvergne-Rhône-Alpes"
+],
+"PAU": [
+"Nouvelle-Aquitaine"
+],
+"PELISSANNE": [
+"Provence-Alpes-Côte d'Azur"
+],
+"PERIGUEUX": [
+"Nouvelle-Aquitaine"
+],
+"PERPIGNAN": [
+"Occitanie"
+],
+"PERSAN": [
+"Île-de-France"
+],
+"PERTUIS": [
+"Provence-Alpes-Côte d'Azur"
+],
+"PESSAC": [
+"Nouvelle-Aquitaine"
+],
+"PETIT-BOURG": [
+"Outre-mer"
+],
+"PETITE-ILE": [
+"Outre-mer"
+],
+"PIERRELATTE": [
+"Auvergne-Rhône-Alpes"
+],
+"PLAISANCE-DU-TOUCH": [
+"Occitanie"
+],
+"PLAISIR": [
+"Île-de-France"
+],
+"PLAN-DE-CUQUES": [
+"Provence-Alpes-Côte d'Azur"
+],
+"PLERIN": [
+"Bretagne"
+],
+"PLOEMEUR": [
+"Bretagne"
+],
+"PLOUFRAGAN": [
+"Bretagne"
+],
+"PLOUGASTEL-DAOULAS": [
+"Bretagne"
+],
+"PLOUZANE": [
+"Bretagne"
+],
+"POINTE-A-PITRE": [
+"Outre-mer"
+],
+"POISSY": [
+"Île-de-France"
+],
+"POITIERS": [
+"Nouvelle-Aquitaine"
+],
+"POLYNESIE FRANCAISE": [
+"Outre-mer"
+],
+"PONT-A-MOUSSON": [
+"Grand Est"
+],
+"PONT-AUDEMER": [
+"Normandie"
+],
+"PONT-DU-CHATEAU": [
+"Auvergne-Rhône-Alpes"
+],
+"PONT-SAINT-ESPRIT": [
+"Occitanie"
+],
+"PONT-SAINTE-MAXENCE": [
+"Hauts-de-France"
+],
+"PONTARLIER": [
+"Bourgogne-Franche-Comté"
+],
+"PONTAULT-COMBAULT": [
+"Île-de-France"
+],
+"PONTCHATEAU": [
+"Pays de la Loire"
+],
+"PONTIVY": [
+"Bretagne"
+],
+"PONTOISE": [
+"Île-de-France"
+],
+"PORNIC": [
+"Pays de la Loire"
+],
+"PORNICHET": [
+"Pays de la Loire"
+],
+"PORT-DE-BOUC": [
+"Provence-Alpes-Côte d'Azur"
+],
+"PORTES-LES-VALENCE": [
+"Auvergne-Rhône-Alpes"
+],
+"PORTO-VECCHIO": [
+"Corse"
+],
+"PROVINS": [
+"Île-de-France"
+],
+"PUTEAUX": [
+"Île-de-France"
+],
+"PUY-DE-DOME": [
+"Auvergne-Rhône-Alpes"
+],
+"PYRENEES-ATLANTIQUES": [
+"Nouvelle-Aquitaine"
+],
+"PYRENEES-ORIENTALES": [
+"Occitanie"
+],
+"Pays de la Loire": [
+"Pays de la Loire"
+],
+"Picardie": [
+"Hauts-de-France"
+],
+"Poitou-Charentes": [
+"Nouvelle-Aquitaine"
+],
+"Provence-Alpes-Côte d'Azur": [
+"Provence-Alpes-Côte d'Azur"
+],
+"QUIMPER": [
+"Bretagne"
+],
+"QUIMPERLE": [
+"Bretagne"
+],
+"RAISMES": [
+"Hauts-de-France"
+],
+"RAMBOUILLET": [
+"Île-de-France"
+],
+"RAMONVILLE-SAINT-AGNE": [
+"Occitanie"
+],
+"REIMS": [
+"Grand Est"
+],
+"REMIRE-MONTJOLY": [
+"Outre-mer"
+],
+"RENNES": [
+"Bretagne"
+],
+"REUNION": [
+"Outre-mer"
+],
+"REZE": [
+"Pays de la Loire"
+],
+"RHONE": [
+"Auvergne-Rhône-Alpes"
+],
+"RIEDISHEIM": [
+"Grand Est"
+],
+"RILLIEUX-LA-PAPE": [
+"Auvergne-Rhône-Alpes"
+],
+"RIOM": [
+"Auvergne-Rhône-Alpes"
+],
+"RIORGES": [
+"Auvergne-Rhône-Alpes"
+],
+"RIS-ORANGIS": [
+"Île-de-France"
+],
+"RIVE-DE-GIER": [
+"Auvergne-Rhône-Alpes"
+],
+"RIVIERE-PILOTE": [
+"Outre-mer"
+],
+"RIVIERE-SALEE": [
+"Outre-mer"
+],
+"RIXHEIM": [
+"Grand Est"
+],
+"ROANNE": [
+"Auvergne-Rhône-Alpes"
+],
+"ROCHEFORT": [
+"Nouvelle-Aquitaine"
+],
+"RODEZ": [
+"Occitanie"
+],
+"ROGNAC": [
+"Provence-Alpes-Côte d'Azur"
+],
+"ROISSY-EN-BRIE": [
+"Île-de-France"
+],
+"ROMAINVILLE": [
+"Île-de-France"
+],
+"ROMANS-SUR-ISERE": [
+"Auvergne-Rhône-Alpes"
+],
+"ROMILLY-SUR-SEINE": [
+"Grand Est"
+],
+"ROMORANTIN-LANTHENAY": [
+"Centre-Val de Loire"
+],
+"RONCHIN": [
+"Hauts-de-France"
+],
+"RONCQ": [
+"Hauts-de-France"
+],
+"ROQUEBRUNE-CAP-MARTIN": [
+"Provence-Alpes-Côte d'Azur"
+],
+"ROQUEBRUNE-SUR-ARGENS": [
+"Provence-Alpes-Côte d'Azur"
+],
+"ROSNY-SOUS-BOIS": [
+"Île-de-France"
+],
+"ROUBAIX": [
+"Hauts-de-France"
+],
+"ROUEN": [
+"Normandie"
+],
+"ROYAN": [
+"Nouvelle-Aquitaine"
+],
+"RUEIL-MALMAISON": [
+"Île-de-France"
+],
+"RUMILLY": [
+"Auvergne-Rhône-Alpes"
+],
+"Rhône-Alpes": [
+"Auvergne-Rhône-Alpes"
+],
+"Région Centre": [
+"Centre-Val de Loire"
+],
+"Région Sud": [
+"Provence-Alpes-Côte d'Azur"
+],
+"SABLE-SUR-SARTHE": [
+"Pays de la Loire"
+],
+"SAINT JUST SAINT RAMBERT": [
+"Auvergne-Rhône-Alpes"
+],
+"SAINT-AMAND-LES-EAUX": [
+"Hauts-de-France"
+],
+"SAINT-ANDRE": [
+"Outre-mer"
+],
+"SAINT-ANDRE-DE-CUBZAC": [
+"Nouvelle-Aquitaine"
+],
+"SAINT-ANDRE-LES-VERGERS": [
+"Grand Est"
+],
+"SAINT-ANDRE-LEZ-LILLE": [
+"Hauts-de-France"
+],
+"SAINT-AVE": [
+"Bretagne"
+],
+"SAINT-AVERTIN": [
+"Centre-Val de Loire"
+],
+"SAINT-AVOLD": [
+"Grand Est"
+],
+"SAINT-BARTHELEMY": [
+"Outre-mer"
+],
+"SAINT-BENOIT": [
+"Outre-mer"
+],
+"SAINT-BREVIN-LES-PINS": [
+"Pays de la Loire"
+],
+"SAINT-BRICE-SOUS-FORET": [
+"Île-de-France"
+],
+"SAINT-BRIEUC": [
+"Bretagne"
+],
+"SAINT-CHAMOND": [
+"Auvergne-Rhône-Alpes"
+],
+"SAINT-CLAUDE": [
+"Outre-mer"
+],
+"SAINT-CLOUD": [
+"Île-de-France"
+],
+"SAINT-CYPRIEN": [
+"Occitanie"
+],
+"SAINT-CYR-L'ECOLE": [
+"Île-de-France"
+],
+"SAINT-CYR-SUR-LOIRE": [
+"Centre-Val de Loire"
+],
+"SAINT-CYR-SUR-MER": [
+"Provence-Alpes-Côte d'Azur"
+],
+"SAINT-DENIS": [
+"Outre-mer",
+"Île-de-France"
+],
+"SAINT-DIE-DES-VOSGES": [
+"Grand Est"
+],
+"SAINT-DIZIER": [
+"Grand Est"
+],
+"SAINT-EGREVE": [
+"Auvergne-Rhône-Alpes"
+],
+"SAINT-ESTEVE": [
+"Occitanie"
+],
+"SAINT-ETIENNE": [
+"Auvergne-Rhône-Alpes"
+],
+"SAINT-ETIENNE-DU-ROUVRAY": [
+"Normandie"
+],
+"SAINT-FARGEAU-PONTHIERRY": [
+"Île-de-France"
+],
+"SAINT-FONS": [
+"Auvergne-Rhône-Alpes"
+],
+"SAINT-FRANCOIS": [
+"Outre-mer"
+],
+"SAINT-GAUDENS": [
+"Occitanie"
+],
+"SAINT-GENIS-LAVAL": [
+"Auvergne-Rhône-Alpes"
+],
+"SAINT-GENIS-POUILLY": [
+"Auvergne-Rhône-Alpes"
+],
+"SAINT-GERMAIN-EN-LAYE": [
+"Île-de-France"
+],
+"SAINT-GERMAIN-LES-ARPAJON": [
+"Île-de-France"
+],
+"SAINT-GILLES": [
+"Occitanie"
+],
+"SAINT-GRATIEN": [
+"Île-de-France"
+],
+"SAINT-HERBLAIN": [
+"Pays de la Loire"
+],
+"SAINT-HILAIRE-DE-RIEZ": [
+"Pays de la Loire"
+],
+"SAINT-JACQUES-DE-LA-LANDE": [
+"Bretagne"
+],
+"SAINT-JEAN": [
+"Occitanie"
+],
+"SAINT-JEAN-DE-BRAYE": [
+"Centre-Val de Loire"
+],
+"SAINT-JEAN-DE-LA-RUELLE": [
+"Centre-Val de Loire"
+],
+"SAINT-JEAN-DE-LUZ": [
+"Nouvelle-Aquitaine"
+],
+"SAINT-JOSEPH": [
+"Outre-mer"
+],
+"SAINT-JULIEN-EN-GENEVOIS": [
+"Auvergne-Rhône-Alpes"
+],
+"SAINT-JUNIEN": [
+"Nouvelle-Aquitaine"
+],
+"SAINT-LAURENT-DE-LA-SALANQUE": [
+"Occitanie"
+],
+"SAINT-LAURENT-DU-MARONI": [
+"Outre-mer"
+],
+"SAINT-LAURENT-DU-VAR": [
+"Provence-Alpes-Côte d'Azur"
+],
+"SAINT-LEU": [
+"Outre-mer"
+],
+"SAINT-LEU-LA-FORET": [
+"Île-de-France"
+],
+"SAINT-LO": [
+"Normandie"
+],
+"SAINT-LOUIS": [
+"Grand Est",
+"Outre-mer"
+],
+"SAINT-MALO": [
+"Bretagne"
+],
+"SAINT-MANDE": [
+"Île-de-France"
+],
+"SAINT-MARTIN": [
+"Outre-mer"
+],
+"SAINT-MARTIN-BOULOGNE": [
+"Hauts-de-France"
+],
+"SAINT-MARTIN-D'HERES": [
+"Auvergne-Rhône-Alpes"
+],
+"SAINT-MARTIN-DE-CRAU": [
+"Provence-Alpes-Côte d'Azur"
+],
+"SAINT-MAUR-DES-FOSSES": [
+"Île-de-France"
+],
+"SAINT-MAURICE": [
+"Île-de-France"
+],
+"SAINT-MAXIMIN-LA-SAINTE-BAUME": [
+"Provence-Alpes-Côte d'Azur"
+],
+"SAINT-MEDARD-EN-JALLES": [
+"Nouvelle-Aquitaine"
+],
+"SAINT-MICHEL-SUR-ORGE": [
+"Île-de-France"
+],
+"SAINT-NAZAIRE": [
+"Pays de la Loire"
+],
+"SAINT-OMER": [
+"Hauts-de-France"
+],
+"SAINT-ORENS-DE-GAMEVILLE": [
+"Occitanie"
+],
+"SAINT-OUEN": [
+"Île-de-France"
+],
+"SAINT-OUEN-L'AUMONE": [
+"Île-de-France"
+],
+"SAINT-PAUL": [
+"Outre-mer"
+],
+"SAINT-PAUL-LES-DAX": [
+"Nouvelle-Aquitaine"
+],
+"SAINT-PIERRE": [
+"Outre-mer"
+],
+"SAINT-PIERRE-DES-CORPS": [
+"Centre-Val de Loire"
+],
+"SAINT-PIERRE-DU-PERRAY": [
+"Île-de-France"
+],
+"SAINT-PIERRE-ET-MIQUELON": [
+"Outre-mer"
+],
+"SAINT-PRIEST": [
+"Auvergne-Rhône-Alpes"
+],
+"SAINT-QUENTIN": [
+"Hauts-de-France"
+],
+"SAINT-RAPHAEL": [
+"Provence-Alpes-Côte d'Azur"
+],
+"SAINT-SAULVE": [
+"Hauts-de-France"
+],
+"SAINT-SEBASTIEN-SUR-LOIRE": [
+"Pays de la Loire"
+],
+"SAINTE-ANNE": [
+"Outre-mer"
+],
+"SAINTE-FOY-LES-LYON": [
+"Auvergne-Rhône-Alpes"
+],
+"SAINTE-GENEVIEVE-DES-BOIS": [
+"Île-de-France"
+],
+"SAINTE-LUCE-SUR-LOIRE": [
+"Pays de la Loire"
+],
+"SAINTE-MARIE": [
+"Outre-mer"
+],
+"SAINTE-MAXIME": [
+"Provence-Alpes-Côte d'Azur"
+],
+"SAINTE-ROSE": [
+"Outre-mer"
+],
+"SAINTE-SAVINE": [
+"Grand Est"
+],
+"SAINTE-SUZANNE": [
+"Outre-mer"
+],
+"SAINTES": [
+"Nouvelle-Aquitaine"
+],
+"SALLANCHES": [
+"Auvergne-Rhône-Alpes"
+],
+"SALON-DE-PROVENCE": [
+"Provence-Alpes-Côte d'Azur"
+],
+"SANARY-SUR-MER": [
+"Provence-Alpes-Côte d'Azur"
+],
+"SANNOIS": [
+"Île-de-France"
+],
+"SAONE-ET-LOIRE": [
+"Bourgogne-Franche-Comté"
+],
+"SARAN": [
+"Centre-Val de Loire"
+],
+"SARCELLES": [
+"Île-de-France"
+],
+"SARREBOURG": [
+"Grand Est"
+],
+"SARREGUEMINES": [
+"Grand Est"
+],
+"SARTHE": [
+"Pays de la Loire"
+],
+"SARTROUVILLE": [
+"Île-de-France"
+],
+"SASSENAGE": [
+"Auvergne-Rhône-Alpes"
+],
+"SAUMUR": [
+"Pays de la Loire"
+],
+"SAVERNE": [
+"Grand Est"
+],
+"SAVIGNY-LE-TEMPLE": [
+"Île-de-France"
+],
+"SAVIGNY-SUR-ORGE": [
+"Île-de-France"
+],
+"SAVOIE": [
+"Auvergne-Rhône-Alpes"
+],
+"SCEAUX": [
+"Île-de-France"
+],
+"SCHILTIGHEIM": [
+"Grand Est"
+],
+"SCHOELCHER": [
+"Outre-mer"
+],
+"SECLIN": [
+"Hauts-de-France"
+],
+"SEDAN": [
+"Grand Est"
+],
+"SEGRE": [
+"Pays de la Loire"
+],
+"SEINE-ET-MARNE": [
+"Île-de-France"
+],
+"SEINE-MARITIME": [
+"Normandie"
+],
+"SEINE-SAINT-DENIS": [
+"Île-de-France"
+],
+"SELESTAT": [
+"Grand Est"
+],
+"SENLIS": [
+"Hauts-de-France"
+],
+"SENS": [
+"Bourgogne-Franche-Comté"
+],
+"SEPTEMES-LES-VALLONS": [
+"Provence-Alpes-Côte d'Azur"
+],
+"SETE": [
+"Occitanie"
+],
+"SEVRAN": [
+"Île-de-France"
+],
+"SEVREMOINE": [
+"Pays de la Loire"
+],
+"SEVRES": [
+"Île-de-France"
+],
+"SEYSSINET-PARISET": [
+"Auvergne-Rhône-Alpes"
+],
+"SIN-LE-NOBLE": [
+"Hauts-de-France"
+],
+"SIX-FOURS-LES-PLAGES": [
+"Provence-Alpes-Côte d'Azur"
+],
+"SOISSONS": [
+"Hauts-de-France"
+],
+"SOISY-SOUS-MONTMORENCY": [
+"Île-de-France"
+],
+"SOLLIES-PONT": [
+"Provence-Alpes-Côte d'Azur"
+],
+"SOMAIN": [
+"Hauts-de-France"
+],
+"SOMME": [
+"Hauts-de-France"
+],
+"SORGUES": [
+"Provence-Alpes-Côte d'Azur"
+],
+"SOTTEVILLE-LES-ROUEN": [
+"Normandie"
+],
+"STAINS": [
+"Île-de-France"
+],
+"STIRING-WENDEL": [
+"Grand Est"
+],
+"STRASBOURG": [
+"Grand Est"
+],
+"SUCY-EN-BRIE": [
+"Île-de-France"
+],
+"SURESNES": [
+"Île-de-France"
+],
+"TALANT": [
+"Bourgogne-Franche-Comté"
+],
+"TALENCE": [
+"Nouvelle-Aquitaine"
+],
+"TARARE": [
+"Auvergne-Rhône-Alpes"
+],
+"TARASCON": [
+"Provence-Alpes-Côte d'Azur"
+],
+"TARBES": [
+"Occitanie"
+],
+"TARN": [
+"Occitanie"
+],
+"TARN-ET-GARONNE": [
+"Occitanie"
+],
+"TARNOS": [
+"Nouvelle-Aquitaine"
+],
+"TASSIN-LA-DEMI-LUNE": [
+"Auvergne-Rhône-Alpes"
+],
+"TAVERNY": [
+"Île-de-France"
+],
+"TERGNIER": [
+"Hauts-de-France"
+],
+"TERRITOIRE-DE-BELFORT": [
+"Bourgogne-Franche-Comté"
+],
+"THIAIS": [
+"Île-de-France"
+],
+"THIERS": [
+"Auvergne-Rhône-Alpes"
+],
+"THIONVILLE": [
+"Grand Est"
+],
+"THONON-LES-BAINS": [
+"Auvergne-Rhône-Alpes"
+],
+"THOUARS": [
+"Nouvelle-Aquitaine"
+],
+"TINQUEUX": [
+"Grand Est"
+],
+"TORCY": [
+"Île-de-France"
+],
+"TOUL": [
+"Grand Est"
+],
+"TOULON": [
+"Provence-Alpes-Côte d'Azur"
+],
+"TOULOUSE": [
+"Occitanie"
+],
+"TOURCOING": [
+"Hauts-de-France"
+],
+"TOURNEFEUILLE": [
+"Occitanie"
+],
+"TOURNON-SUR-RHONE": [
+"Auvergne-Rhône-Alpes"
+],
+"TOURS": [
+"Centre-Val de Loire"
+],
+"TRAPPES": [
+"Île-de-France"
+],
+"TRELAZE": [
+"Pays de la Loire"
+],
+"TREMBLAY-EN-FRANCE": [
+"Île-de-France"
+],
+"TRETS": [
+"Provence-Alpes-Côte d'Azur"
+],
+"TRIEL-SUR-SEINE": [
+"Île-de-France"
+],
+"TROYES": [
+"Grand Est"
+],
+"TULLE": [
+"Nouvelle-Aquitaine"
+],
+"VAIRES-SUR-MARNE": [
+"Île-de-France"
+],
+"VAL-D'OISE": [
+"Île-de-France"
+],
+"VAL-DE-MARNE": [
+"Île-de-France"
+],
+"VAL-DE-REUIL": [
+"Normandie"
+],
+"VALBONNE": [
+"Provence-Alpes-Côte d'Azur"
+],
+"VALENCE": [
+"Auvergne-Rhône-Alpes"
+],
+"VALENCIENNES": [
+"Hauts-de-France"
+],
+"VALENTIGNEY": [
+"Bourgogne-Franche-Comté"
+],
+"VALENTON": [
+"Île-de-France"
+],
+"VALLAURIS": [
+"Provence-Alpes-Côte d'Azur"
+],
+"VANDOEUVRE-LES-NANCY": [
+"Grand Est"
+],
+"VANNES": [
+"Bretagne"
+],
+"VANVES": [
+"Île-de-France"
+],
+"VAR": [
+"Provence-Alpes-Côte d'Azur"
+],
+"VAUCLUSE": [
+"Provence-Alpes-Côte d'Azur"
+],
+"VAULX-EN-VELIN": [
+"Auvergne-Rhône-Alpes"
+],
+"VAUREAL": [
+"Île-de-France"
+],
+"VAUVERT": [
+"Occitanie"
+],
+"VAUX-LE-PENIL": [
+"Île-de-France"
+],
+"VEDENE": [
+"Provence-Alpes-Côte d'Azur"
+],
+"VELIZY-VILLACOUBLAY": [
+"Île-de-France"
+],
+"VENCE": [
+"Provence-Alpes-Côte d'Azur"
+],
+"VENDEE": [
+"Pays de la Loire"
+],
+"VENDOME": [
+"Centre-Val de Loire"
+],
+"VENISSIEUX": [
+"Auvergne-Rhône-Alpes"
+],
+"VERDUN": [
+"Grand Est"
+],
+"VERNEUIL-SUR-SEINE": [
+"Île-de-France"
+],
+"VERNON": [
+"Normandie"
+],
+"VERNOUILLET": [
+"Centre-Val de Loire",
+"Île-de-France"
+],
+"VERRIERES-LE-BUISSON": [
+"Île-de-France"
+],
+"VERSAILLES": [
+"Île-de-France"
+],
+"VERTOU": [
+"Pays de la Loire"
+],
+"VESOUL": [
+"Bourgogne-Franche-Comté"
+],
+"VICHY": [
+"Auvergne-Rhône-Alpes"
+],
+"VIDAUBAN": [
+"Provence-Alpes-Côte d'Azur"
+],
+"VIENNE": [
+"Auvergne-Rhône-Alpes",
+"Nouvelle-Aquitaine"
+],
+"VIERZON": [
+"Centre-Val de Loire"
+],
+"VIEUX-CONDE": [
+"Hauts-de-France"
+],
+"VIGNEUX-SUR-SEINE": [
+"Île-de-France"
+],
+"VILLE-D'AVRAY": [
+"Île-de-France"
+],
+"VILLEBON-SUR-YVETTE": [
+"Île-de-France"
+],
+"VILLEFONTAINE": [
+"Auvergne-Rhône-Alpes"
+],
+"VILLEFRANCHE-DE-ROUERGUE": [
+"Occitanie"
+],
+"VILLEFRANCHE-SUR-SAONE": [
+"Auvergne-Rhône-Alpes"
+],
+"VILLEJUIF": [
+"Île-de-France"
+],
+"VILLEMOMBLE": [
+"Île-de-France"
+],
+"VILLENAVE-D'ORNON": [
+"Nouvelle-Aquitaine"
+],
+"VILLENEUVE-D'ASCQ": [
+"Hauts-de-France"
+],
+"VILLENEUVE-LA-GARENNE": [
+"Île-de-France"
+],
+"VILLENEUVE-LE-ROI": [
+"Île-de-France"
+],
+"VILLENEUVE-LES-AVIGNON": [
+"Occitanie"
+],
+"VILLENEUVE-LOUBET": [
+"Provence-Alpes-Côte d'Azur"
+],
+"VILLENEUVE-SAINT-GEORGES": [
+"Île-de-France"
+],
+"VILLENEUVE-SUR-LOT": [
+"Nouvelle-Aquitaine"
+],
+"VILLEPARISIS": [
+"Île-de-France"
+],
+"VILLEPINTE": [
+"Île-de-France"
+],
+"VILLEPREUX": [
+"Île-de-France"
+],
+"VILLERS-COTTERETS": [
+"Hauts-de-France"
+],
+"VILLERS-LES-NANCY": [
+"Grand Est"
+],
+"VILLETANEUSE": [
+"Île-de-France"
+],
+"VILLEURBANNE": [
+"Auvergne-Rhône-Alpes"
+],
+"VILLIERS-LE-BEL": [
+"Île-de-France"
+],
+"VILLIERS-SUR-MARNE": [
+"Île-de-France"
+],
+"VINCENNES": [
+"Île-de-France"
+],
+"VIRE-NORMANDIE": [
+"Normandie"
+],
+"VIROFLAY": [
+"Île-de-France"
+],
+"VIRY-CHATILLON": [
+"Île-de-France"
+],
+"VITRE": [
+"Bretagne"
+],
+"VITROLLES": [
+"Provence-Alpes-Côte d'Azur"
+],
+"VITRY-LE-FRANCOIS": [
+"Grand Est"
+],
+"VITRY-SUR-SEINE": [
+"Île-de-France"
+],
+"VOIRON": [
+"Auvergne-Rhône-Alpes"
+],
+"VOISINS-LE-BRETONNEUX": [
+"Île-de-France"
+],
+"VOSGES": [
+"Grand Est"
+],
+"WALLIS ET FUTUNA": [
+"Outre-mer"
+],
+"WAMBRECHIES": [
+"Hauts-de-France"
+],
+"WASQUEHAL": [
+"Hauts-de-France"
+],
+"WATTIGNIES": [
+"Hauts-de-France"
+],
+"WATTRELOS": [
+"Hauts-de-France"
+],
+"WITTELSHEIM": [
+"Grand Est"
+],
+"WITTENHEIM": [
+"Grand Est"
+],
+"WOIPPY": [
+"Grand Est"
+],
+"YERRES": [
+"Île-de-France"
+],
+"YONNE": [
+"Bourgogne-Franche-Comté"
+],
+"YUTZ": [
+"Grand Est"
+],
+"YVELINES": [
+"Île-de-France"
+],
+"YVETOT": [
+"Normandie"
+],
+"YZEURE": [
+"Auvergne-Rhône-Alpes"
+],
+"Île-de-France": [
+"Île-de-France"
+]
+}

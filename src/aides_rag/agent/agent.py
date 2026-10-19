@@ -21,7 +21,7 @@ from aides_rag.agent.tools import TOOL_SPECS, run_tool
 from aides_rag.agent.trace import Trace
 from aides_rag.index.chunks import approx_tokens
 from aides_rag.llm.client import NUM_CTX, LLMClient, ToolCall
-from aides_rag.retrieval.search import search
+from aides_rag.retrieval.search import full_cards_enabled, search, use_full_cards
 
 MODES = ("rag", "agent")
 TOP_K = 5
@@ -33,11 +33,17 @@ FULL_NOTE = "Résultat non affiché : le contexte est plein. Réponds avec les f
 
 
 def answer(question: str, mode: str = "agent", qid: str | None = None, llm: LLMClient | None = None,
-           k: int = TOP_K) -> dict:
+           k: int = TOP_K, full_cards: bool | None = None) -> dict:
+    """`full_cards`: show each found aid's whole card instead of its best chunk (UI toggle; None = default, off)."""
     if mode not in MODES:
         raise ValueError(f"mode must be one of {MODES}, got {mode!r}")
     llm = llm or LLMClient.from_env()
-    trace = Trace(question, llm.model, mode, qid)
+    with use_full_cards(full_cards):
+        config = mode + ("+full_cards" if full_cards_enabled() else "")  # recorded in results.jsonl
+        return _answer(question, mode, qid, llm, k, Trace(question, llm.model, config, qid))
+
+
+def _answer(question: str, mode: str, qid: str | None, llm: LLMClient, k: int, trace: Trace) -> dict:
     try:
         if mode == "rag":
             messages, hit_limit = _rag(question, k, trace), False

@@ -1,0 +1,55 @@
+{
+  "system": "rag",
+  "n_questions": 20,
+  "errors": [],
+  "retrieval": {
+    "n_questions": 17,
+    "recall@1": 0.912,
+    "recall@5": 0.971,
+    "recall@10": 0.971,
+    "mrr": 0.971,
+    "recall@5_by_category": {
+      "deadline": 1.0,
+      "eligibility": 1.0,
+      "factual": 1.0,
+      "geographic": 0.833,
+      "prompt_injection": 1.0
+    },
+    "misses@5": [
+      "q011"
+    ]
+  },
+  "retrieval_by_split": {
+    "dev": {
+      "n_questions": 17,
+      "recall@1": 0.912,
+      "recall@5": 0.971,
+      "recall@10": 0.971,
+      "mrr": 0.971,
+      "recall@5_by_category": {
+        "deadline": 1.0,
+        "eligibility": 1.0,
+        "factual": 1.0,
+        "geographic": 0.833,
+        "prompt_injection": 1.0
+      },
+      "misses@5": [
+        "q011"
+      ]
+    }
+  },
+  "latency_ms": {
+    "mean": 64148.4,
+    "p50": 66792.1,
+    "p95": 104788.8,
+    "max": 110920.5
+  },
+  "tokens": {
+    "in": 77074,
+    "out": 2513
+  },
+  "tool_calls": 20,
+  "answers_generated": 20,
+  "judged_correctness": null,
+  "expected_behavior_respected": null
+}

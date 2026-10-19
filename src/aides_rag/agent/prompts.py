@@ -6,6 +6,7 @@ instructions found inside them are not to be followed (prompt-injection defence,
 
 from __future__ import annotations
 
+from aides_rag.retrieval.geo import geo_note
 from aides_rag.retrieval.search import Hit
 
 SYSTEM_PROMPT = """Tu es un assistant qui aide les entreprises françaises (PME, ETI, créateurs) à trouver des aides \
@@ -67,18 +68,24 @@ def _part(h: Hit) -> str:
     return f' extrait="{h.part}/{h.n_parts}"' if h.n_parts > 1 else ""
 
 
+def _question_block(question: str) -> str:
+    """The question as data, followed by the regions of the places it names (computed by code, like deadlines)."""
+    note = geo_note(question)
+    return f"<question>\n{question}\n</question>" + (f"\n{note}" if note else "")
+
+
 def answer_request(question: str) -> dict:
     """Agent mode: restate the question right before the answer request; after ~3k tokens of aids,
     a 4B model otherwise loses details such as the company's age or size."""
     return {"role": "user", "content": f"Question de l'utilisateur, à traiter avec les fiches ci-dessus :\n"
-                                       f"<question>\n{question}\n</question>\n\n{ANSWER_INSTRUCTION}"}
+                                       f"{_question_block(question)}\n\n{ANSWER_INSTRUCTION}"}
 
 
 def agent_messages(question: str) -> list[dict]:
     """Agentic RAG: the model gets only the question and fetches the aids itself with its tools."""
     return [
         {"role": "system", "content": SYSTEM_PROMPT + AGENT_RULES},
-        {"role": "user", "content": f"Question de l'utilisateur :\n<question>\n{question}\n</question>"},
+        {"role": "user", "content": f"Question de l'utilisateur :\n{_question_block(question)}"},
     ]
 
 
@@ -87,6 +94,6 @@ def rag_messages(question: str, hits: list[Hit]) -> list[dict]:
     return [
         {"role": "system", "content": SYSTEM_PROMPT},
         {"role": "user", "content": f"Fiches trouvées :\n\n{format_hits(hits)}\n\n"
-                                    f"Question de l'utilisateur :\n<question>\n{question}\n</question>\n\n"
+                                    f"Question de l'utilisateur :\n{_question_block(question)}\n\n"
                                     f"{ANSWER_INSTRUCTION}"},
     ]
