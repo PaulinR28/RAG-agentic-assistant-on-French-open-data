@@ -35,20 +35,23 @@ File: `eval/golden.jsonl`, 40 questions, one JSON object per line.
 - No aid appears in both splits, so tuning on dev cannot leak into held-out scores.
 - Questions that depend on today's date state the date explicitly.
 - `pytest` checks the schema, that every `gold_docs` id exists in the corpus, and that out-of-corpus questions have no docs.
-- <!-- TODO: how questions were written (who, from which aids, how many reviewed by a second member) -->
+- How they were written: all 40 were drafted with an AI assistant from the aid cards, then read and approved by the
+  team (dev on 2026-10-14; held-out reviewed before merge in PR #5). Because they were written from the cards, they
+  may share more words with them than real user questions: BM25 alone already ranks the gold aid first on 12 of
+  the 16 held-out questions with gold docs.
 
-**Composition** <!-- TODO: fill counts -->
+**Composition**
 
 | Category | What it tests | dev | heldout |
 |---|---|---:|---:|
-| factual | a fact stated in one aid (amount, funder, rate) | TODO | TODO |
-| eligibility | can company X get aid Y (size, age, sector) | TODO | TODO |
-| geographic | aids available in a given region | TODO | TODO |
-| deadline | dates, "still open on <date>" | TODO | TODO |
-| exclusion | conditions that rule a company out | TODO | TODO |
-| no_amount | aid exists but the corpus gives no amount: must not invent one | TODO | TODO |
-| out_of_corpus | no answer in the corpus: must abstain | TODO | TODO |
-| prompt_injection | injected instruction in the question: refuse or ignore it | TODO | TODO |
+| factual | a fact stated in one aid (amount, funder, rate) | 6 | 4 |
+| eligibility | can company X get aid Y (size, age, sector) | 4 | 3 |
+| geographic | aids available in a given region | 3 | 3 |
+| deadline | dates, "still open on <date>" | 3 | 2 |
+| exclusion | conditions that rule a company out | 0 | 2 |
+| no_amount | aid exists but the corpus gives no amount: must not invent one | 0 | 1 |
+| out_of_corpus | no answer in the corpus: must abstain | 2 | 3 |
+| prompt_injection | injected instruction in the question: refuse or ignore it | 2 | 2 |
 | **Total** | | **20** | **20** |
 
 ---
@@ -62,15 +65,16 @@ and are run with:
 uv run python eval/run_eval.py --questions eval/golden.jsonl --out eval/ --system <name>
 ```
 
-<!-- TODO: adjust to the systems actually built -->
 | System | Retrieval | Generation | Notes |
 |---|---|---|---|
 | `bm25` | BM25, French analyzer | none | baseline |
 | `hybrid` | BM25 + `bge-m3`, weighted RRF (k = 60, dense weight 3) | none | retrieval of `rag` / `agent` |
 | `hybrid_rerank` | hybrid, top 10 chunks re-sorted by `bge-reranker-v2-m3` | none | option, off by default |
-| `rag` | hybrid, top-TODO chunks | TODO local LLM, one call | |
-| `agent` | tools over hybrid + metadata filters | TODO local LLM, up to TODO tool calls | final system |
-| `agent_api` | same as `agent` | TODO API model | optional comparison |
+| `rag` | one forced `hybrid` search with the raw question, top 5 aids | `qwen3:4b-instruct-2507-q4_K_M` (Ollama), one answer call (+1 retry if invalid) | baseline with an LLM |
+| `agent` | tools `search_aids` (`hybrid`, filters: region, aid type, deadline status on a date) and `get_aid` (full card) | same model, up to 3 tool calls, then one answer call (+1 retry) | |
+
+API comparison: the same `rag` or `agent` system with `LLM_BACKEND=openrouter LLM_MODEL=<model>` (Claude Haiku 5.5,
+Qwen3-14B). There is no separate API system. Final system (`rag` or `agent`): TODO, decided on dev.
 
 ---
 
@@ -82,12 +86,12 @@ uv run python eval/run_eval.py --questions eval/golden.jsonl --out eval/ --syste
 | MRR | mean of 1 / rank of the first gold doc (0 if absent from the top 10) | same |
 | Correctness | TODO: judged `correct` / `partial` / `wrong` against the reference answer | `expected_behavior = answer` |
 | Citation precision | share of cited ids that are gold docs or support the answer | answers with citations |
-| Hallucinated citations | cited ids that were not retrieved | all answers |
+| Hallucinated citations | cited ids that were not retrieved: rejected by the validator (retry, then `invalid_output`), so 0 in valid answers by construction | all answers |
 | Behaviour accuracy | abstains, refuses or ignores the injection as expected | `abstain`, `refuse_injection`, `answer_ignore_injection` |
-| Valid output rate | share of answers that pass schema validation (first try / after retries) | all |
+| Valid output rate | share of answers that pass schema validation (first try / after the one retry) | all |
 | Latency | wall-clock seconds per question, p50 and p95 | all |
 | Tokens | mean tokens in / out per question | LLM systems |
-| Cost | € per question (API: tokens × price on TODO date; local: 0 € API cost) | all |
+| Cost | USD per question: the cost billed by OpenRouter (`usage.cost`); 0 for the local model | all |
 
 Retrieval is scored at **aid level**: a chunk counts as its parent `id_aid`, duplicates removed before ranking.
 
@@ -106,14 +110,14 @@ Retrieval is scored at **aid level**: a chunk counts as its parent `id_aid`, dup
 ### Held-out (q021–q040)
 
 <!-- TODO: from eval/summary.json -->
-| System | R@1 | R@5 | R@10 | MRR | Correct | Behaviour OK | Cit. precision | p50 / p95 latency (s) | Tokens in / out | € / question |
+| System | R@1 | R@5 | R@10 | MRR | Correct | Behaviour OK | Cit. precision | p50 / p95 latency (s) | Tokens in / out | USD / question |
 |---|---|---|---|---|---|---|---|---|---|---|
 | `bm25` | 0.75 | 0.88 | 0.94 | 0.81 | n/a | n/a | n/a | < 0.01 | 0 / 0 | 0 |
 | `hybrid` | **0.88** | **1.00** | 1.00 | **0.92** | n/a | n/a | n/a | 0.22 (mean) | 0 / 0 | 0 |
 | `hybrid_rerank` ¹ | 0.75 | 0.94 | 1.00 | 0.83 | n/a | n/a | n/a | 20.5 (mean) | 0 / 0 | 0 |
 | `rag` | TODO | TODO | TODO | TODO | TODO | TODO | TODO | TODO | TODO | TODO |
 | `agent` | TODO | TODO | TODO | TODO | TODO | TODO | TODO | TODO | TODO | TODO |
-| `agent_api` | TODO | TODO | TODO | TODO | TODO | TODO | TODO | TODO | TODO | TODO |
+| `rag` or `agent`, API model | TODO | TODO | TODO | TODO | TODO | TODO | TODO | TODO | TODO | TODO |
 
 ¹ Measured with `bench_rerank.py` on a hybrid pool with equal weights (`eval/retrieval_rerank.json`), not on the exact `hybrid_rerank` pool (dense weight 3); latency = reranking only. Retrieval rows: 16 held-out questions with gold docs; latency = mean query time on the demo machine (CPU), from `eval/retrieval_dense.json`.
 
@@ -141,7 +145,7 @@ TODO: which system we would ship under a latency budget of TODO s, and why.
 
 ## 5. Experiments (dev split)
 
-One design decision per row, everything else fixed. Raw outputs in `eval/experiments/` <!-- TODO: confirm -->.
+One design decision per row, everything else fixed. Raw outputs of generation experiments in `eval/experiments/`.
 
 | # | Decision | Variant A | Variant B | Metric | A | B | Kept |
 |---|---|---|---|---|---|---|---|
@@ -151,15 +155,18 @@ One design decision per row, everything else fixed. Raw outputs in `eval/experim
 | E4 | Retriever | BM25 | hybrid, bge-m3 ×3 | Recall@1 / MRR | 0.74 / 0.84 | **0.91 / 0.97** | hybrid ⁴ |
 | E5 | Reranker (pool 10) | off | `bge-reranker-v2-m3` | MRR / latency | 0.94 / 0 s | 0.97 / +20.5 s | off ⁵ |
 | E6 | Chunks passed to the LLM | top TODO | top TODO | correctness / tokens | TODO | TODO | TODO |
-| E7 | RAG vs agent | `rag` | `agent` | correctness / latency | TODO | TODO | TODO |
-| E8 | Local vs API LLM | TODO | TODO | correctness / latency / cost | TODO | TODO | TODO |
+| E7 | RAG vs agent (local 4B) ⁶ | `rag` | `agent` | correct / partial / wrong, mean latency | 15 / 3 / 2, 22.7 s | 15 / 2 / 3, 37.2 s | TODO |
+| E8 | Local vs API LLM (`rag`) ⁶ | Qwen3 4B, local | Claude Haiku 5.5, API | correct / partial / wrong, mean latency, cost for 20 q | 15 / 3 / 2, 22.7 s, $0 | 19 / 0 / 1, 2.1 s, $0.011 | TODO |
+| E9 | Whole cards + place hints (`rag`, local 4B) ⁷ | best chunk, no hints | whole cards (≤ 4,000 chars) + place hints | correct / partial / wrong, prompt tokens | 15 / 1 / 4, 62.8k | 15 / 1 / 4, 77.1k | hints on, whole cards off |
 
-Retrieval rows are on the 17 dev questions with gold docs. Sources: `eval/retrieval_bm25.json` (E1–E3), `eval/retrieval_dense.json` and `eval/retrieval_fusion.json` (E4), `eval/retrieval_rerank.json` (E5).
+Retrieval rows are on the 17 dev questions with gold docs. Sources: `eval/retrieval_bm25.json` (E1–E3), `eval/retrieval_dense.json` and `eval/retrieval_fusion.json` (E4), `eval/retrieval_rerank.json` (E5). Generation rows (E7–E9) are on the 20 dev questions, graded by hand by one team member.
 
 ² Ties on Recall@5; 1,800 characters keeps header + body inside a 512-token encoder window for 87% of chunks (390 median / 636 max real tokens, bge-m3 tokenizer). 1,200 has a slightly higher MRR, not re-tested with the dense model.
 ³ Honest note: dev slightly favours no stemming (MRR 0.88 vs 0.84; held-out Recall@5 1.00 vs 0.88). We kept stemming; the impact is limited because BM25 weighs 1/4 in the final fusion. Not re-tuned.
 ⁴ Embedding model chosen first, dense alone (Recall@1 dev / held-out): e5-small 0.74 / 0.75, e5-base 0.74 / 0.63, **bge-m3 0.91 / 0.88** (query 39 / 86 / 219 ms, RAM 1.6 / 2.4 / 2.6 GB). Fusion weight then picked on dev with a rule fixed beforehand (Recall@1, then MRR, then simplest): equal weights give 0.85 / 0.75, dense ×3 gives 0.91 / 0.88 (held-out checked afterwards).
 ⁵ `mmarco-mMiniLMv2` (0.5 GB) made it worse: held-out Recall@1 0.75 → 0.50 at pool 10 (0.44 at 20 and 50), +2.6 s. `bge-reranker-v2-m3`: dev Recall@1 0.85 → 0.91 but held-out unchanged (0.75), +20.5 s per question on CPU, identical when re-measured at 1,024 tokens instead of 512. Kept as an option.
+⁶ PR #10 (2026-10-16), measured on an 8 GB M1 before the place hints and the context-guard fix; Qwen3-14B (API): 17 / 0 / 3 (`rag`), 18 / 0 / 2 (`agent`). Re-run with the final configuration: TODO.
+⁷ PR #16, `eval/experiments/e9_full_cards_geo/`. Place hints fixed q011 (Lyon → Auvergne-Rhône-Alpes); whole cards broke q005 and did not fix q010 (the model still says a company created in 2025 meets "created before 30 Sept 2023").
 
 ---
 
