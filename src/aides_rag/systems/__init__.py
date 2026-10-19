@@ -12,8 +12,12 @@ Every system is a class with `answer(question: str) -> dict` returning the keys 
     abstained      bool | None  the system said the corpus does not hold the answer (None without an LLM)
     cost_usd       float | None billed cost of the answer (0 for a local model, None without an LLM)
     model          str | None   generating model, e.g. "qwen3:4b-instruct-2507-q4_K_M"
+    config         str | None   generation settings, e.g. "rag" or "rag+full_cards" (None without an LLM)
+    n_llm_calls    int | None   number of LLM calls
+    llm_calls      list | None  one {"phase", "tokens_in", "tokens_out", "latency_ms", "cost_usd", "finish_reason"} per call
+    valid_output   bool | None  the final answer passed the schema and citation checks
 
-Latency is measured by the runner, not by the system. To add a system, write a module in this
+Keys a system does not return are written as null. Latency is measured by the runner, not by the system. To add a system, write a module in this
 package and register it in `SYSTEMS` as "module:Class".
 """
 
@@ -22,7 +26,7 @@ from __future__ import annotations
 import importlib
 
 OUTPUT_KEYS = ("answer", "cited_sources", "retrieved_ids", "tokens_in", "tokens_out", "tool_calls", "stop_reason",
-               "abstained", "cost_usd", "model")
+               "abstained", "cost_usd", "model", "config", "n_llm_calls", "llm_calls", "valid_output")
 
 SYSTEMS = {
     "bm25": "aides_rag.systems.bm25_only:Bm25Only",

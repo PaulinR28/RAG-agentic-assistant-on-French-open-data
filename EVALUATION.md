@@ -74,7 +74,8 @@ uv run python eval/run_eval.py --questions eval/golden.jsonl --out eval/ --syste
 | `agent` | tools `search_aids` (`hybrid`, filters: region, aid type, deadline status on a date) and `get_aid` (full card) | same model, up to 3 tool calls, then one answer call (+1 retry) | |
 
 API comparison: the same `rag` or `agent` system with `LLM_BACKEND=openrouter LLM_MODEL=<model>` (Claude Haiku 5.5,
-Qwen3-14B). There is no separate API system. Final system (`rag` or `agent`): TODO, decided on dev.
+Qwen3-14B). There is no separate API system. Final system: **`rag`**, decided on dev (E7): same 15 correct answers as `agent`, one fewer wrong
+answer, 1.6× lower mean latency (22.7 s vs 37.2 s). `agent` stays reported as a comparison.
 
 ---
 
