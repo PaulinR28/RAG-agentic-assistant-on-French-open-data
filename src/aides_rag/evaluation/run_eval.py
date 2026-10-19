@@ -7,11 +7,17 @@ Writes, in --out:
                  latency, tokens, tool calls, errors
 
 Retrieval metrics are aid-level and use the questions that have gold_docs, as in
-retrieval/eval_recall.py. Answer-level scores (judged correctness, abstention, injection) need
-an LLM and are reported as null until a generating system exists.
+retrieval/eval_recall.py. Answer-level scores (judged correctness, abstention, injection) are
+reported as null until a judge exists.
+
+Errors count both exceptions caught here and errors a system reports itself (the generating
+systems catch their own exceptions and return stop_reason "error"), so a broken run never looks clean.
 
 Usage:
-    uv run python eval/run_eval.py --questions eval/golden.jsonl --out eval/ [--system bm25]
+    uv run python eval/run_eval.py --questions eval/golden.jsonl --out eval/ [--system rag]
+
+The default system is the assistant itself (rag), so the brief's command scores the answers, not
+retrieval alone. Retrieval-only systems: --system bm25 | hybrid | hybrid_rerank.
 """
 
 from __future__ import annotations
@@ -19,6 +25,7 @@ from __future__ import annotations
 import argparse
 import json
 import time
+from collections import Counter
 from pathlib import Path
 
 import numpy as np
@@ -28,6 +35,7 @@ from aides_rag.systems import OUTPUT_KEYS, SYSTEMS, load_system
 
 KS = (1, 5, 10)
 SPLITS = ("dev", "heldout")
+DEFAULT_SYSTEM = "rag"
 
 
 def run(system, questions: list[dict], system_name: str) -> list[dict]:
@@ -49,7 +57,7 @@ def run(system, questions: list[dict], system_name: str) -> list[dict]:
             "gold_docs": q["gold_docs"],
             **{key: out.get(key) for key in OUTPUT_KEYS},
             "latency_ms": latency_ms,
-            "error": error,
+            "error": error or out.get("error"),  # systems may report their own errors
         })
     return rows
 
@@ -87,7 +95,8 @@ def summarize(rows: list[dict], system_name: str) -> dict:
     return {
         "system": system_name,
         "n_questions": len(rows),
-        "errors": [r["id"] for r in rows if r["error"]],
+        "errors": [r["id"] for r in rows if r["error"] or r["stop_reason"] == "error"],
+        "stop_reasons": dict(Counter(r["stop_reason"] for r in rows if r["stop_reason"])),
         "retrieval": retrieval_metrics(rows),
         # tune on dev, report final scores on heldout (no aid is shared between the two splits)
         "retrieval_by_split": {split: retrieval_metrics([r for r in rows if r["split"] == split])
@@ -100,8 +109,8 @@ def summarize(rows: list[dict], system_name: str) -> dict:
         },
         "tokens": {"in": total(rows, "tokens_in"), "out": total(rows, "tokens_out")},
         "tool_calls": sum(len(r["tool_calls"] or []) for r in rows),
-        "answers_generated": sum(r["answer"] is not None for r in rows),
-        # need an LLM answer: filled in once a generating system exists
+        "answers_generated": sum(bool(r["answer"]) for r in rows),  # an empty "" is not an answer
+        # filled in once a judge exists
         "judged_correctness": None,
         "expected_behavior_respected": None,
     }
@@ -117,7 +126,7 @@ def main(argv: list[str] | None = None) -> dict:
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("--questions", type=Path, default=Path("eval/golden.jsonl"))
     ap.add_argument("--out", type=Path, default=Path("eval"))
-    ap.add_argument("--system", default="bm25", choices=sorted(SYSTEMS))
+    ap.add_argument("--system", default=DEFAULT_SYSTEM, choices=sorted(SYSTEMS))
     ap.add_argument("--limit", type=int, default=None, help="only the first N questions (quick check)")
     args = ap.parse_args(argv)
 

@@ -49,8 +49,29 @@ def test_failing_question_is_recorded_not_raised(tmp_path, monkeypatch):
         raise RuntimeError("model down")
 
     monkeypatch.setattr("aides_rag.systems.bm25_only.Bm25Only.answer", boom)
-    summary = main(["--questions", str(GOLDEN), "--out", str(tmp_path), "--limit", "2"])
+    summary = main(["--questions", str(GOLDEN), "--out", str(tmp_path), "--limit", "2", "--system", "bm25"])
     assert len(summary["errors"]) == 2
+
+
+def test_error_reported_by_the_system_is_visible(tmp_path, monkeypatch):
+    """Generating systems catch their own exceptions: run_eval must still count them, and "" is no answer."""
+    def broken(self, question):
+        return {"answer": "", "cited_sources": [], "retrieved_ids": [], "stop_reason": "error",
+                "error": "ConnectError: Ollama is not running"}
+
+    monkeypatch.setattr("aides_rag.systems.bm25_only.Bm25Only.answer", broken)
+    summary = main(["--questions", str(GOLDEN), "--out", str(tmp_path), "--limit", "2", "--system", "bm25"])
+    rows = [json.loads(line) for line in (tmp_path / "results.jsonl").read_text(encoding="utf-8").splitlines()]
+    assert all(r["error"] == "ConnectError: Ollama is not running" for r in rows)
+    assert len(summary["errors"]) == 2
+    assert summary["stop_reasons"] == {"error": 2}
+    assert summary["answers_generated"] == 0
+
+
+def test_default_system_is_the_assistant():
+    from aides_rag.evaluation.run_eval import DEFAULT_SYSTEM
+
+    assert DEFAULT_SYSTEM in ("rag", "agent")
 
 
 def test_unknown_system_rejected():

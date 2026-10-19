@@ -47,8 +47,8 @@ uv run python -m aides_rag.ingest.check_sources   # optional, needs network: sou
 Evaluation:
 
 ```bash
-uv run python eval/run_eval.py --questions eval/golden.jsonl --out eval/   # --system bm25 (default)
-uv run python eval/run_eval.py --questions eval/golden.jsonl --out eval/ --system agent   # or rag, hybrid, hybrid_rerank
+uv run python eval/run_eval.py --questions eval/golden.jsonl --out eval/   # --system rag (default)
+uv run python eval/run_eval.py --questions eval/golden.jsonl --out eval/ --system agent   # or bm25, hybrid, hybrid_rerank
 ```
 
 Systems: `bm25`, `hybrid`, `hybrid_rerank` (retrieval only, no LLM), `rag` and `agent` (answer with the LLM).
