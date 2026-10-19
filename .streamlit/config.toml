@@ -1,0 +1,29 @@
+# Boussole UI: white + burgundy, technical look; Space Grotesk text, JetBrains Mono figures
+[theme]
+base = "light"
+primaryColor = "#790D16"
+backgroundColor = "#FFFFFF"
+secondaryBackgroundColor = "#F6F6F7"
+textColor = "#0E0E10"
+borderColor = "#E6E6E9"
+baseRadius = "10px"
+font = "Space Grotesk:https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&display=swap, sans-serif"
+headingFont = "Space Grotesk:https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&display=swap, sans-serif"
+codeFont = "JetBrains Mono:https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&display=swap, monospace"
+
+[theme.sidebar]
+backgroundColor = "#FAFAFB"
+secondaryBackgroundColor = "#F1F1F3"
+textColor = "#0E0E10"
+primaryColor = "#790D16"
+borderColor = "#E6E6E9"
+
+[browser]
+gatherUsageStats = false
+
+[client]
+toolbarMode = "minimal"
+
+[server]
+headless = true
+address = "localhost"  # demo machine only, not the network
