@@ -62,8 +62,8 @@ Local model: install [Ollama](https://ollama.com), then `ollama pull qwen3:4b-in
 `uv run python -m aides_rag.agent "Quel est le taux du CIR ?"` (`--mode rag` or `agent`).
 
 It writes `eval/results.jsonl` (one line per question: answer, cited sources, retrieved aid ids,
-tokens in/out, latency, tool calls, stop reason) and `eval/summary.json` (Recall@k, MRR, latency,
-tokens). Every system implements the same `answer(question) -> dict` contract, documented in
+tokens in/out, latency, tool calls, stop reason, cost, config and each LLM call) and `eval/summary.json`
+(Recall@k, MRR, latency, tokens, total cost, models, stop reasons, errors). Every system implements the same `answer(question) -> dict` contract, documented in
 `src/aides_rag/systems/__init__.py`; add a new one there and compare with `--system <name>`.
 
 ## Repository layout

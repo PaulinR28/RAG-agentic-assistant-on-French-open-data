@@ -108,6 +108,9 @@ def summarize(rows: list[dict], system_name: str) -> dict:
             "max": round(float(latencies.max()), 1),
         },
         "tokens": {"in": total(rows, "tokens_in"), "out": total(rows, "tokens_out")},
+        "cost_usd": round(cost, 6) if (cost := total(rows, "cost_usd")) is not None else None,  # billed, 0 when local
+        "models": sorted({r["model"] for r in rows if r["model"]}),
+        "configs": sorted({r["config"] for r in rows if r["config"]}),
         "tool_calls": sum(len(r["tool_calls"] or []) for r in rows),
         "answers_generated": sum(bool(r["answer"]) for r in rows),  # an empty "" is not an answer
         # filled by --judge
