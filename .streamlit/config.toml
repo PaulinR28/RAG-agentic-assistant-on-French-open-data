@@ -1,22 +1,22 @@
-# Boussole brand: cream base, burgundy accent, espresso sidebar; Mulish body, Instrument Serif titles, JetBrains Mono figures
+# Boussole UI: white + burgundy, technical look; Space Grotesk text, JetBrains Mono figures
 [theme]
 base = "light"
 primaryColor = "#790D16"
-backgroundColor = "#F5EFE1"
-secondaryBackgroundColor = "#EFE4CC"
-textColor = "#2A1F1D"
-borderColor = "#E2D5BC"
-baseRadius = "14px"
-font = "Mulish:https://fonts.googleapis.com/css2?family=Mulish:wght@400;500;600;700;800&display=swap, Arial, sans-serif"
-headingFont = "Instrument Serif:https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&display=swap, Georgia, serif"
-codeFont = "JetBrains Mono:https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&display=swap, monospace"
+backgroundColor = "#FFFFFF"
+secondaryBackgroundColor = "#F6F6F7"
+textColor = "#0E0E10"
+borderColor = "#E6E6E9"
+baseRadius = "10px"
+font = "Space Grotesk:https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&display=swap, sans-serif"
+headingFont = "Space Grotesk:https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&display=swap, sans-serif"
+codeFont = "JetBrains Mono:https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&display=swap, monospace"
 
 [theme.sidebar]
-backgroundColor = "#1C1311"
-secondaryBackgroundColor = "#2A1F1D"
-textColor = "#F5EFE1"
-primaryColor = "#E5D3AF"
-borderColor = "#3A2C28"
+backgroundColor = "#FAFAFB"
+secondaryBackgroundColor = "#F1F1F3"
+textColor = "#0E0E10"
+primaryColor = "#790D16"
+borderColor = "#E6E6E9"
 
 [browser]
 gatherUsageStats = false
