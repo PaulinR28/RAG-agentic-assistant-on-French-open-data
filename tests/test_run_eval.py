@@ -68,6 +68,28 @@ def test_error_reported_by_the_system_is_visible(tmp_path, monkeypatch):
     assert summary["answers_generated"] == 0
 
 
+def test_generation_trace_and_cost_are_kept(tmp_path, monkeypatch):
+    """The row keeps the generation trace (config, LLM calls) and the summary adds up the billed cost."""
+    def generated(self, question):
+        return {"answer": "Oui", "cited_sources": ["411"], "retrieved_ids": ["411"], "tokens_in": 100, "tokens_out": 10,
+                "tool_calls": [], "stop_reason": "final_answer", "abstained": False, "cost_usd": 0.0015,
+                "model": "anthropic/claude-haiku-5.5", "config": "rag", "n_llm_calls": 1, "valid_output": True,
+                "llm_calls": [{"phase": "answer", "tokens_in": 100, "tokens_out": 10, "latency_ms": 900,
+                               "cost_usd": 0.0015, "finish_reason": "stop"}]}
+
+    monkeypatch.setattr("aides_rag.systems.bm25_only.Bm25Only.answer", generated)
+    summary = main(["--questions", str(GOLDEN), "--out", str(tmp_path), "--limit", "2", "--system", "bm25"])
+    rows = [json.loads(line) for line in (tmp_path / "results.jsonl").read_text(encoding="utf-8").splitlines()]
+    assert rows[0]["config"] == "rag" and rows[0]["n_llm_calls"] == 1 and rows[0]["llm_calls"][0]["latency_ms"] == 900
+    assert summary["cost_usd"] == 0.003
+    assert summary["models"] == ["anthropic/claude-haiku-5.5"] and summary["configs"] == ["rag"]
+
+
+def test_retrieval_only_run_has_no_cost(full_run):
+    summary, rows = full_run
+    assert summary["cost_usd"] is None and summary["models"] == [] and rows[0]["llm_calls"] is None
+
+
 def test_default_system_is_the_assistant():
     from aides_rag.evaluation.run_eval import DEFAULT_SYSTEM
 

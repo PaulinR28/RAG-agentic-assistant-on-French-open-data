@@ -17,8 +17,8 @@ hybrid retrieval (BM25 + bge-m3 embeddings), answers with citations, and runs lo
 |---|---|---|---|---|---|---|
 | `bm25` (baseline, no LLM) | 0.875 | 0.81 | n/a | n/a | < 0.01 | 0 |
 | `hybrid` (no LLM, retrieval used by `rag` / `agent`) | **1.00** | **0.92** | n/a | n/a | 0.22 | 0 |
-| `rag` | TODO | TODO | TODO | TODO | TODO | TODO |
-| **`agent` (final)** | TODO | TODO | TODO | TODO | TODO | TODO |
+| **`rag` (final)** | TODO | TODO | TODO | TODO | TODO | TODO |
+| `agent` | TODO | TODO | TODO | TODO | TODO | TODO |
 
 - Hybrid search (BM25 + bge-m3, dense weight 3) over BM25 alone, held-out: Recall@1 0.75 → 0.88, Recall@5 0.88 → 1.00, for ~0.2 s per question on CPU. Cross-encoder reranking was measured and left off by default: no held-out gain for +20 s per question (EVALUATION.md §5, E5–E6).
 - TODO: quality vs latency between `rag` and `agent`.
@@ -60,8 +60,8 @@ Local model: install [Ollama](https://ollama.com), then `ollama pull qwen3:4b-in
 `uv run python -m aides_rag.agent "Quel est le taux du CIR ?"` (`--mode rag` or `agent`).
 
 It writes `eval/results.jsonl` (one line per question: answer, cited sources, retrieved aid ids,
-tokens in/out, latency, tool calls, stop reason) and `eval/summary.json` (Recall@k, MRR, latency,
-tokens). Every system implements the same `answer(question) -> dict` contract, documented in
+tokens in/out, latency, tool calls, stop reason, cost, config and each LLM call) and `eval/summary.json`
+(Recall@k, MRR, latency, tokens, total cost, models, stop reasons, errors). Every system implements the same `answer(question) -> dict` contract, documented in
 `src/aides_rag/systems/__init__.py`; add a new one there and compare with `--system <name>`.
 
 ## Repository layout
