@@ -1,11 +1,22 @@
-# Boussole brand: cream base, burgundy accent, sand for secondary surfaces, Mulish (Arial if offline)
+# Boussole brand: cream base, burgundy accent, espresso sidebar; Mulish body, Instrument Serif titles, JetBrains Mono figures
 [theme]
 base = "light"
 primaryColor = "#790D16"
 backgroundColor = "#F5EFE1"
-secondaryBackgroundColor = "#E5D3AF"
+secondaryBackgroundColor = "#EFE4CC"
 textColor = "#2A1F1D"
-font = "Mulish:https://fonts.googleapis.com/css2?family=Mulish:wght@400;600;700;800&display=swap, Arial, sans-serif"
+borderColor = "#E2D5BC"
+baseRadius = "14px"
+font = "Mulish:https://fonts.googleapis.com/css2?family=Mulish:wght@400;500;600;700;800&display=swap, Arial, sans-serif"
+headingFont = "Instrument Serif:https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&display=swap, Georgia, serif"
+codeFont = "JetBrains Mono:https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&display=swap, monospace"
+
+[theme.sidebar]
+backgroundColor = "#1C1311"
+secondaryBackgroundColor = "#2A1F1D"
+textColor = "#F5EFE1"
+primaryColor = "#E5D3AF"
+borderColor = "#3A2C28"
 
 [browser]
 gatherUsageStats = false
