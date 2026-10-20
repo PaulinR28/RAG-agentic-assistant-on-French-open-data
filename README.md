@@ -110,8 +110,8 @@ Exact Hugging Face revisions are pinned; weights are never committed (`models/` 
 | Keyword | BM25 (Okapi, k1=1.5, b=0.75), French Snowball stemmer | `snowballstemmer` (see `uv.lock`) | In use |
 | Fusion | Reciprocal Rank Fusion, k=60, **dense weight 3 / BM25 1** | (code) | In use, picked on dev |
 | Answering LLM (local, default) | `qwen3:4b-instruct-2507-q4_K_M` (Ollama tag; Q4_K_M quantisation) | Ollama 0.40.4, `temperature=0`, `num_ctx=8192` | **In use** |
-| Answering LLM (API, comparison) | `anthropic/claude-haiku-5.5` via OpenRouter | TODO (dated snapshot) | Optional (`LLM_BACKEND=openrouter`) |
-| Answering LLM (API, comparison) | Qwen3-14B via OpenRouter | TODO (exact slug) | Optional (`LLM_MODEL=<slug>`) |
+| Answering LLM (API, comparison) | `anthropic/claude-haiku-5.5` via OpenRouter | no dated snapshot exposed by OpenRouter; held-out run 2026-10-19 | Optional (`LLM_BACKEND=openrouter`); held-out in Results |
+| Answering LLM (API, comparison) | Qwen3-14B via OpenRouter | `qwen/qwen3-14b` (the only Qwen3-14B slug on OpenRouter) | Dev only (PR #10), not run on held-out |
 | Judge | `anthropic/claude-sonnet-5.5` via OpenRouter | temperature 0, reasoning `low` | **In use** (`run_eval.py --judge`); 97.5 % agreement with our hand labels (20 dev questions × 2 runs = 40 answers; held-out never used) |
 
 Library versions are pinned in `uv.lock`.
@@ -202,7 +202,8 @@ Main residual risks (full table: `EVALUATION.md` §7):
 - **Region coverage:** 204 of 432 territorial aids have no machine-readable region.
 - **Not advice:** eligibility answers are indicative; the funder decides.
 - **Small test set:** 20 held-out questions, so one question = 5 points.
-- **Injection:** the direct injection (q039) is refused by all systems; with the hidden one (q040), the local model ignores it but abstains. No cited id outside the retrieved aids (blocked by the validator).
+- **Injection:** the direct injection (q039) is refused by all systems. The hidden one (q040) is refused by both Haiku systems; local `rag` (final) ignores it but abstains; **local `agent` obeys it** ("100 %", with a citation). No cited id outside the retrieved aids (blocked by the validator), but the validator does not check the claims.
+- **Wrong but well-cited answers:** all 6 wrong answers of the final system cite the right aid (e.g. an invented 1 M€ turnover threshold), so users must open the source. Error analysis: `EVALUATION.md` §6.
 
 **Bonuses:** date handling: deadline status computed in code for a given day (`search_aids(open_on=…)`) ·
 local vs API comparison: dev and held-out (`EVALUATION.md` §4–5) · UI: Streamlit (`uv run streamlit run src/aides_rag/ui/app.py`) ·
@@ -214,10 +215,10 @@ annotated, not filtered, so a just-closed aid stays visible).
 <!-- TODO: everyone speaks at the defence -->
 | Member | Main contributions | Defence part |
 |---|---|---|
-| Izan-Gaël | TODO | TODO |
-| Oussama | TODO | TODO |
-| Paulin | TODO | TODO |
-| Léopold | TODO | TODO |
+| Izan-Gaël | Project lead. Data selection (504 aids, licence check), chunking, BM25, meaning search (bge-m3) and weighted hybrid, reranker benchmarks, held-out questions, place hints, LLM judge, Streamlit UI (#1, #4, #5, #8, #11, #13–#16, #19–#20, #23) | TODO |
+| Oussama | Evaluation runner `run_eval.py` and its error counting, final held-out runs (local and API) (#6, #17, #22) | TODO |
+| Paulin | Generation and agent: LLM client (Ollama / OpenRouter), answer schema and validator, tools, trace, local vs API comparison (#10) | TODO |
+| Léopold | Documentation: README structure, DATA_CARD, EVALUATION.md (#12) | TODO |
 
 ## Git workflow
 
