@@ -25,8 +25,8 @@ take about 2.5× longer (dev p50 ~59 s).
 | `agent`, Claude Haiku 5.5 (API) | 0.94 | 0.88 | 16 / 2 / 2 | 19 / 20 | 4.7 | 0.0017 |
 
 - Hybrid search (BM25 + bge-m3, dense weight 3) over BM25 alone, held-out: Recall@1 0.75 → 0.88, Recall@5 0.88 → 1.00, for ~0.2 s per question on CPU. Cross-encoder reranking was measured and left off by default: no held-out gain for +20 s per question (EVALUATION.md §5, E5–E6).
-- Local `agent` costs three times the tokens of `rag` and is slower, for no gain; with Haiku, `agent` gains one question over `rag`. `rag` stays the final local system.
-- Main remaining failure: the 4B model misreads conditions (thresholds, dates, exclusions) in the right aid. For every wrong answer of the final `rag` system the gold aid was in the top 5 (local `agent`: all but q026); the same pipeline with Claude Haiku 5.5 gets 15–16 / 20. Out-of-corpus questions: 3 / 3 abstained by all systems; 0 errors, 20 / 20 valid outputs.
+- Local `agent` costs three times the tokens of `rag` and is slower, for no gain: Qwen3 4B makes one search per question and never opens a card. With Haiku the agent reformulates, opens a card and is the only system to get the deadline question (q032) right; its one-question lead over `rag` is within run-to-run variance (15 / 20 on a second run). `rag` stays the final local system.
+- Main remaining failure: the 4B model misreads conditions (thresholds, dates, exclusions) in the right aid; once (q026) the deciding condition is in a chunk the prompt does not show. For every wrong answer of the final `rag` system the gold aid was in the top 5 (local `agent`: all but q026); the same pipeline with Claude Haiku 5.5 gets 15–16 / 20. Out-of-corpus questions: 3 / 3 abstained by all systems; 0 errors, 20 / 20 valid outputs.
 
 Demo recording: <!-- TODO: link -->
 
@@ -217,7 +217,7 @@ annotated, not filtered, so a just-closed aid stays visible).
 |---|---|---|
 | Izan-Gaël | Project lead. Data selection (504 aids, licence check), chunking, BM25, meaning search (bge-m3) and weighted hybrid, reranker benchmarks, held-out questions, place hints, LLM judge, Streamlit UI (#1, #4, #5, #8, #11, #13–#16, #19–#20, #23) | TODO |
 | Oussama | Evaluation runner `run_eval.py` and its error counting, final held-out runs (local and API) (#6, #17, #22) | TODO |
-| Paulin | Generation and agent: LLM client (Ollama / OpenRouter), answer schema and validator, tools, trace, local vs API comparison (#10) | TODO |
+| Paulin | Generation and agent: LLM client (Ollama / OpenRouter), answer schema and validator, tools, trace, local vs API comparison (#10); error analysis at prompt level, numbers-in-cards check, agent tool-use and API tool-call analysis (#24) | TODO |
 | Léopold | Documentation: README structure, DATA_CARD, EVALUATION.md (#12) | TODO |
 
 ## Git workflow
