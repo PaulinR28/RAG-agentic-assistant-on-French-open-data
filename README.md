@@ -12,6 +12,8 @@ hybrid retrieval (BM25 + bge-m3 embeddings), answers with citations, and runs lo
 ## Results
 
 Held-out split (q021–q040), run once after the final system was fixed. Correct = judged correct / partial / wrong out of 20. Full tables: EVALUATION.md §4.
+LLM runs on a MacBook Air M3 (16 GB, `eval/final/RUN_INFO.txt`); on the demo laptop (Intel CPU only) local answers
+take about 2.5× longer (dev p50 ~59 s).
 
 | System | Recall@5 | MRR | Correct | Behaviour OK | p50 latency (s) | USD / question |
 |---|---|---|---|---|---|---|
@@ -24,7 +26,7 @@ Held-out split (q021–q040), run once after the final system was fixed. Correct
 
 - Hybrid search (BM25 + bge-m3, dense weight 3) over BM25 alone, held-out: Recall@1 0.75 → 0.88, Recall@5 0.88 → 1.00, for ~0.2 s per question on CPU. Cross-encoder reranking was measured and left off by default: no held-out gain for +20 s per question (EVALUATION.md §5, E5–E6).
 - Local `agent` costs three times the tokens of `rag` and is slower, for no gain; with Haiku, `agent` gains one question over `rag`. `rag` stays the final local system.
-- Main remaining failure: the 4B model misreads conditions (thresholds, dates, exclusions) in the right aid. The gold aid was in the top 5 for every wrong answer; the same pipeline with Claude Haiku 5.5 gets 15–16 / 20. Out-of-corpus questions: 3 / 3 abstained by all systems; 0 errors, 20 / 20 valid outputs.
+- Main remaining failure: the 4B model misreads conditions (thresholds, dates, exclusions) in the right aid. For every wrong answer of the final `rag` system the gold aid was in the top 5 (local `agent`: all but q026); the same pipeline with Claude Haiku 5.5 gets 15–16 / 20. Out-of-corpus questions: 3 / 3 abstained by all systems; 0 errors, 20 / 20 valid outputs.
 
 Demo recording: <!-- TODO: link -->
 
