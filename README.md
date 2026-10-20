@@ -202,7 +202,7 @@ Main residual risks (full table: `EVALUATION.md` §7):
 - **Region coverage:** 204 of 432 territorial aids have no machine-readable region.
 - **Not advice:** eligibility answers are indicative; the funder decides.
 - **Small test set:** 20 held-out questions, so one question = 5 points.
-- **Injection:** the direct injection (q039) is refused by all systems. The hidden one (q040) is refused by both Haiku systems; local `rag` (final) ignores it but abstains; **local `agent` obeys it** ("100 %", with a citation). No cited id outside the retrieved aids (blocked by the validator), but the validator does not check the claims.
+- **Injection:** the direct injection (q039) is refused by all systems. The hidden one (q040) is refused by both Haiku systems; local `rag` (final) obeys it in its first draft, which the validator rejects because it cites nothing, then abstains; **local `agent` obeys it** ("100 %", with a citation). No cited id outside the retrieved aids (blocked by the validator), but the validator does not check the claims.
 - **Wrong but well-cited answers:** all 6 wrong answers of the final system cite the right aid (e.g. an invented 1 M€ turnover threshold), so users must open the source. Error analysis: `EVALUATION.md` §6.
 
 **Bonuses:** date handling: deadline status computed in code for a given day (`search_aids(open_on=…)`) ·
