@@ -59,22 +59,36 @@ header[data-testid="stHeader"] { background: transparent; }
 .lede b { color: var(--ink); font-weight: 600; }
 .lede code { font: 500 0.92em var(--mono); color: var(--bur); background: rgba(121,13,22,0.06); padding: 0.05rem 0.35rem; border-radius: 4px; }
 
-/* Pipeline diagram: the system, drawn */
-.pipe { position: relative; display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 0.6rem; margin: 2.4rem 0 2rem; }
-.pipe::before { content: ""; position: absolute; left: 4%; right: 4%; top: 22px; height: 1px; background: var(--line); }
-.pipe .pulse { position: absolute; top: 19px; left: 4%; width: 7px; height: 7px; border-radius: 50%; background: var(--bur2);
-  box-shadow: 0 0 12px 3px rgba(176,22,42,0.45); animation: travel 4.5s var(--ease) infinite; }
-.pipe.running .pulse { animation-duration: 1.4s; }
-@keyframes travel { from { left: 4%; opacity: 0; } 10% { opacity: 1; } 90% { opacity: 1; } to { left: 96%; opacity: 0; } }
-.node { position: relative; text-align: center; animation: rise 0.8s var(--ease) both; }
-.node .dot { width: 44px; height: 44px; margin: 0 auto 0.6rem; border-radius: 12px; display: flex; align-items: center;
-  justify-content: center; background: #fff; border: 1px solid var(--line); font: 700 0.72rem var(--mono); color: var(--bur);
-  transition: transform 0.5s var(--ease), border-color 0.5s var(--ease); }
-.node:hover .dot { transform: translateY(-3px); border-color: var(--bur); }
-.node .k { font: 700 0.7rem var(--mono); letter-spacing: 0.06em; text-transform: uppercase; color: var(--ink); }
-.node .s { font-size: 0.75rem; color: var(--mute); margin-top: 0.15rem; }
-.pipe.running .node .dot { animation: lit 1.4s var(--ease) infinite; }
-@keyframes lit { 0%, 100% { background: #fff; color: var(--bur); } 30% { background: var(--bur); color: #fff; border-color: var(--bur); } }
+/* How it works, in 3 plain steps: still when idle; while a question runs, one step lights at a time, 3 s each */
+.howto { margin: 2.4rem 0 1.6rem; }
+.howto .cap { font: 700 0.66rem var(--mono); letter-spacing: 0.16em; text-transform: uppercase; color: var(--mute); margin-bottom: 0.7rem; }
+.howto.running .cap { color: var(--bur); }
+.howto .row { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1.2rem; }
+.howto .st { position: relative; display: flex; align-items: center; gap: 0.9rem; padding: 0.95rem 1.05rem; background: #fff;
+  border: 1px solid var(--line); border-radius: 12px; animation: rise 0.8s var(--ease) both; }
+.howto .st:not(:last-child)::after { content: "→"; position: absolute; right: -1rem; top: 50%; transform: translateY(-50%);
+  color: var(--mute); font-size: 0.9rem; }
+.howto .ic { flex: none; width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center;
+  font: 700 1rem var(--mono); background: rgba(121,13,22,0.07); color: var(--bur); }
+.howto .st b { display: block; font-weight: 600; font-size: 1rem; line-height: 1.25; color: var(--ink); }
+.howto .st span { display: block; font-size: 0.8rem; color: var(--mute); margin-top: 0.15rem; }
+.howto.running .st { animation: steplit 9s ease-in-out infinite both; }
+.howto.running .ic { animation: iclit 9s ease-in-out infinite both; }
+@keyframes steplit { 0%, 38%, 100% { border-color: var(--line); background: #fff; }
+                     6%, 30% { border-color: var(--bur); background: rgba(121,13,22,0.04); } }
+@keyframes iclit { 0%, 38%, 100% { background: rgba(121,13,22,0.07); color: var(--bur); }
+                   6%, 30% { background: var(--bur); color: #fff; } }
+
+/* Funnel under each answer: the real numbers of this question */
+.funnel { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1.2rem; margin: 0 0 1.8rem; }
+.funnel .f { position: relative; padding: 0.9rem 1.05rem; background: #fff; border: 1px solid var(--line); border-radius: 12px;
+  animation: rise 0.8s var(--ease) both; }
+.funnel .f:not(:last-child)::after { content: "→"; position: absolute; right: -1rem; top: 50%; transform: translateY(-50%);
+  color: var(--mute); font-size: 0.9rem; }
+.funnel .f .v { font: 700 2.1rem var(--mono); letter-spacing: -0.03em; line-height: 1; color: var(--ink); }
+.funnel .f .k { font-size: 0.85rem; color: var(--mute); margin-top: 0.35rem; }
+.funnel .f.hot { background: var(--bur); border-color: var(--bur); }
+.funnel .f.hot .v, .funnel .f.hot .k { color: #fff; }
 
 /* HUD frame: white panel with burgundy corner ticks */
 [data-testid="stForm"], .st-key-answer, .hud { position: relative; background: #fff; border: 1px solid var(--line) !important;
@@ -175,7 +189,8 @@ button[kind="primaryFormSubmit"]:active { transform: scale(0.98); }
 
 @media (max-width: 768px) {
   .block-container { padding-top: 2rem; }
-  .pipe { grid-template-columns: repeat(3, minmax(0, 1fr)); row-gap: 1.2rem; } .pipe::before, .pipe .pulse { display: none; }
+  .howto .row, .funnel { grid-template-columns: 1fr; gap: 0.6rem; }
+  .howto .st::after, .funnel .f::after { display: none; }
   .sources, .stats { grid-template-columns: 1fr; } .tile.wide { grid-column: span 1; }
   .step { grid-template-columns: 1fr; gap: 0.2rem; } .step .ms { text-align: left; }
 }
@@ -226,19 +241,29 @@ def hero() -> None:
                 "et chaque étape tracée.</p>", unsafe_allow_html=True)
 
 
-def pipeline(settings: dict, running: bool = False) -> str:
-    """The system as a diagram; while a question runs, the pulse speeds up and the steps light in turn."""
-    model = "Qwen3 4B" if settings["backend"] == "ollama" else "Haiku"
-    nodes = [("Q", "Question", "en français"),
-             ("⇄", "Hybride", "BM25 ∥ bge-m3"),
-             ("Σ", "Fusion", "RRF · sens ×3"),
-             ("↺" if settings["mode"] == "agent" else "λ", model, "agent + outils" if settings["mode"] == "agent" else "une passe"),
-             ("{}", "JSON validé", "Pydantic · citations"),
-             ("✓", "Réponse", "sourcée")]
-    html = "".join(f'<div class="node" style="animation-delay:{0.06 * n:.2f}s"><div class="dot" style="animation-delay:{0.2 * n:.1f}s">'
-                   f'{g}</div><div class="k">{escape(k)}</div><div class="s">{escape(s)}</div></div>'
-                   for n, (g, k, s) in enumerate(nodes))
-    return f'<div class="pipe{" running" if running else ""}"><span class="pulse"></span>{html}</div>'
+HOW_IT_WORKS = [("Je lis votre question", "en français, comme vous l'écrivez"),
+                ("Je cherche parmi 504 aides", "par mots-clés et par sens"),
+                ("J'écris une réponse sourcée", "chaque aide citée est vérifiée")]
+
+
+def how_it_works(running: bool = False, wait: str = "") -> str:
+    """Three plain steps. While a question runs they light in turn, slowly: a timed animation, not live progress."""
+    cap = f"Boussole travaille… ({wait})" if running else "Comment ça marche"
+    html = "".join(f'<div class="st" style="animation-delay:{3 * n if running else 0.06 * n}s"><div class="ic" '
+                   f'style="animation-delay:{3 * n}s">{n + 1}</div><div><b>{escape(title)}</b><span>{escape(sub)}</span></div></div>'
+                   for n, (title, sub) in enumerate(HOW_IT_WORKS))
+    return f'<div class="howto{" running" if running else ""}"><div class="cap">{escape(cap)}</div><div class="row">{html}</div></div>'
+
+
+def funnel(row: dict) -> str:
+    """504 aids → found for this question → cited in the answer: the real counts of this row."""
+    found, cited = len(row["retrieved_ids"]), len(row["cited_sources"])
+    cells = [("", 504, "aides dans la base"),
+             ("", found, f"trouvée{'s' if found > 1 else ''} pour votre question"),
+             ("hot", cited, f"citée{'s' if cited > 1 else ''} dans la réponse" if cited else "citée : pas de réponse sûre")]
+    return '<div class="funnel">' + "".join(
+        f'<div class="f {cls}" style="animation-delay:{0.15 * n:.2f}s"><div class="v">{count(v)}</div><div class="k">{escape(k)}</div></div>'
+        for n, (cls, v, k) in enumerate(cells)) + "</div>"
 
 
 def show_sources(row: dict) -> None:
@@ -330,6 +355,7 @@ def show_entry(entry: dict) -> None:
     if row["abstained"]:
         html += '<span class="chip warn">abstention</span>'
     st.markdown(f'<div class="chips rise d1">{html}</div>', unsafe_allow_html=True)
+    st.markdown(funnel(row), unsafe_allow_html=True)
     left, right = st.columns([7, 5], gap="large")
     with left, st.container(key="answer"):
         st.markdown('<span class="scan"></span><div class="label">Réponse</div>', unsafe_allow_html=True)
@@ -355,7 +381,7 @@ def main() -> None:
     history_panel(entries)
 
     diagram = st.empty()
-    diagram.markdown(pipeline(settings), unsafe_allow_html=True)
+    diagram.markdown(how_it_works(), unsafe_allow_html=True)
     with st.form("ask", clear_on_submit=False, border=False):
         question = st.text_area("Votre question", height=96,
                                 placeholder="Ex. : Je dirige une PME industrielle à Lyon, quelles aides pour "
@@ -364,8 +390,8 @@ def main() -> None:
     if asked and question.strip():
         llm = LLMClient.from_env(backend=settings["backend"])
         wait = "20 à 60 s en local" if settings["backend"] == "ollama" else "quelques secondes"
-        diagram.markdown(pipeline(settings, running=True), unsafe_allow_html=True)
-        with st.spinner(f"Exécution du pipeline ({wait})…"):
+        diagram.markdown(how_it_works(running=True, wait=wait), unsafe_allow_html=True)
+        with st.spinner(f"Recherche et rédaction ({wait})…"):
             row = answer(question.strip(), mode=settings["mode"], llm=llm, full_cards=settings["full_cards"])
         entry = history.save(row, {**settings, "model": llm.model})
         st.session_state.selected = entry["id"]

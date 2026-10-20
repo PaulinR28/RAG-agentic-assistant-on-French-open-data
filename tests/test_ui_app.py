@@ -39,6 +39,8 @@ def test_ask_shows_answer_and_saves_settings(ui):
     at.button[0].click().run()
     assert not at.exception
     assert any("Prêt Vert" in m.value for m in at.markdown)
+    funnel = next(m.value for m in at.markdown if 'class="funnel"' in m.value)
+    assert '--to:504' in funnel and '--to:2"' in funnel and '--to:1"' in funnel  # 504 aids, 2 found, 1 cited
     [entry] = history.load(ui)
     assert entry["settings"]["full_cards"] is True and entry["row"]["config"].endswith("+full_cards")
 
