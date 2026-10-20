@@ -69,6 +69,10 @@ tokens in/out, latency, tool calls, stop reason, cost, config and each LLM call)
 (Recall@k, MRR, latency, tokens, total cost, models, stop reasons, errors). Every system implements the same `answer(question) -> dict` contract, documented in
 `src/aides_rag/systems/__init__.py`; add a new one there and compare with `--system <name>`.
 
+The committed `eval/results.jsonl` and `eval/summary.json` come from that exact command (default `rag`, local
+Qwen3 4B, all 40 questions) at the `v1.0` code, on a MacBook Air M3; running it again overwrites them. The
+reference scores are the held-out runs in `eval/final/` (`RUN_INFO.txt`), graded by the judge (EVALUATION.md §4).
+
 ## Repository layout
 
 ```
@@ -110,7 +114,7 @@ Exact Hugging Face revisions are pinned; weights are never committed (`models/` 
 | Reranker (compared) | `cross-encoder/mmarco-mMiniLMv2-L12-H384-v1` | `1427fd652930e4ba29e8149678df786c240d8825` | Rejected: lowers held-out Recall@1 |
 | Keyword | BM25 (Okapi, k1=1.5, b=0.75), French Snowball stemmer | `snowballstemmer` (see `uv.lock`) | In use |
 | Fusion | Reciprocal Rank Fusion, k=60, **dense weight 3 / BM25 1** | (code) | In use, picked on dev |
-| Answering LLM (local, default) | `qwen3:4b-instruct-2507-q4_K_M` (Ollama tag; Q4_K_M quantisation) | Ollama 0.40.4, `temperature=0`, `num_ctx=8192` | **In use** |
+| Answering LLM (local, default) | `qwen3:4b-instruct-2507-q4_K_M` (Ollama tag; Q4_K_M quantisation; model id `0edcdef34593`) | Ollama 0.40.6 for the final runs (0.40.4–0.40.6 used during development), `temperature=0`, `num_ctx=8192` | **In use** |
 | Answering LLM (API, comparison) | `anthropic/claude-haiku-5.5` via OpenRouter | no dated snapshot exposed by OpenRouter; held-out run 2026-10-19 | Optional (`LLM_BACKEND=openrouter`); held-out in Results |
 | Answering LLM (API, comparison) | Qwen3-14B via OpenRouter | `qwen/qwen3-14b` (the only Qwen3-14B slug on OpenRouter) | Dev only (PR #10), not run on held-out |
 | Judge | `anthropic/claude-sonnet-5.5` via OpenRouter | temperature 0, reasoning `low` | **In use** (`run_eval.py --judge`); 97.5 % agreement with our hand labels (20 dev questions × 2 runs = 40 answers; held-out never used) |
