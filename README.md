@@ -200,7 +200,7 @@ Main residual risks (full table: `EVALUATION.md` §7):
 - **Region coverage:** 204 of 432 territorial aids have no machine-readable region.
 - **Not advice:** eligibility answers are indicative; the funder decides.
 - **Small test set:** 20 held-out questions, so one question = 5 points.
-- **Injection:** the direct injection (q039) is refused by all systems; with the hidden one (q040), the local model ignores it but abstains. No cited id outside the retrieved aids (blocked by the validator).
+- **Injection:** the direct injection (q039) is refused by all systems; with the hidden one (q040), the local model obeys in its first draft; in `rag` the validator rejects that draft (it cites nothing) and the retry abstains, while local `agent` returns the injected sentence. No cited id outside the retrieved aids (blocked by the validator).
 
 **Bonuses:** date handling: deadline status computed in code for a given day (`search_aids(open_on=…)`) ·
 local vs API comparison: dev and held-out (`EVALUATION.md` §4–5) · UI: Streamlit (`uv run streamlit run src/aides_rag/ui/app.py`) ·
