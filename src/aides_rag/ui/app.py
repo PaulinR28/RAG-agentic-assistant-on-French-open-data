@@ -22,6 +22,8 @@ from aides_rag.ui import history
 
 BACKENDS = {"ollama": "Local · Qwen3 4B", "openrouter": "API · Claude Haiku"}
 MODES = {"rag": "RAG", "agent": "Agent"}
+# Short labels for the pills inside the question box
+BACKEND_PILLS = {"ollama": "Qwen3 4B · local", "openrouter": "Haiku · API"}
 
 # Technical look: white + burgundy, drifting grid, HUD corners, a live diagram of the pipeline, counting figures
 CSS = """
@@ -115,6 +117,39 @@ button[kind="primaryFormSubmit"]::after { content: "↵"; margin-left: 0.7rem; f
 button[kind="primaryFormSubmit"]:hover::after { transform: translateX(3px); }
 button[kind="primaryFormSubmit"]:active { transform: scale(0.98); }
 
+/* Composer: the question box with its settings inside, as in chat apps */
+.st-key-composer { position: relative; background: #fff; border: 1px solid var(--line); border-radius: 18px;
+  padding: 0.9rem 1rem 0.7rem !important; box-shadow: 0 1px 0 rgba(14,14,16,0.03), 0 24px 48px -36px rgba(14,14,16,0.3);
+  transition: border-color 0.35s var(--ease), box-shadow 0.35s var(--ease); }
+.st-key-composer:focus-within { border-color: rgba(121,13,22,0.45);
+  box-shadow: 0 0 0 4px rgba(121,13,22,0.06), 0 24px 48px -36px rgba(14,14,16,0.3); }
+.st-key-composer [data-testid="stTextArea"] div { border: none !important; background: transparent !important; box-shadow: none !important; }
+.st-key-composer textarea { background: transparent !important; font-size: 1.08rem !important; line-height: 1.55 !important;
+  padding: 0.2rem 0.1rem !important; resize: none !important; }
+.st-key-composer [data-testid="stHorizontalBlock"] { gap: 0.5rem; align-items: center; }
+.st-key-composer [data-testid="stColumn"] { width: auto !important; flex: 0 0 auto !important; min-width: 0; }
+.st-key-composer [data-testid="stColumn"]:nth-last-child(2) { flex: 1 1 auto !important; }
+/* Segmented pills: a soft track, the active option lifts in white */
+.st-key-composer [role="radiogroup"] { background: var(--soft); border-radius: 999px; padding: 3px; gap: 2px; }
+.st-key-composer [data-testid="stButtonGroup"] button { border: none !important; border-radius: 999px !important; background: transparent;
+  min-height: 30px; padding: 0.2rem 0.85rem !important; color: var(--mute);
+  transition: background 0.35s var(--ease), color 0.35s var(--ease), box-shadow 0.35s var(--ease), transform 0.35s var(--ease); }
+.st-key-composer [data-testid="stButtonGroup"] button p { font: 600 0.8rem var(--mono); letter-spacing: 0.02em; }
+.st-key-composer [data-testid="stButtonGroup"] button:hover { color: var(--ink); }
+.st-key-composer [data-testid="stButtonGroup"] button[aria-checked="true"] { background: #fff !important; color: var(--bur) !important;
+  box-shadow: 0 1px 2px rgba(14,14,16,0.08), 0 4px 12px -6px rgba(121,13,22,0.45); }
+.st-key-composer [data-testid="stButtonGroup"] button:active { transform: scale(0.96); }
+/* Options popover and send button */
+.st-key-composer [data-testid="stPopover"] button { border-radius: 999px !important; border: 1px solid var(--line) !important;
+  min-height: 34px; padding: 0 0.7rem !important; transition: border-color 0.3s var(--ease); }
+.st-key-composer [data-testid="stPopover"] button:hover { border-color: var(--bur) !important; }
+.st-key-send button { width: 40px; height: 40px; min-height: 40px; border-radius: 50% !important; padding: 0 !important; border: none !important;
+  box-shadow: 0 10px 24px -12px rgba(121,13,22,0.9); transition: transform 0.35s var(--ease), box-shadow 0.35s var(--ease) !important; }
+.st-key-send button:hover { transform: translateY(-1px); }
+.st-key-send button:active { transform: scale(0.94); }
+.st-key-send button p { font: 700 1.05rem var(--mono) !important; }
+.composer-note { font: 500 0.68rem var(--mono); color: var(--mute); letter-spacing: 0.04em; margin: 0.5rem 0 0 0.3rem; }
+
 /* Sidebar */
 [data-testid="stSidebar"] { border-right: 1px solid var(--line); }
 [data-testid="stSidebar"] h3 { font: 700 0.66rem var(--mono) !important; letter-spacing: 0.18em; text-transform: uppercase;
@@ -204,19 +239,33 @@ def aids_by_id() -> dict[str, dict]:
     return {a["id_aid"]: a for a in read_corpus(AIDS_PATH)}
 
 
-def settings_panel() -> dict:
-    st.sidebar.markdown("### Réglages")
-    mode = st.sidebar.segmented_control("Mode", list(MODES), format_func=MODES.get, default="rag",
-                                        help="RAG : une recherche puis la réponse. Agent : le modèle choisit ses outils.")
+def composer() -> tuple[str, bool, dict]:
+    """The question box with the settings as pills inside it, as in chat apps. Returns question, asked, settings."""
     has_key = bool(os.environ.get("OPENROUTER_API_KEY"))
     backends = list(BACKENDS) if has_key else ["ollama"]
-    backend = st.sidebar.radio("Modèle", backends, format_func=BACKENDS.get)
-    if not has_key:
-        st.sidebar.caption("API indisponible : ajoutez OPENROUTER_API_KEY dans .env.")
-    full_cards = st.sidebar.toggle("Fiches entières", value=False,
+    with st.container(key="composer"):
+        question = st.text_area("Votre question", height=96, label_visibility="collapsed", key="question",
+                                placeholder="Ex. : Je dirige une PME industrielle à Lyon, quelles aides pour "
+                                            "réduire ma consommation d'énergie ?")
+        opts, mode_col, model_col, _, send_col = st.columns([1, 3, 4, 4, 1], vertical_alignment="center")
+        with opts, st.popover("Options", help="Réglages avancés"):
+            full_cards = st.toggle("Fiches entières", value=False, key="full_cards",
                                    help="Donne au modèle la fiche complète de chaque aide trouvée, "
                                         "au lieu du meilleur extrait. Désactivé par défaut (mesuré : pas de gain).")
-    return {"mode": mode or "rag", "backend": backend, "full_cards": full_cards}
+        with mode_col:
+            mode = st.segmented_control("Mode", list(MODES), format_func=MODES.get, default="rag", key="mode",
+                                        label_visibility="collapsed",
+                                        help="RAG : une recherche puis la réponse. Agent : le modèle choisit ses outils.")
+        with model_col:
+            backend = st.segmented_control("Modèle", backends, format_func=BACKEND_PILLS.get, default="ollama",
+                                           key="backend", label_visibility="collapsed")
+        with send_col:
+            asked = st.button("↑", key="send", type="primary", help="Exécuter")
+    if not has_key:
+        st.markdown('<div class="composer-note">API indisponible : ajoutez OPENROUTER_API_KEY dans .env.</div>',
+                    unsafe_allow_html=True)
+    # a segmented control can be clicked off: fall back to the defaults
+    return question, asked, {"mode": mode or "rag", "backend": backend or "ollama", "full_cards": full_cards}
 
 
 def history_panel(entries: list[dict]) -> None:
@@ -374,7 +423,6 @@ def main() -> None:
     st.markdown(CSS, unsafe_allow_html=True)
     hero()
 
-    settings = settings_panel()
     entries = history.load()
     if entries and "selected" not in st.session_state:
         st.session_state.selected = entries[-1]["id"]  # a fresh session opens on the latest question
@@ -382,11 +430,7 @@ def main() -> None:
 
     diagram = st.empty()
     diagram.markdown(how_it_works(), unsafe_allow_html=True)
-    with st.form("ask", clear_on_submit=False, border=False):
-        question = st.text_area("Votre question", height=96,
-                                placeholder="Ex. : Je dirige une PME industrielle à Lyon, quelles aides pour "
-                                            "réduire ma consommation d'énergie ?")
-        asked = st.form_submit_button("Exécuter", type="primary")
+    question, asked, settings = composer()
     if asked and question.strip():
         llm = LLMClient.from_env(backend=settings["backend"])
         wait = "20 à 60 s en local" if settings["backend"] == "ollama" else "quelques secondes"
