@@ -67,6 +67,34 @@
   ],
   "tool_calls": 20,
   "answers_generated": 20,
-  "judged_correctness": null,
-  "expected_behavior_respected": null
+  "judged_correctness": {
+    "all": {
+      "n": 20,
+      "correct": 11,
+      "partial": 3,
+      "wrong": 6,
+      "accuracy": 0.55
+    },
+    "heldout": {
+      "n": 20,
+      "correct": 11,
+      "partial": 3,
+      "wrong": 6,
+      "accuracy": 0.55
+    },
+    "judge_model": "anthropic/claude-sonnet-5.5",
+    "judge_cost_usd": 0.063196
+  },
+  "expected_behavior_respected": {
+    "all": {
+      "n": 20,
+      "respected": 19,
+      "rate": 0.95
+    },
+    "heldout": {
+      "n": 20,
+      "respected": 19,
+      "rate": 0.95
+    }
+  }
 }

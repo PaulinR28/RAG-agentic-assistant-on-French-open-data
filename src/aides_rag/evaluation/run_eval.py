@@ -7,8 +7,8 @@ Writes, in --out:
                  latency, tokens, tool calls, errors
 
 Retrieval metrics are aid-level and use the questions that have gold_docs, as in
-retrieval/eval_recall.py. Answer-level scores (judged correctness, abstention, injection) are
-reported as null until a judge exists.
+retrieval/eval_recall.py. Answer-level scores (judged correctness, abstention, injection) come from
+the LLM judge (--judge, evaluation/judge.py) and are null without it.
 
 Errors count both exceptions caught here and errors a system reports itself (the generating
 systems catch their own exceptions and return stop_reason "error"), so a broken run never looks clean.
@@ -113,7 +113,7 @@ def summarize(rows: list[dict], system_name: str) -> dict:
         "configs": sorted({r["config"] for r in rows if r["config"]}),
         "tool_calls": sum(len(r["tool_calls"] or []) for r in rows),
         "answers_generated": sum(bool(r["answer"]) for r in rows),  # an empty "" is not an answer
-        # filled in once a judge exists
+        # filled by --judge
         "judged_correctness": None,
         "expected_behavior_respected": None,
     }
@@ -131,12 +131,21 @@ def main(argv: list[str] | None = None) -> dict:
     ap.add_argument("--out", type=Path, default=Path("eval"))
     ap.add_argument("--system", default=DEFAULT_SYSTEM, choices=sorted(SYSTEMS))
     ap.add_argument("--limit", type=int, default=None, help="only the first N questions (quick check)")
+    ap.add_argument("--judge", action="store_true",
+                    help="grade the answers with the LLM judge (evaluation/judge.py; needs OPENROUTER_API_KEY)")
     args = ap.parse_args(argv)
 
     questions = read_corpus(args.questions)[: args.limit]
     system = load_system(args.system)
     rows = run(system, questions, args.system)
     summary = summarize(rows, args.system)
+    if args.judge:
+        from aides_rag.evaluation import judge
+
+        judged = judge.judge_run(rows, questions)
+        summary.update(judge.summarize(judged))
+        args.out.mkdir(parents=True, exist_ok=True)
+        write_jsonl(judged, args.out / "judged.jsonl")
 
     args.out.mkdir(parents=True, exist_ok=True)
     write_jsonl(rows, args.out / "results.jsonl")
@@ -151,6 +160,10 @@ def main(argv: list[str] | None = None) -> dict:
                   + f"  (on {ret['n_questions']} questions with gold docs)")
     lat = summary["latency_ms"]
     print(f"  latency ms: mean={lat['mean']} p95={lat['p95']}  tokens: {summary['tokens']}  tool calls: {summary['tool_calls']}")
+    for name, c in (summary["judged_correctness"] or {}).items():
+        if isinstance(c, dict):
+            print(f"  judged [{name}]: correct={c['correct']} partial={c['partial']} wrong={c['wrong']}  "
+                  f"behaviour ok={summary['expected_behavior_respected'][name]['respected']}/{c['n']}")
     print(f"-> {args.out / 'results.jsonl'}, {args.out / 'summary.json'}")
     return summary
 
