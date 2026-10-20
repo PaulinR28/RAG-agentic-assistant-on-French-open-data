@@ -22,6 +22,8 @@ from aides_rag.ui import history
 
 BACKENDS = {"ollama": "Local · Qwen3 4B", "openrouter": "API · Claude Haiku"}
 MODES = {"rag": "RAG", "agent": "Agent"}
+# Short labels for the pills inside the question box
+BACKEND_PILLS = {"ollama": "Qwen3 4B · local", "openrouter": "Haiku · API"}
 
 # Technical look: white + burgundy, drifting grid, HUD corners, a live diagram of the pipeline, counting figures
 CSS = """
@@ -59,22 +61,36 @@ header[data-testid="stHeader"] { background: transparent; }
 .lede b { color: var(--ink); font-weight: 600; }
 .lede code { font: 500 0.92em var(--mono); color: var(--bur); background: rgba(121,13,22,0.06); padding: 0.05rem 0.35rem; border-radius: 4px; }
 
-/* Pipeline diagram: the system, drawn */
-.pipe { position: relative; display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 0.6rem; margin: 2.4rem 0 2rem; }
-.pipe::before { content: ""; position: absolute; left: 4%; right: 4%; top: 22px; height: 1px; background: var(--line); }
-.pipe .pulse { position: absolute; top: 19px; left: 4%; width: 7px; height: 7px; border-radius: 50%; background: var(--bur2);
-  box-shadow: 0 0 12px 3px rgba(176,22,42,0.45); animation: travel 4.5s var(--ease) infinite; }
-.pipe.running .pulse { animation-duration: 1.4s; }
-@keyframes travel { from { left: 4%; opacity: 0; } 10% { opacity: 1; } 90% { opacity: 1; } to { left: 96%; opacity: 0; } }
-.node { position: relative; text-align: center; animation: rise 0.8s var(--ease) both; }
-.node .dot { width: 44px; height: 44px; margin: 0 auto 0.6rem; border-radius: 12px; display: flex; align-items: center;
-  justify-content: center; background: #fff; border: 1px solid var(--line); font: 700 0.72rem var(--mono); color: var(--bur);
-  transition: transform 0.5s var(--ease), border-color 0.5s var(--ease); }
-.node:hover .dot { transform: translateY(-3px); border-color: var(--bur); }
-.node .k { font: 700 0.7rem var(--mono); letter-spacing: 0.06em; text-transform: uppercase; color: var(--ink); }
-.node .s { font-size: 0.75rem; color: var(--mute); margin-top: 0.15rem; }
-.pipe.running .node .dot { animation: lit 1.4s var(--ease) infinite; }
-@keyframes lit { 0%, 100% { background: #fff; color: var(--bur); } 30% { background: var(--bur); color: #fff; border-color: var(--bur); } }
+/* How it works, in 3 plain steps: still when idle; while a question runs, one step lights at a time, 3 s each */
+.howto { margin: 2.4rem 0 1.6rem; }
+.howto .cap { font: 700 0.66rem var(--mono); letter-spacing: 0.16em; text-transform: uppercase; color: var(--mute); margin-bottom: 0.7rem; }
+.howto.running .cap { color: var(--bur); }
+.howto .row { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1.2rem; }
+.howto .st { position: relative; display: flex; align-items: center; gap: 0.9rem; padding: 0.95rem 1.05rem; background: #fff;
+  border: 1px solid var(--line); border-radius: 12px; animation: rise 0.8s var(--ease) both; }
+.howto .st:not(:last-child)::after { content: "→"; position: absolute; right: -1rem; top: 50%; transform: translateY(-50%);
+  color: var(--mute); font-size: 0.9rem; }
+.howto .ic { flex: none; width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center;
+  font: 700 1rem var(--mono); background: rgba(121,13,22,0.07); color: var(--bur); }
+.howto .st b { display: block; font-weight: 600; font-size: 1rem; line-height: 1.25; color: var(--ink); }
+.howto .st span { display: block; font-size: 0.8rem; color: var(--mute); margin-top: 0.15rem; }
+.howto.running .st { animation: steplit 9s ease-in-out infinite both; }
+.howto.running .ic { animation: iclit 9s ease-in-out infinite both; }
+@keyframes steplit { 0%, 38%, 100% { border-color: var(--line); background: #fff; }
+                     6%, 30% { border-color: var(--bur); background: rgba(121,13,22,0.04); } }
+@keyframes iclit { 0%, 38%, 100% { background: rgba(121,13,22,0.07); color: var(--bur); }
+                   6%, 30% { background: var(--bur); color: #fff; } }
+
+/* Funnel under each answer: the real numbers of this question */
+.funnel { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1.2rem; margin: 0 0 1.8rem; }
+.funnel .f { position: relative; padding: 0.9rem 1.05rem; background: #fff; border: 1px solid var(--line); border-radius: 12px;
+  animation: rise 0.8s var(--ease) both; }
+.funnel .f:not(:last-child)::after { content: "→"; position: absolute; right: -1rem; top: 50%; transform: translateY(-50%);
+  color: var(--mute); font-size: 0.9rem; }
+.funnel .f .v { font: 700 2.1rem var(--mono); letter-spacing: -0.03em; line-height: 1; color: var(--ink); }
+.funnel .f .k { font-size: 0.85rem; color: var(--mute); margin-top: 0.35rem; }
+.funnel .f.hot { background: var(--bur); border-color: var(--bur); }
+.funnel .f.hot .v, .funnel .f.hot .k { color: #fff; }
 
 /* HUD frame: white panel with burgundy corner ticks */
 [data-testid="stForm"], .st-key-answer, .hud { position: relative; background: #fff; border: 1px solid var(--line) !important;
@@ -100,6 +116,39 @@ button[kind="primaryFormSubmit"]::after { content: "↵"; margin-left: 0.7rem; f
   transition: transform 0.4s var(--ease); }
 button[kind="primaryFormSubmit"]:hover::after { transform: translateX(3px); }
 button[kind="primaryFormSubmit"]:active { transform: scale(0.98); }
+
+/* Composer: the question box with its settings inside, as in chat apps */
+.st-key-composer { position: relative; background: #fff; border: 1px solid var(--line); border-radius: 18px;
+  padding: 0.9rem 1rem 0.7rem !important; box-shadow: 0 1px 0 rgba(14,14,16,0.03), 0 24px 48px -36px rgba(14,14,16,0.3);
+  transition: border-color 0.35s var(--ease), box-shadow 0.35s var(--ease); }
+.st-key-composer:focus-within { border-color: rgba(121,13,22,0.45);
+  box-shadow: 0 0 0 4px rgba(121,13,22,0.06), 0 24px 48px -36px rgba(14,14,16,0.3); }
+.st-key-composer [data-testid="stTextArea"] div { border: none !important; background: transparent !important; box-shadow: none !important; }
+.st-key-composer textarea { background: transparent !important; font-size: 1.08rem !important; line-height: 1.55 !important;
+  padding: 0.2rem 0.1rem !important; resize: none !important; }
+.st-key-composer [data-testid="stHorizontalBlock"] { gap: 0.5rem; align-items: center; }
+.st-key-composer [data-testid="stColumn"] { width: auto !important; flex: 0 0 auto !important; min-width: 0; }
+.st-key-composer [data-testid="stColumn"]:nth-last-child(2) { flex: 1 1 auto !important; }
+/* Segmented pills: a soft track, the active option lifts in white */
+.st-key-composer [role="radiogroup"] { background: var(--soft); border-radius: 999px; padding: 3px; gap: 2px; }
+.st-key-composer [data-testid="stButtonGroup"] button { border: none !important; border-radius: 999px !important; background: transparent;
+  min-height: 30px; padding: 0.2rem 0.85rem !important; color: var(--mute);
+  transition: background 0.35s var(--ease), color 0.35s var(--ease), box-shadow 0.35s var(--ease), transform 0.35s var(--ease); }
+.st-key-composer [data-testid="stButtonGroup"] button p { font: 600 0.8rem var(--mono); letter-spacing: 0.02em; }
+.st-key-composer [data-testid="stButtonGroup"] button:hover { color: var(--ink); }
+.st-key-composer [data-testid="stButtonGroup"] button[aria-checked="true"] { background: #fff !important; color: var(--bur) !important;
+  box-shadow: 0 1px 2px rgba(14,14,16,0.08), 0 4px 12px -6px rgba(121,13,22,0.45); }
+.st-key-composer [data-testid="stButtonGroup"] button:active { transform: scale(0.96); }
+/* Options popover and send button */
+.st-key-composer [data-testid="stPopover"] button { border-radius: 999px !important; border: 1px solid var(--line) !important;
+  min-height: 34px; padding: 0 0.7rem !important; transition: border-color 0.3s var(--ease); }
+.st-key-composer [data-testid="stPopover"] button:hover { border-color: var(--bur) !important; }
+.st-key-send button { width: 40px; height: 40px; min-height: 40px; border-radius: 50% !important; padding: 0 !important; border: none !important;
+  box-shadow: 0 10px 24px -12px rgba(121,13,22,0.9); transition: transform 0.35s var(--ease), box-shadow 0.35s var(--ease) !important; }
+.st-key-send button:hover { transform: translateY(-1px); }
+.st-key-send button:active { transform: scale(0.94); }
+.st-key-send button p { font: 700 1.05rem var(--mono) !important; }
+.composer-note { font: 500 0.68rem var(--mono); color: var(--mute); letter-spacing: 0.04em; margin: 0.5rem 0 0 0.3rem; }
 
 /* Sidebar */
 [data-testid="stSidebar"] { border-right: 1px solid var(--line); }
@@ -175,7 +224,8 @@ button[kind="primaryFormSubmit"]:active { transform: scale(0.98); }
 
 @media (max-width: 768px) {
   .block-container { padding-top: 2rem; }
-  .pipe { grid-template-columns: repeat(3, minmax(0, 1fr)); row-gap: 1.2rem; } .pipe::before, .pipe .pulse { display: none; }
+  .howto .row, .funnel { grid-template-columns: 1fr; gap: 0.6rem; }
+  .howto .st::after, .funnel .f::after { display: none; }
   .sources, .stats { grid-template-columns: 1fr; } .tile.wide { grid-column: span 1; }
   .step { grid-template-columns: 1fr; gap: 0.2rem; } .step .ms { text-align: left; }
 }
@@ -189,19 +239,33 @@ def aids_by_id() -> dict[str, dict]:
     return {a["id_aid"]: a for a in read_corpus(AIDS_PATH)}
 
 
-def settings_panel() -> dict:
-    st.sidebar.markdown("### Réglages")
-    mode = st.sidebar.segmented_control("Mode", list(MODES), format_func=MODES.get, default="rag",
-                                        help="RAG : une recherche puis la réponse. Agent : le modèle choisit ses outils.")
+def composer() -> tuple[str, bool, dict]:
+    """The question box with the settings as pills inside it, as in chat apps. Returns question, asked, settings."""
     has_key = bool(os.environ.get("OPENROUTER_API_KEY"))
     backends = list(BACKENDS) if has_key else ["ollama"]
-    backend = st.sidebar.radio("Modèle", backends, format_func=BACKENDS.get)
-    if not has_key:
-        st.sidebar.caption("API indisponible : ajoutez OPENROUTER_API_KEY dans .env.")
-    full_cards = st.sidebar.toggle("Fiches entières", value=False,
+    with st.container(key="composer"):
+        question = st.text_area("Votre question", height=96, label_visibility="collapsed", key="question",
+                                placeholder="Ex. : Je dirige une PME industrielle à Lyon, quelles aides pour "
+                                            "réduire ma consommation d'énergie ?")
+        opts, mode_col, model_col, _, send_col = st.columns([1, 3, 4, 4, 1], vertical_alignment="center")
+        with opts, st.popover("Options", help="Réglages avancés"):
+            full_cards = st.toggle("Fiches entières", value=False, key="full_cards",
                                    help="Donne au modèle la fiche complète de chaque aide trouvée, "
                                         "au lieu du meilleur extrait. Désactivé par défaut (mesuré : pas de gain).")
-    return {"mode": mode or "rag", "backend": backend, "full_cards": full_cards}
+        with mode_col:
+            mode = st.segmented_control("Mode", list(MODES), format_func=MODES.get, default="rag", key="mode",
+                                        label_visibility="collapsed",
+                                        help="RAG : une recherche puis la réponse. Agent : le modèle choisit ses outils.")
+        with model_col:
+            backend = st.segmented_control("Modèle", backends, format_func=BACKEND_PILLS.get, default="ollama",
+                                           key="backend", label_visibility="collapsed")
+        with send_col:
+            asked = st.button("↑", key="send", type="primary", help="Exécuter")
+    if not has_key:
+        st.markdown('<div class="composer-note">API indisponible : ajoutez OPENROUTER_API_KEY dans .env.</div>',
+                    unsafe_allow_html=True)
+    # a segmented control can be clicked off: fall back to the defaults
+    return question, asked, {"mode": mode or "rag", "backend": backend or "ollama", "full_cards": full_cards}
 
 
 def history_panel(entries: list[dict]) -> None:
@@ -226,19 +290,29 @@ def hero() -> None:
                 "et chaque étape tracée.</p>", unsafe_allow_html=True)
 
 
-def pipeline(settings: dict, running: bool = False) -> str:
-    """The system as a diagram; while a question runs, the pulse speeds up and the steps light in turn."""
-    model = "Qwen3 4B" if settings["backend"] == "ollama" else "Haiku"
-    nodes = [("Q", "Question", "en français"),
-             ("⇄", "Hybride", "BM25 ∥ bge-m3"),
-             ("Σ", "Fusion", "RRF · sens ×3"),
-             ("↺" if settings["mode"] == "agent" else "λ", model, "agent + outils" if settings["mode"] == "agent" else "une passe"),
-             ("{}", "JSON validé", "Pydantic · citations"),
-             ("✓", "Réponse", "sourcée")]
-    html = "".join(f'<div class="node" style="animation-delay:{0.06 * n:.2f}s"><div class="dot" style="animation-delay:{0.2 * n:.1f}s">'
-                   f'{g}</div><div class="k">{escape(k)}</div><div class="s">{escape(s)}</div></div>'
-                   for n, (g, k, s) in enumerate(nodes))
-    return f'<div class="pipe{" running" if running else ""}"><span class="pulse"></span>{html}</div>'
+HOW_IT_WORKS = [("Je lis votre question", "en français, comme vous l'écrivez"),
+                ("Je cherche parmi 504 aides", "par mots-clés et par sens"),
+                ("J'écris une réponse sourcée", "chaque aide citée est vérifiée")]
+
+
+def how_it_works(running: bool = False, wait: str = "") -> str:
+    """Three plain steps. While a question runs they light in turn, slowly: a timed animation, not live progress."""
+    cap = f"Boussole travaille… ({wait})" if running else "Comment ça marche"
+    html = "".join(f'<div class="st" style="animation-delay:{3 * n if running else 0.06 * n}s"><div class="ic" '
+                   f'style="animation-delay:{3 * n}s">{n + 1}</div><div><b>{escape(title)}</b><span>{escape(sub)}</span></div></div>'
+                   for n, (title, sub) in enumerate(HOW_IT_WORKS))
+    return f'<div class="howto{" running" if running else ""}"><div class="cap">{escape(cap)}</div><div class="row">{html}</div></div>'
+
+
+def funnel(row: dict) -> str:
+    """504 aids → found for this question → cited in the answer: the real counts of this row."""
+    found, cited = len(row["retrieved_ids"]), len(row["cited_sources"])
+    cells = [("", 504, "aides dans la base"),
+             ("", found, f"trouvée{'s' if found > 1 else ''} pour votre question"),
+             ("hot", cited, f"citée{'s' if cited > 1 else ''} dans la réponse" if cited else "citée : pas de réponse sûre")]
+    return '<div class="funnel">' + "".join(
+        f'<div class="f {cls}" style="animation-delay:{0.15 * n:.2f}s"><div class="v">{count(v)}</div><div class="k">{escape(k)}</div></div>'
+        for n, (cls, v, k) in enumerate(cells)) + "</div>"
 
 
 def show_sources(row: dict) -> None:
@@ -330,6 +404,7 @@ def show_entry(entry: dict) -> None:
     if row["abstained"]:
         html += '<span class="chip warn">abstention</span>'
     st.markdown(f'<div class="chips rise d1">{html}</div>', unsafe_allow_html=True)
+    st.markdown(funnel(row), unsafe_allow_html=True)
     left, right = st.columns([7, 5], gap="large")
     with left, st.container(key="answer"):
         st.markdown('<span class="scan"></span><div class="label">Réponse</div>', unsafe_allow_html=True)
@@ -348,24 +423,19 @@ def main() -> None:
     st.markdown(CSS, unsafe_allow_html=True)
     hero()
 
-    settings = settings_panel()
     entries = history.load()
     if entries and "selected" not in st.session_state:
         st.session_state.selected = entries[-1]["id"]  # a fresh session opens on the latest question
     history_panel(entries)
 
     diagram = st.empty()
-    diagram.markdown(pipeline(settings), unsafe_allow_html=True)
-    with st.form("ask", clear_on_submit=False, border=False):
-        question = st.text_area("Votre question", height=96,
-                                placeholder="Ex. : Je dirige une PME industrielle à Lyon, quelles aides pour "
-                                            "réduire ma consommation d'énergie ?")
-        asked = st.form_submit_button("Exécuter", type="primary")
+    diagram.markdown(how_it_works(), unsafe_allow_html=True)
+    question, asked, settings = composer()
     if asked and question.strip():
         llm = LLMClient.from_env(backend=settings["backend"])
         wait = "20 à 60 s en local" if settings["backend"] == "ollama" else "quelques secondes"
-        diagram.markdown(pipeline(settings, running=True), unsafe_allow_html=True)
-        with st.spinner(f"Exécution du pipeline ({wait})…"):
+        diagram.markdown(how_it_works(running=True, wait=wait), unsafe_allow_html=True)
+        with st.spinner(f"Recherche et rédaction ({wait})…"):
             row = answer(question.strip(), mode=settings["mode"], llm=llm, full_cards=settings["full_cards"])
         entry = history.save(row, {**settings, "model": llm.model})
         st.session_state.selected = entry["id"]
