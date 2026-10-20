@@ -1,0 +1,180 @@
+{
+  "answers_checked": 61,
+  "by_grade": {
+    "correct": 37,
+    "partial": 10,
+    "wrong": 14
+  },
+  "strict": {
+    "flagged": 13,
+    "wrong": 7,
+    "partial": 0,
+    "correct_false_alarms": 6,
+    "rows": [
+      {
+        "system": "rag",
+        "id": "q026",
+        "grade": "wrong",
+        "unsupported": [
+          60000.0,
+          1000000.0
+        ]
+      },
+      {
+        "system": "rag",
+        "id": "q032",
+        "grade": "wrong",
+        "unsupported": [
+          2400.0,
+          8000.0
+        ]
+      },
+      {
+        "system": "agent",
+        "id": "q024",
+        "grade": "correct",
+        "unsupported": [
+          250000.0
+        ]
+      },
+      {
+        "system": "agent",
+        "id": "q026",
+        "grade": "wrong",
+        "unsupported": [
+          25000.0
+        ]
+      },
+      {
+        "system": "agent",
+        "id": "q032",
+        "grade": "wrong",
+        "unsupported": [
+          8000.0
+        ]
+      },
+      {
+        "system": "agent",
+        "id": "q034",
+        "grade": "wrong",
+        "unsupported": [
+          8000.0
+        ]
+      },
+      {
+        "system": "agent",
+        "id": "q040",
+        "grade": "wrong",
+        "unsupported": [
+          100.0
+        ]
+      },
+      {
+        "system": "rag_api",
+        "id": "q024",
+        "grade": "correct",
+        "unsupported": [
+          37500.0,
+          250000.0
+        ]
+      },
+      {
+        "system": "rag_api",
+        "id": "q032",
+        "grade": "wrong",
+        "unsupported": [
+          8000.0
+        ]
+      },
+      {
+        "system": "rag_api",
+        "id": "q040",
+        "grade": "correct",
+        "unsupported": [
+          100.0
+        ]
+      },
+      {
+        "system": "agent_api",
+        "id": "q024",
+        "grade": "correct",
+        "unsupported": [
+          37500.0,
+          250000.0
+        ]
+      },
+      {
+        "system": "agent_api",
+        "id": "q032",
+        "grade": "correct",
+        "unsupported": [
+          8000.0
+        ]
+      },
+      {
+        "system": "agent_api",
+        "id": "q040",
+        "grade": "correct",
+        "unsupported": [
+          100.0
+        ]
+      }
+    ]
+  },
+  "lenient": {
+    "flagged": 6,
+    "wrong": 4,
+    "partial": 0,
+    "correct_false_alarms": 2,
+    "rows": [
+      {
+        "system": "rag",
+        "id": "q026",
+        "grade": "wrong",
+        "unsupported": [
+          1000000.0
+        ]
+      },
+      {
+        "system": "agent",
+        "id": "q026",
+        "grade": "wrong",
+        "unsupported": [
+          25000.0
+        ]
+      },
+      {
+        "system": "agent",
+        "id": "q034",
+        "grade": "wrong",
+        "unsupported": [
+          8000.0
+        ]
+      },
+      {
+        "system": "agent",
+        "id": "q040",
+        "grade": "wrong",
+        "unsupported": [
+          100.0
+        ]
+      },
+      {
+        "system": "rag_api",
+        "id": "q040",
+        "grade": "correct",
+        "unsupported": [
+          100.0
+        ]
+      },
+      {
+        "system": "agent_api",
+        "id": "q040",
+        "grade": "correct",
+        "unsupported": [
+          100.0
+        ]
+      }
+    ]
+  }
+}
