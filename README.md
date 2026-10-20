@@ -12,8 +12,9 @@ hybrid retrieval (BM25 + bge-m3 embeddings), answers with citations, and runs lo
 ## Results
 
 Held-out split (q021–q040), run once after the final system was fixed. Correct = judged correct / partial / wrong out of 20. Full tables: EVALUATION.md §4.
-LLM runs on a MacBook Air M3 (16 GB, `eval/final/RUN_INFO.txt`); on the demo laptop (Intel CPU only) local answers
-take about 2.5× longer (dev p50 ~59 s).
+LLM runs on a MacBook Air M3 (16 GB, `eval/final/RUN_INFO.txt`). On the demo laptop (Intel Core Ultra 5, CPU only,
+~4.5 GB RAM free) local `rag` was re-measured on dev with the final setup: **p50 91 s** per question
+(`eval/final_dev/rag/`), about 4× the M3; Haiku through the API: p50 2.4 s on the same laptop.
 
 | System | Recall@5 | MRR | Correct | Behaviour OK | p50 latency (s) | USD / question |
 |---|---|---|---|---|---|---|

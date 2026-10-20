@@ -138,7 +138,22 @@ Retrieval is scored at **aid level**: a chunk counts as its parent `id_aid`, dup
 
 LLM rows: `eval/final/<system>/` (`results.jsonl`, `summary.json`, `judged.jsonl`). Correct = correct / partial / wrong by the judge (§3), all 20 questions. Behaviour OK = expected behaviour respected (answer, abstain, refuse, ignore the injection), all 20. Cit. precision = cited ids that are gold docs / all cited ids, a strict lower bound (a non-gold citation can still support the answer). For `agent`, retrieval is scored on the aids its searches returned. Tokens = mean per question; agent makes 3–5 LLM calls per question, rag 1–2. 0 errors and 20 / 20 valid structured outputs in all four runs (retries: rag 1, agent 3, rag API 3, agent API 3). Judge cost for the 80 verdicts: $0.26.
 
-Dev scores for the same systems: E7–E9 in §5 (hand-graded; `eval/experiments/`).
+### Dev (q001–q020), final setup, same judge
+
+Re-run on 2026-10-20 with the final configuration and the same judge as held-out, on the **demo laptop**
+(Intel Core Ultra 5 135U, CPU only), so dev and held-out are scored the same way. `eval/final_dev/<system>/`.
+Dev was used to tune, so these scores are optimistic by design; held-out (above) is the reported result.
+
+| System | Correct (dev) | Behaviour OK | Correct (held-out) | p50 latency, demo laptop | USD / question |
+|---|---|---|---|---|---|
+| **`rag`, Qwen3 4B local (final)** | 15 / 2 / 3 | 19 / 20 | 11 / 3 / 6 | 91 s | 0 |
+| `rag`, Claude Haiku 5.5 (API) | 17 / 2 / 1 | 20 / 20 | 15 / 2 / 3 | 2.4 s | 0.00055 |
+| `agent`, Claude Haiku 5.5 (API) | 16 / 2 / 2 | 19 / 20 | 16 / 2 / 2 | 4.8 s | 0.0015 |
+
+Local `agent` was not re-run on dev (about 2 min per question on this laptop). The local dev score (15 / 20) matches
+the earlier hand grading (E7, §5), and the drop to 11 / 20 on held-out is the expected cost of tuning on dev with a
+small model. The remaining dev errors (q007, q010, q016) are the same "Oui… mais ne remplit pas la condition"
+self-contradictions as on held-out. Older hand-graded dev runs: E7–E9 in §5.
 
 ### By category (held-out, final system)
 
@@ -156,6 +171,10 @@ Dev scores for the same systems: E7–E9 in §5 (hand-graded; `eval/experiments/
 In every failed answer of the final system the gold aid was ranked 1st. Five of the six wrong answers are reading errors; in the sixth (q026) the deciding condition was not in the text shown to the model (§6).
 
 ### Cost / latency trade-off
+
+![Quality vs latency on held-out](eval/final/tradeoff.png)
+
+(`eval/final/tradeoff.png`, built by `eval/final/plot_tradeoff.py` from the four `summary.json`.)
 
 Local `rag` is free, keeps the data on the machine and answers in ~23 s (p50); it gets 11 / 20 correct. The same pipeline with Claude Haiku 5.5 gets 15 / 20 in 2 s for $0.0007 per question; `agent` with Haiku gets 16 / 20 in 5 s for $0.0017 (15 / 20 on a second run: the one-question lead over `rag` is within run-to-run variance, §6). Local `agent` adds three times the tokens and 4 s for no gain: it makes one search per question and never opens a card (§6). Retrieval is identical across backends, so the gap is the answering model: a 4B model misreads thresholds and dates that a larger model gets right. Under a 10 s budget with a paid API allowed, we would ship `agent` with Haiku; without an API (privacy, cost), local `rag`. 20 questions: differences under ~10 points (2 questions) are not conclusive.
 
@@ -336,7 +355,7 @@ for two tool calls"), not a tuning step, and nothing else was changed after the 
 | Small golden set | 20 held-out questions: one question = 5 points. Two runs of `agent` with Haiku on the same questions moved 3 of 20 verdicts (16 then 15 correct, §6) | Report counts, not only percentages | Differences under ~10 points (2 questions) are not conclusive, between API systems even less: one run each |
 | Cut tool calls (API agent) | At the 200-token cap of a tool round, Haiku's second parallel call was cut and ran as an empty search on 4 / 20 held-out questions (0 / 20 on dev); no verdict changed when fixed (§6) | Local backend never reaches the cap (65 tokens max); the final system has no tool round | Not fixed in `v1.0`; the cut is not visible in `results.jsonl` (`finish_reason` shows `tool_calls`) |
 | Judge bias | 97.5 % agreement with our hand labels on 40 dev answers (20 questions × 2 runs), labels by one team member (Cohen's κ ≈ 0.94 from the confusion matrix in §3). On held-out it mixed behaviour with correctness twice (q024, q034, §6) | Judge sees the reference answer; reasons are saved per answer (`judged.jsonl`); verdicts of the final system read by hand (§6) | Few `partial` cases tested; slightly stricter than us on unsupported details. Validated on Qwen answers only: not checked on Haiku answers, which a model of the same family grades |
-| Latency on CPU | Local `rag` p50 23 s on the M3, ~59 s on the demo laptop (Intel CPU) | Intel iGPU via Vulkan is 3–5× faster; API option answers in ~2 s | Slow for interactive use on a CPU-only laptop |
+| Latency on CPU | Local `rag` p50 23 s on the M3, **91 s** on the demo laptop (Intel CPU, dev re-run, `eval/final_dev/rag/`) | Intel iGPU via Vulkan is 3–5× faster; API option answers in ~2 s | Slow for interactive use on a CPU-only laptop |
 | Data leaves the machine in API mode | API runs send the question and the retrieved aids to OpenRouter / Anthropic | Local is the default; API is opt-in (`LLM_BACKEND=openrouter`, UI switch) | Users must choose API mode knowingly |
 
 ---

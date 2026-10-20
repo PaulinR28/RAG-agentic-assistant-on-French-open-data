@@ -1,0 +1,96 @@
+{
+  "system": "agent",
+  "n_questions": 20,
+  "errors": [],
+  "stop_reasons": {
+    "final_answer": 17,
+    "abstained": 3
+  },
+  "retrieval": {
+    "n_questions": 17,
+    "recall@1": 0.912,
+    "recall@5": 0.912,
+    "recall@10": 0.912,
+    "mrr": 0.941,
+    "recall@5_by_category": {
+      "deadline": 1.0,
+      "eligibility": 1.0,
+      "factual": 1.0,
+      "geographic": 0.5,
+      "prompt_injection": 1.0
+    },
+    "misses@5": [
+      "q011",
+      "q013"
+    ]
+  },
+  "retrieval_by_split": {
+    "dev": {
+      "n_questions": 17,
+      "recall@1": 0.912,
+      "recall@5": 0.912,
+      "recall@10": 0.912,
+      "mrr": 0.941,
+      "recall@5_by_category": {
+        "deadline": 1.0,
+        "eligibility": 1.0,
+        "factual": 1.0,
+        "geographic": 0.5,
+        "prompt_injection": 1.0
+      },
+      "misses@5": [
+        "q011",
+        "q013"
+      ]
+    }
+  },
+  "latency_ms": {
+    "mean": 10627.2,
+    "p50": 4750.0,
+    "p95": 11342.5,
+    "max": 121969.1
+  },
+  "tokens": {
+    "in": 262783,
+    "out": 7466
+  },
+  "cost_usd": 0.030012,
+  "models": [
+    "anthropic/claude-haiku-5.5"
+  ],
+  "configs": [
+    "agent"
+  ],
+  "tool_calls": 21,
+  "answers_generated": 20,
+  "judged_correctness": {
+    "all": {
+      "n": 20,
+      "correct": 16,
+      "partial": 2,
+      "wrong": 2,
+      "accuracy": 0.8
+    },
+    "dev": {
+      "n": 20,
+      "correct": 16,
+      "partial": 2,
+      "wrong": 2,
+      "accuracy": 0.8
+    },
+    "judge_model": "anthropic/claude-sonnet-5.5",
+    "judge_cost_usd": 0.062746
+  },
+  "expected_behavior_respected": {
+    "all": {
+      "n": 20,
+      "respected": 19,
+      "rate": 0.95
+    },
+    "dev": {
+      "n": 20,
+      "respected": 19,
+      "rate": 0.95
+    }
+  }
+}
